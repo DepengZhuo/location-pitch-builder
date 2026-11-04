@@ -24,3 +24,29 @@
 
 /* 决策人提示：根据点位类型给运营商下一步动作 */
 .decision-guide{display:flex;gap:11px;align-items:flex-start;background:#f7f7f5;border:1px solid #eee;border-radius:7px;padding:13px;margin-top:18px}.guide-icon{width:24px;height:24px;display:grid;place-items:center;background:#111;color:var(--yellow);border-radius:5px;font-size:13px;flex-shrink:0}.decision-guide strong{font-size:10px}.decision-guide p{font-size:9px;line-height:1.65;color:#777;margin:5px 0 0}
+
+/* Accessibility and bilingual proposal additions */
+:root{--yellow:#111;--yellow-dark:#444;--green:#333;--red:#333}
+.brand{gap:0}.brand-mark{display:none}
+.nav-item.active:before,.nav-icon,.hero-kicker,.compliance-progress strong,.progress-track i,.score-ring,.landlord-card strong,.landlord-symbol,.note-icon{color:#fff;background-color:inherit}
+.nav-item.active:before,.progress-track i{background:#fff}
+.nav-icon{color:#bbb}.hero-kicker{color:#fff}.status-dot,.local-indicator i,.preview-toolbar i{background:#777;box-shadow:none}
+.button-yellow{background:#111;color:#fff}.button-yellow:hover{background:#333}.factor-buttons button.selected{background:#111;color:#fff;border-color:#111}
+.notice-bar,.proposal-callout{background:#f3f3f3;border-color:#ddd}.notice-bar>span{background:#111;color:#fff}.proposal-callout{border-left-color:#111}
+.doc-status.linked{background:#eee;color:#333}.live-tag,.doc-status.ready{background:#eee;color:#333}.chart-bar.highlight{background:#111}.field em{color:#333}
+.landlord-card strong,.landlord-symbol{color:#fff}.compliance-progress strong{color:#fff}.note-icon{background:#111;color:#fff}
+.field input,.field select,.field textarea{font-size:14px}
+.eyebrow,.sidebar-label,.sidebar-footer,.breadcrumb,.local-indicator,.button,.hero-kicker,.visual-caption,.section-head p,.panel-head p,.text-button,.stat-card span,.stat-card small,.recent-row strong,.recent-row small,.quick-number,.quick-link strong,.quick-link small,.notice-bar p,.step-tag,.field>span,.factor-row strong,.factor-row small,.factor-weight,.method-note,.result-label,.score-status,.result-top p,.breakdown-row span,.breakdown-row b,.next-step-box strong,.next-step-box p,.range-line strong,.landlord-card h3,.landlord-card small,.metric-card span,.metric-card small,.chart-title strong,.chart-title small,.chart-bar-wrap small,.narrative-box,.preview-toolbar>span,.proposal-doc-type,.proposal-subtitle,.proposal-meta div span,.proposal-meta div strong,.proposal-section h3,.proposal-section p,.proposal-section li,.proposal-machine-card strong,.proposal-machine-card span,.proposal-stat span,.proposal-stat strong,.proposal-callout,.proposal-footer,.compliance-banner p,.compliance-progress span,.doc-status,.document-card h3,.document-card p,.doc-meta,.doc-actions button,.doc-download,.compliance-note-panel strong,.compliance-note-panel p,.project-type,.project-card h3,.project-card p,.project-card-bottom small,.project-card-bottom button,.empty-state,.toast,.modal>p,.doc-select-grid label,.search-box input,.app-footer,small{font-size:max(12px,.85em)!important}
+.proposal-overview{display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:12px;align-items:stretch}
+.proposal-meta{align-content:start;grid-template-columns:repeat(2,minmax(0,1fr));margin:14px 0}
+.proposal-machine-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:7px;border:1px solid #ddd;border-radius:7px;background:#fafafa;padding:10px;text-align:center;min-width:0}
+.proposal-machine-card img{width:100%;height:150px;object-fit:contain}
+.proposal-machine-card span{display:block;color:#555;line-height:1.4}
+.machine-image-pending{height:150px;display:grid;place-items:center;color:#666}
+.proposal-meta div strong{overflow-wrap:anywhere}
+.doc-download{display:flex;justify-content:center;align-items:center;text-align:center;min-height:36px;margin-top:10px;padding:8px 10px;border:1px solid #111;border-radius:5px;background:#111;color:#fff;text-decoration:none;font-weight:700}
+.doc-download:hover{background:#333}.doc-download:disabled{background:#f4f4f4;color:#777;border-color:#ddd;cursor:not-allowed}
+[hidden]{display:none!important}
+body[data-language="en"]{font-family:Arial,"Microsoft YaHei",sans-serif}
+@media(max-width:820px){.proposal-overview{grid-template-columns:minmax(0,1fr) 175px}}
+@media(max-width:600px){.proposal-overview{grid-template-columns:1fr}.proposal-machine-card img{height:180px}}
