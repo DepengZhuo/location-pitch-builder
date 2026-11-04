@@ -39,27 +39,25 @@ function translate(value) {
 }
 export function t(value) { return language === 'en' ? translate(value) : value; }
 
-function visit(root, restore = false) {
-  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
-  let node;
-  while ((node = walker.nextNode())) {
-    if (node.parentElement?.closest('#languageToggle')) continue;
-    if (!originalText.has(node)) originalText.set(node, node.nodeValue);
-    const original = originalText.get(node);
-    node.nodeValue = restore ? original : translate(original);
+function translateTextNode(node, restore = false) {
+  if (node.parentElement?.closest('#languageToggle')) return;
+  if (!originalText.has(node)) originalText.set(node, node.nodeValue);
+
+  const original = originalText.get(node);
+  const nextValue = restore ? original : translate(original);
+
+  // 内容未变化时不写回 DOM，避免多余的 mutation。
+  if (node.nodeValue !== nextValue) {
+    node.nodeValue = nextValue;
   }
-  root.querySelectorAll?.('[placeholder],[aria-label],[title]').forEach(element => {
-    if (element.closest('#languageToggle')) return;
-    for (const name of ['placeholder','aria-label','title']) {
-      if (!element.hasAttribute(name)) continue;
-      let saved = originalAttributes.get(element);
-      if (!saved) { saved = {}; originalAttributes.set(element, saved); }
-      if (saved[name] === undefined) saved[name] = element.getAttribute(name);
-      const original = saved[name];
-      element.setAttribute(name, restore ? original : translate(original));
-    }
-  });
 }
+
+function visit(root, restore = false) {
+  // MutationObserver 也可能收到直接插入的 Text 节点。
+  if (root.nodeType === Node.TEXT_NODE) {
+    translateTextNode(root, restore);
+    return;
+  }
 
 export function setLanguage(next) {
   language = next === 'en' ? 'en' : 'zh';
@@ -73,20 +71,29 @@ export function setLanguage(next) {
 }
 
 export function initializeLanguageToggle() {
-  document.getElementById('languageToggle')?.addEventListener('click', () => setLanguage(language === 'zh' ? 'en' : 'zh'));
+  document.getElementById('languageToggle')?.addEventListener('click', () => {
+    setLanguage(language === 'zh' ? 'en' : 'zh');
+  });
+
+  // 只监听新增节点，不监听 characterData。
+  // 文本翻译本身会改动 characterData；监听它会导致观察器自触发循环。
   const observer = new MutationObserver(records => {
     if (language !== 'en') return;
+
     for (const record of records) {
-      if (record.type === 'childList') record.addedNodes.forEach(node => { if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) visit(node); });
-      else if (record.type === 'characterData') {
-        const node = record.target;
-        if (node.parentElement?.closest('#languageToggle')) continue;
-        if (!originalText.has(node)) originalText.set(node, node.nodeValue);
-        const original = originalText.get(node);
-        node.nodeValue = translate(original);
-      }
+      if (record.type !== 'childList') continue;
+      record.addedNodes.forEach(node => {
+        if (node.nodeType === Node.ELEMENT_NODE || node.nodeType === Node.TEXT_NODE) {
+          visit(node);
+        }
+      });
     }
   });
-  observer.observe(document.body, { childList:true, subtree:true, characterData:true });
+
+  observer.observe(document.body, {
+    childList: true,
+    subtree: true
+  });
+
   setLanguage(language);
 }
