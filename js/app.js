@@ -6,8 +6,9 @@ import { DEFAULT_SCORE, DEFAULT_DOCS, dateLabel, money, escapeHTML } from './dat
 import { loadStore, saveStore, createProject } from './storage.js';
 import { renderScoreFactors, calculateScore, paintScoreResult } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
-import { readProposalForm, applyProposalForm, renderProposalPreview, exportProposalHTML, bindProposalInputs } from './proposal.js';
+import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs } from './proposal.js';
 import { renderCompliance, normalizeDocs, setComplianceChangeHandler, bindComplianceAddButton } from './compliance.js';
+import { initializeLanguageToggle } from './i18n.js';
 
 const store = loadStore();
 store.docs = normalizeDocs(store.docs?.length ? store.docs : DEFAULT_DOCS);
@@ -147,7 +148,7 @@ function setPage(page) {
   currentPage = page;
   document.querySelectorAll('.page').forEach(section => section.classList.toggle('active', section.id === `page-${page}`));
   document.querySelectorAll('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.page === page));
-  const names = { dashboard:'工作台', scorer:'点位评估', roi:'ROI 收益测算', proposal:'商业提案', compliance:'合规文件中心', projects:'我的项目' };
+  const names = { dashboard:'工作台', scorer:'点位评估', roi:'点位方收益测算', proposal:'商业提案', compliance:'合规文件中心', projects:'我的项目' };
   $('breadcrumbCurrent').textContent = names[page] || '工作台';
   $('sidebar').classList.remove('open');
   if (page === 'dashboard') updateDashboard();
@@ -215,14 +216,15 @@ renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
 updateDecisionGuide();
 $('saveScore').addEventListener('click', saveScore);
 $('resetScore').addEventListener('click', () => { scoreValues = { ...DEFAULT_SCORE }; renderScoreFactors($('scoreFactors'), scoreValues, updateScoring); updateScoring(); toast('评分已重置为 3 分。'); });
-$('scoreToProposal').addEventListener('click', () => {
+  $('scoreToRoi').addEventListener('click', () => {
   const location = readScoreForm();
   if (location.name) $('propProperty').value = location.name;
   if (location.city) $('propCity').value = location.city;
   if (location.type) $('propVenue').value = location.type;
   if (location.traffic) $('propTraffic').value = location.traffic;
   if (currentProject()) { currentProject().score = { ...location, result: calculateScore(scoreValues) }; persist(); }
-  refreshProposalPreview(); setPage('proposal');
+  if (location.name) $('roiLocation').value = location.name;
+  renderROI(); setPage('roi');
 });
 ['locName','locCity','locType','locTraffic','locAudience','locTerm','locDecision','locSource','locNotes'].forEach(id => $(id).addEventListener('input', () => {
   if (id === 'locType') updateDecisionGuide();
@@ -237,6 +239,16 @@ bindROIInputs(result => {
 });
 $('saveRoi').addEventListener('click', saveROI);
 $('resetRoi').addEventListener('click', () => { applyROIForm(); renderROI(); refreshProposalPreview(); toast('ROI 参数已恢复为示例值。'); });
+$('roiToProposal').addEventListener('click', () => {
+  const roi = readROIForm();
+  if (roi.location) $('propProperty').value = roi.location;
+  const scoreData = readScoreForm();
+  if (scoreData.city) $('propCity').value = scoreData.city;
+  if (scoreData.type) $('propVenue').value = scoreData.type;
+  if (scoreData.traffic) $('propTraffic').value = scoreData.traffic;
+  applyROIToProposal(roi);
+  refreshProposalPreview(); setPage('proposal');
+});
 
 /* 商业提案 */
 bindProposalInputs(updateProposalAutoSave);
@@ -248,13 +260,16 @@ $('exportProposal').addEventListener('click', () => {
 });
 $('printProposal').addEventListener('click', () => { refreshProposalPreview(); window.print(); });
 $('loadProposalExample').addEventListener('click', () => {
-  applyProposalForm({ title:'智能零售柜点位合作提案', property:'Sunrise Apartments', city:'Tampa, FL', operator:'Independent Vending Operator', contact:'Property Management Team', venue:'公寓 / 多户住宅', traffic:300, machine:'HAHA 智能零售柜', quantity:1, deal:'销售额分成', share:10, launch:'双方确认后 2–4 周', planogram:'瓶装水、运动饮料、碳酸饮料、健康零食、方便食品及日常必需品。根据住户画像和销售数据持续优化 SKU。', service:'运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。', notes:'需进一步确认设备摆放区域、电源及网络条件、电费承担方式、物业访问权限和最终合作协议。' });
+  applyProposalForm({ title:'智能零售柜点位合作提案', property:'Sunrise Apartments', city:'Tampa, FL', operator:'Independent Vending Operator', contactName:'Property Management Team', contactEmail:'', venue:'公寓 / 多户住宅', traffic:300, machine:'Mini 360', quantity:1, deal:'revenueShare', share:10, launch:'双方确认后 2–4 周', planogram:'瓶装水、运动饮料、碳酸饮料、健康零食、方便食品及日常必需品。根据住户画像和销售数据持续优化 SKU。', service:'运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。', notes:'需进一步确认设备摆放区域、电源及网络条件、电费承担方式、物业访问权限和最终合作协议。' });
   updateProposalAutoSave(); toast('已载入示例提案内容，请替换为真实信息。');
 });
 $('syncFromRoi').addEventListener('click', () => {
-  const roi = calculateROI(readROIForm()); $('propShare').value = roi.shareRate;
-  $('propNotes').value = `收益测算参考：预计月销售额 ${money(roi.monthlyRevenue)}；物业预计月收益 ${money(roi.landlordIncome)}。以上为假设测算，非收益承诺。`;
-  updateProposalAutoSave(); toast('已将 ROI 分成比例和测算结果同步到提案。');
+  const roi = calculateROI(readROIForm());
+  if (roi.location) $('propProperty').value = roi.location;
+  applyROIToProposal(roi);
+  $('propNotes').value = `收益测算参考：预计月销售额 ${money(roi.monthlyRevenue)}；点位方预计月收益 ${money(roi.landlordIncome)}。合作方式：${roi.dealType === 'fixedRent' ? `固定月租 ${money(roi.rent)}` : `销售额分成 ${roi.shareRate}%`}。以上为假设测算，非收益承诺。`;
+  exportProposalHTML(roi, calculateScore(scoreValues), store.docs);
+  updateProposalAutoSave(); toast('合作提案已下载；所选认证资料可在提案中直接下载。');
 });
 
 /* 合规文件中心 */
@@ -277,3 +292,4 @@ function initialize() {
   renderROI(); updateScoring(); refreshProposalPreview(); updateDashboard();
 }
 initialize();
+initializeLanguageToggle();

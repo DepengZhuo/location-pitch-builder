@@ -17,20 +17,22 @@ export function normalizeDocs(docs = []) {
 
 export function renderCompliance(docs) {
   const list = normalizeDocs(docs);
-  const readyCount = list.filter(d => Boolean(safeURL(d.url))).length;
+  const readyCount = list.filter(d => Boolean(d.downloadPath || safeURL(d.url))).length;
   document.getElementById('complianceCount').textContent = `${readyCount} / ${list.length}`;
   document.getElementById('complianceProgressBar').style.width = `${readyCount / list.length * 100}%`;
   document.getElementById('complianceGrid').innerHTML = list.map(doc => {
     const temp = temporaryFiles.get(doc.id);
-    const ready = Boolean(safeURL(doc.url));
+    const safeLink = safeURL(doc.url) || doc.downloadPath;
+    const ready = Boolean(safeLink);
     const status = ready ? '已配置链接' : temp ? '临时附件' : '待补充';
     const statusClass = ready ? 'linked' : temp ? 'ready' : '';
     return `<article class="document-card" data-doc="${doc.id}">
       <div class="doc-top"><div class="doc-icon">▤</div><span class="doc-status ${statusClass}">${status}</span></div>
       <h3>${escapeHTML(doc.title)}</h3><p>${escapeHTML(doc.desc)}</p>
       <div class="doc-meta">${escapeHTML(doc.category)} · ${escapeHTML(doc.note || '待补充')}</div>
-      ${ready ? `<div class="doc-meta">链接：${escapeHTML(doc.url.length > 42 ? doc.url.slice(0,39)+'…' : doc.url)}</div>` : temp ? `<div class="doc-meta">本次会话：${escapeHTML(temp.name)}</div>` : ''}
-      <div class="doc-actions"><button data-action="link" data-id="${doc.id}">${ready ? '修改链接' : '添加 Drive 链接'}</button><button data-action="upload" data-id="${doc.id}">本地预览</button>${ready ? `<button data-action="open" data-id="${doc.id}">打开 ↗</button>` : temp ? `<button data-action="temp" data-id="${doc.id}">查看附件 ↗</button>` : ''}</div>
+      ${ready ? `<div class="doc-meta">${doc.downloadPath ? '仓库认证文件' : `链接：${escapeHTML(doc.url.length > 42 ? doc.url.slice(0,39)+'…' : doc.url)}`}</div>` : temp ? `<div class="doc-meta">本次会话：${escapeHTML(temp.name)}</div>` : ''}
+      <div class="doc-actions"><button data-action="link" data-id="${doc.id}">${doc.url ? '修改链接' : '添加 Drive 链接'}</button><button data-action="upload" data-id="${doc.id}">本地预览</button>${temp ? `<button data-action="temp" data-id="${doc.id}">查看附件 ↗</button>` : ''}</div>
+      ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" download>${doc.downloadPath ? '下载认证资料 ↓' : '打开 / 下载资料 ↗'}</a>` : '<button class="doc-download" disabled>下载资料（待补充）</button>'}
     </article>`;
   }).join('');
   document.querySelectorAll('[data-action="link"]').forEach(button => button.addEventListener('click', () => editLink(button.dataset.id, docs)));
