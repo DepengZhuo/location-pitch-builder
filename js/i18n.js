@@ -53,11 +53,47 @@ function translateTextNode(node, restore = false) {
 }
 
 function visit(root, restore = false) {
-  // MutationObserver 也可能收到直接插入的 Text 节点。
+  // 如果传入的是单独的文本节点，直接翻译。
   if (root.nodeType === Node.TEXT_NODE) {
     translateTextNode(root, restore);
     return;
   }
+
+  // 翻译页面内所有文本节点。
+  const walker = document.createTreeWalker(root, NodeFilter.SHOW_TEXT);
+  let node;
+
+  while ((node = walker.nextNode())) {
+    translateTextNode(node, restore);
+  }
+
+  // 同时翻译输入框提示、按钮说明等属性。
+  root.querySelectorAll?.('[placeholder],[aria-label],[title]').forEach(element => {
+    if (element.closest('#languageToggle')) return;
+
+    for (const name of ['placeholder', 'aria-label', 'title']) {
+      if (!element.hasAttribute(name)) continue;
+
+      let saved = originalAttributes.get(element);
+
+      if (!saved) {
+        saved = {};
+        originalAttributes.set(element, saved);
+      }
+
+      if (saved[name] === undefined) {
+        saved[name] = element.getAttribute(name);
+      }
+
+      const original = saved[name];
+      const nextValue = restore ? original : translate(original);
+
+      if (element.getAttribute(name) !== nextValue) {
+        element.setAttribute(name, nextValue);
+      }
+    }
+  });
+}
 
 export function setLanguage(next) {
   language = next === 'en' ? 'en' : 'zh';
