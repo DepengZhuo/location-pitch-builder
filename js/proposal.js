@@ -2,6 +2,7 @@
    商业提案模块：将表单内容组合为物业可阅读的提案网页
    ================================================== */
 import { escapeHTML, money, machineFootprint } from './data.js';
+import { cleanLegacyNotes } from './storage.js';
 import { getLanguage, t, translateMultiline, PROPOSAL_DEFAULTS } from './i18n.js';
 
 const fields = [
@@ -13,6 +14,9 @@ const fields = [
 const el = id => document.getElementById(id);
 
 export function syncProposalFormLanguage() {
+  if (el('propNotes')) {
+    el('propNotes').value = cleanLegacyNotes(el('propNotes').value);
+  }
   const map = {
     propTitle: 'title',
     propLaunch: 'launch',
@@ -43,6 +47,7 @@ export function syncProposalFormLanguage() {
 }
 
 export function readProposalForm() {
+  const rawNotes = el('propNotes')?.value.trim() || '';
   return {
     title: el('propTitle')?.value.trim() || '',
     property: el('propProperty')?.value.trim() || '',
@@ -60,7 +65,7 @@ export function readProposalForm() {
     planogram: el('propPlanogram')?.value.trim() || '',
     service: el('propService')?.value.trim() || '',
     confirmItems: el('propConfirmItems')?.value.trim() || '',
-    notes: el('propNotes')?.value.trim() || '',
+    notes: cleanLegacyNotes(rawNotes),
     selectedDocs: [...document.querySelectorAll('input[name="propDoc"]:checked')].map(input => input.value)
   };
 }
@@ -85,9 +90,11 @@ export function applyProposalForm(data = {}) {
   const legacyContact = data.contact || '';
   const [legacyName, ...emailParts] = legacyContact.split(/\s*[/|]\s*/);
   const dealValue = data.deal === 'fixedRent' || String(data.deal || '').includes('固定') ? 'fixedRent' : 'revenueShare';
+  const cleanedNotes = data.notes !== undefined ? cleanLegacyNotes(data.notes) : defaults.notes;
   const merged = {
     ...defaults,
     ...data,
+    notes: cleanedNotes,
     deal: dealValue,
     machine: data.machine && machineFootprint(data.machine) ? data.machine : (data.machine ? '' : defaults.machine),
     contactName: data.contactName ?? legacyName ?? '',
@@ -133,6 +140,7 @@ export function applyROIToProposal(roi) {
   if (el('propDeal')) el('propDeal').value = roi.dealType || (roi.rent > 0 ? 'fixedRent' : 'revenueShare');
   if (el('propShare')) el('propShare').value = roi.shareRate ?? 10;
   if (el('propRent')) el('propRent').value = roi.rent ?? 0;
+  if (el('propNotes')) el('propNotes').value = cleanLegacyNotes(el('propNotes').value);
   updateDealFields();
 }
 
@@ -157,6 +165,13 @@ function renderRichLines(rawText) {
 export function renderProposalPreview(roiData = null, scoreData = null, complianceDocs = []) {
   const previewEl = el('proposalPreview');
   if (!previewEl) return null;
+  if (el('propNotes')) {
+    const cleaned = cleanLegacyNotes(el('propNotes').value);
+    if (el('propNotes').value !== cleaned) {
+      el('propNotes').value = cleaned;
+      syncProposalFormLanguage();
+    }
+  }
   const p = readProposalForm();
   const isEn = getLanguage() === 'en';
   const safe = key => escapeHTML(p[key] ? translateMultiline(p[key]) : t('待补充'));
@@ -216,7 +231,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
           <div><span>${t('预计上线时间')}</span><strong>${safe('launch')}</strong></div>
         </div>
         <aside class="proposal-machine-card">
-          ${dimensions ? `<img src="${localImg}" data-fallback="${fallbackImg}" alt="${escapeHTML(p.machine)} front view">` : `<div class="machine-image-pending">${t('请先选择机器型号')}</div>`}
+          ${dimensions ? `<img src="${localImg}" data-fallback="${fallbackImg}" data-model="${escapeHTML(p.machine)}" alt="${escapeHTML(p.machine)} front view">` : `<div class="machine-image-pending">${t('请先选择机器型号')}</div>`}
           <strong>${escapeHTML(p.machine || t('待选择型号'))}</strong>
         </aside>
       </div>
@@ -282,7 +297,7 @@ export function exportProposalHTML(roiData = null, scoreData = null, complianceD
     }
   }
   const paper = clone ? clone.innerHTML : (el('proposalPreview')?.innerHTML || '');
-  const standalone = `<!doctype html><html lang="${getLanguage() === 'en' ? 'en' : 'zh-CN'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHTML(translateMultiline(p.title) || 'Location Partnership Proposal')}</title><style>*{box-sizing:border-box}body{margin:0;background:#f3f3f2;color:#222;font-family:Arial,"Microsoft YaHei",sans-serif}.paper{width:min(1000px,calc(100% - 32px));margin:32px auto;background:#fff;padding:48px 52px;border-radius:10px}.proposal-brand{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:15px}.proposal-logo{font-weight:900;letter-spacing:1px;font-size:17px}.proposal-doc-type{font-size:12px;letter-spacing:1.3px;color:#666;font-weight:700}.proposal-title{margin:28px 0 9px;font-size:30px}.proposal-subtitle{font-size:14px;color:#666;margin-bottom:20px}.proposal-section{margin:24px 0;page-break-inside:avoid}.proposal-section h3{font-size:17px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #ddd}.proposal-section p,.proposal-section li{font-size:14px;line-height:1.75;color:#333;margin:0 0 6px}.proposal-section ul{padding-left:18px;margin:6px 0}.proposal-overview{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px;align-items:stretch;margin:14px 0}.proposal-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#f5f5f5;padding:16px;border-radius:8px;align-content:center}.proposal-meta div span{font-size:12px;color:#666;display:block;margin-bottom:4px}.proposal-meta div strong{font-size:14px;color:#111}.proposal-machine-card{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;border:1px solid #ddd;background:#fcfcfb;padding:16px;border-radius:8px;text-align:center}.proposal-machine-card img{width:100%;height:230px;object-fit:contain}.proposal-machine-card strong{font-size:14px;background:#eee;padding:4px 12px;border-radius:999px}.proposal-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.proposal-stat{background:#111;color:#fff;padding:14px;border-radius:8px}.proposal-stat span{font-size:12px;color:#ccc;display:block}.proposal-stat strong{font-size:15px;display:block;margin-top:6px}.proposal-callout{background:#f4f4f4;border-left:3px solid #111;padding:13px 15px;font-size:13px;line-height:1.75;color:#333;margin-top:10px}.proposal-footer{border-top:1px solid #ddd;margin-top:30px;padding-top:12px;display:flex;justify-content:space-between;color:#666;font-size:12px}.doc-print-only{display:none}.doc-web-link{color:#111;font-weight:700}@media(max-width:650px){.paper{padding:24px 18px}.proposal-overview{grid-template-columns:1fr}.proposal-stat-row{grid-template-columns:1fr}}@media print{body{background:#fff}.paper{width:100%;margin:0;padding:20px 28px}.doc-web-only,.doc-web-footnote{display:none!important}.doc-print-only{display:inline!important;color:#333;font-size:13px}}</style></head><body><main class="paper">${paper}</main></body></html>`;
+  const standalone = `<!doctype html><html lang="${getLanguage() === 'en' ? 'en' : 'zh-CN'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHTML(translateMultiline(p.title) || 'Location Partnership Proposal')}</title><style>*{box-sizing:border-box}body{margin:0;background:#f3f3f2;color:#222;font-family:Arial,"Microsoft YaHei",sans-serif}.paper{width:min(1000px,calc(100% - 32px));margin:32px auto;background:#fff;padding:48px 52px;border-radius:10px}.proposal-brand{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:15px}.proposal-logo{font-weight:900;letter-spacing:1px;font-size:17px}.proposal-doc-type{font-size:12px;letter-spacing:1.3px;color:#666;font-weight:700}.proposal-title{margin:28px 0 9px;font-size:30px}.proposal-subtitle{font-size:14px;color:#666;margin-bottom:20px}.proposal-section{margin:24px 0;page-break-inside:avoid}.proposal-section h3{font-size:17px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #ddd}.proposal-section p,.proposal-section li{font-size:14px;line-height:1.75;color:#333;margin:0 0 6px}.proposal-section ul{padding-left:18px;margin:6px 0}.proposal-overview{display:grid;grid-template-columns:minmax(0,1fr) 280px;gap:16px;align-items:stretch;margin:14px 0}.proposal-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#f5f5f5;padding:16px;border-radius:8px;align-content:center}.proposal-meta div span{font-size:12px;color:#666;display:block;margin-bottom:4px}.proposal-meta div strong{font-size:14px;color:#111}.proposal-machine-card{display:flex;flex-direction:column;gap:10px;align-items:center;justify-content:center;border:1px solid #ddd;background:#fff;padding:12px 10px;border-radius:8px;text-align:center;overflow:hidden}.proposal-machine-card img{width:100%;height:285px;object-fit:contain;object-position:center}.proposal-machine-card img[data-model="Ultra 1200"]{object-fit:cover;object-position:18% 50%}.proposal-machine-card strong{font-size:13px;background:#eee;padding:4px 14px;border-radius:999px}.proposal-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.proposal-stat{background:#111;color:#fff;padding:14px;border-radius:8px}.proposal-stat span{font-size:12px;color:#ccc;display:block}.proposal-stat strong{font-size:15px;display:block;margin-top:6px}.proposal-callout{background:#f4f4f4;border-left:3px solid #111;padding:13px 15px;font-size:13px;line-height:1.75;color:#333;margin-top:10px}.proposal-footer{border-top:1px solid #ddd;margin-top:30px;padding-top:12px;display:flex;justify-content:space-between;color:#666;font-size:12px}.doc-print-only{display:none}.doc-web-link{color:#111;font-weight:700}@media(max-width:650px){.paper{padding:24px 18px}.proposal-overview{grid-template-columns:1fr}.proposal-stat-row{grid-template-columns:1fr}}@media print{body{background:#fff}.paper{width:100%;margin:0;padding:20px 28px}.doc-web-only,.doc-web-footnote{display:none!important}.doc-print-only{display:inline!important;color:#333;font-size:13px}}</style></head><body><main class="paper">${paper}</main></body></html>`;
   const blob = new Blob([standalone], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');

@@ -1,7 +1,7 @@
 /* =========================================================
    中英文切换模块（i18n）
    确保英文模式下全站（含表单默认/示例文案与右侧提案）100%纯英文，
-   中文模式下 100%纯中文。
+   中文模式下 100%纯中文，且反向映射 'Site Partner Earnings' -> '点位方收益测算'。
    ========================================================= */
 export const PROPOSAL_DEFAULTS = {
   zh: {
@@ -40,11 +40,11 @@ const translations = {
   '工作空间': 'Workspace',
   '工作台': 'Dashboard',
   '点位评估': 'Location Assessment',
+  'ROI 收益测算': 'Site Partner Earnings',
   '点位收益测算': 'Site Partner Earnings',
   '点位方收益测算': 'Site Partner Earnings',
-  'ROI 收益测算': 'Site Partner Earnings',
-  '商业提案': 'Business Proposal',
   '商业提案生成': 'Business Proposal',
+  '商业提案': 'Business Proposal',
   '合规文件中心': 'Compliance Documents',
   '我的项目': 'My Projects',
   '本地工作模式': 'Local Workspace',
@@ -105,10 +105,10 @@ const translations = {
   '评分拆解': 'Score Breakdown',
   '建议下一步': 'Recommended Next Step',
   '先补充人流量、场地类型和决策人信息。': 'Add foot traffic, venue type, and decision maker details.',
-  '下一步：点位方收益测算 →': 'Next: Site Partner Earnings →',
-  '下一步：点位方收益测算': 'Next: Site Partner Earnings',
   '下一步：点位收益测算 →': 'Next: Site Partner Earnings →',
   '下一步：点位收益测算': 'Next: Site Partner Earnings',
+  '下一步：点位方收益测算 →': 'Next: Site Partner Earnings →',
+  '下一步：点位方收益测算': 'Next: Site Partner Earnings',
   '恢复示例参数': 'Restore Example Inputs',
   '保存测算': 'Save Estimate',
   '先选择固定月租或按销售额分成，再查看点位方收益与运营商回本周期估算。': 'Choose fixed monthly rent or a percentage of sales, then review site partner earnings and operator payback estimates.',
@@ -375,6 +375,9 @@ const normalize = value => String(value ?? '').replace(/\s+/g, ' ').trim();
 const reverseTranslations = Object.fromEntries(
   Object.entries(translations).map(([zh, en]) => [normalize(en), zh])
 );
+reverseTranslations['Site Partner Earnings'] = '点位方收益测算';
+reverseTranslations['Next: Site Partner Earnings →'] = '下一步：点位方收益测算 →';
+reverseTranslations['Next: Site Partner Earnings'] = '下一步：点位方收益测算';
 
 const originalText = new WeakMap();
 const originalAttributes = new WeakMap();
@@ -476,6 +479,7 @@ export function translate(value) {
 export function translateToZh(value) {
   const key = normalize(value);
   if (!key) return value;
+  if (key === 'ROI 收益测算' || key === '点位收益测算') return '点位方收益测算';
   if (reverseTranslations[key]) return reverseTranslations[key];
   return value;
 }
@@ -526,9 +530,12 @@ function translateTextNode(node, restore = false) {
 
   const savedRaw = originalText.get(node);
   if (restore) {
-    const restored = reverseTranslations[currentTrimmed]
+    let restored = reverseTranslations[currentTrimmed]
       ? currentRaw.replace(currentRaw.trim(), reverseTranslations[currentTrimmed])
       : savedRaw;
+    if (normalize(restored) === 'ROI 收益测算' || normalize(restored) === '点位收益测算') {
+      restored = restored.replace(/ROI 收益测算|点位收益测算/, '点位方收益测算');
+    }
     if (node.nodeValue !== restored) {
       node.nodeValue = restored;
     }

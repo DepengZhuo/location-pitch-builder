@@ -97,15 +97,17 @@
 
         <!-- 页面二：点位评估 -->
         <section class="page" id="page-scorer">
-          <div class="page-heading">
-            <div>
-              <div class="eyebrow">01 / LOCATION SCORER</div>
-              <h1>点位评估</h1>
-              <p>先判断这个点位是否值得投入时间开发。评分规则可调整，当前权重为原型默认值。</p>
-            </div>
-            <div class="heading-actions">
-              <button class="button button-outline" id="resetScore" type="button">重置评分</button>
-              <button class="button button-dark" id="saveScore" type="button">保存评估</button>
+          <div class="page-heading scorer-page-heading">
+            <div class="scorer-heading-main">
+              <div>
+                <div class="eyebrow">01 / LOCATION SCORER</div>
+                <h1>点位评估</h1>
+                <p>先判断这个点位是否值得投入时间开发。评分规则可调整，当前权重为原型默认值。</p>
+              </div>
+              <div class="heading-actions">
+                <button class="button button-outline" id="resetScore" type="button">重置评分</button>
+                <button class="button button-dark" id="saveScore" type="button">保存评估</button>
+              </div>
             </div>
           </div>
           <div class="two-column-layout scorer-layout">
@@ -146,8 +148,7 @@
               <div id="scoreFactors" class="score-factors"></div>
               <div class="method-note">评分模型为本工具的初始建议：人流量 25%、场地匹配度 20%、目标人群 15%、消费便利性 15%、竞争情况 10%、合作期限 10%、决策人可触达性 5%。请结合实际运营数据持续校准。</div>
               <div class="scorer-bottom-actions">
-                <button class="button button-outline" id="saveScoreBottom" type="button">保存评估</button>
-                <button class="button button-dark" id="scoreToRoiBottom" type="button">下一步：点位方收益测算 →</button>
+                <button class="button button-dark button-wide" id="scoreToRoi" type="button">下一步：点位方收益测算 →</button>
               </div>
             </div>
             <aside class="panel score-result-panel">
@@ -158,8 +159,7 @@
                 <p id="scoreSummary">填写左侧信息后，系统将生成点位评估结果。</p>
               </div>
               <div class="result-breakdown"><h3>评分拆解</h3><div id="scoreBreakdown"></div></div>
-              <div class="next-step-box"><strong>建议下一步</strong><p id="scoreNextStep">先补充人流量、场地类型和决策人信息。</p></div>
-              <div class="button-row"><button class="button button-dark button-wide" id="scoreToRoi" type="button">下一步：点位方收益测算 →</button></div>
+              <div class="next-step-box" style="margin-bottom:0;"><strong>建议下一步</strong><p id="scoreNextStep">先补充人流量、场地类型和决策人信息。</p></div>
             </aside>
           </div>
         </section>

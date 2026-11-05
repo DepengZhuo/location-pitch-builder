@@ -5,16 +5,36 @@
 import { DEFAULT_DOCS } from './data.js';
 
 const STORAGE_KEY = 'haha_location_pitch_builder_v1';
+const DEFAULT_SAFE_NOTES_ZH = '零场地改造成本：设备即插即用（仅需标准 110V 电源插座，内置 4G/LTE 无线通信模块，无需拉网线）；运营商承担 100% 设备投放、安装、日常补货、维保及 $2M 商业责任险费用；支持首期 90 天试运营评估与灵活退换机制。';
 
 const cloneDocs = () => JSON.parse(JSON.stringify(DEFAULT_DOCS));
+
+export function cleanLegacyNotes(notes) {
+  if (!notes) return DEFAULT_SAFE_NOTES_ZH;
+  const trimmed = String(notes).trim();
+  if (
+    trimmed.includes('收益测算参考') ||
+    trimmed.includes('非收益承诺') ||
+    trimmed.includes('需进一步确认设备摆放区域、电源及网络条件')
+  ) {
+    return DEFAULT_SAFE_NOTES_ZH;
+  }
+  return trimmed;
+}
 
 export function loadStore() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return { projects: [], currentProjectId: null, docs: cloneDocs() };
     const parsed = JSON.parse(raw);
+    const projects = Array.isArray(parsed.projects) ? parsed.projects : [];
+    projects.forEach(p => {
+      if (p?.proposal?.notes) {
+        p.proposal.notes = cleanLegacyNotes(p.proposal.notes);
+      }
+    });
     return {
-      projects: Array.isArray(parsed.projects) ? parsed.projects : [],
+      projects,
       currentProjectId: parsed.currentProjectId || null,
       docs: Array.isArray(parsed.docs) ? parsed.docs : cloneDocs()
     };

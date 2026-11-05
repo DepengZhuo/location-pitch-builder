@@ -3,7 +3,7 @@
    新增页面时：在 index.html 增加 section，再在这里增加路由映射。
    =================================================== */
 import { DEFAULT_SCORE, DEFAULT_DOCS, dateLabel, money, escapeHTML } from './data.js';
-import { loadStore, saveStore, createProject } from './storage.js';
+import { loadStore, saveStore, createProject, cleanLegacyNotes } from './storage.js';
 import { renderScoreFactors, calculateScore, paintScoreResult } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
 import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage } from './proposal.js';
@@ -209,8 +209,12 @@ function loadProject(project) {
   else applyScoreForm({ name: project.name, city: project.city });
   if (project.roi) applyROIForm(project.roi);
   else applyROIForm({ location: project.name });
-  if (project.proposal) applyProposalForm(project.proposal);
-  else applyProposalForm({ property: project.name, city: project.city });
+  if (project.proposal) {
+    project.proposal.notes = cleanLegacyNotes(project.proposal.notes);
+    applyProposalForm(project.proposal);
+  } else {
+    applyProposalForm({ property: project.name, city: project.city });
+  }
   renderROI();
   refreshProposalPreview();
   persist();
@@ -405,9 +409,7 @@ $('confirmNewProject')?.addEventListener('click', () => {
 /* 点位评估 */
 renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
 updateDecisionGuide();
-['saveScore', 'saveScoreBottom'].forEach(id => {
-  $(id)?.addEventListener('click', saveScore);
-});
+$('saveScore')?.addEventListener('click', saveScore);
 $('resetScore')?.addEventListener('click', () => {
   scoreValues = { ...DEFAULT_SCORE };
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
@@ -429,9 +431,7 @@ function advanceScoreToRoi() {
   setPage('roi');
 }
 
-['scoreToRoi', 'scoreToRoiBottom'].forEach(id => {
-  $(id)?.addEventListener('click', advanceScoreToRoi);
-});
+$('scoreToRoi')?.addEventListener('click', advanceScoreToRoi);
 
 ['locName', 'locCity', 'locType', 'locTraffic', 'locAudience', 'locTerm', 'locDecision', 'locSource', 'locNotes'].forEach(id => {
   $(id)?.addEventListener('input', () => {
@@ -548,6 +548,10 @@ onLanguageChange(() => {
     projects: '我的项目'
   };
   if ($('breadcrumbCurrent')) $('breadcrumbCurrent').textContent = t(names[currentPage] || '工作台');
+  const roiNavBtn = document.querySelector('.nav-item[data-page="roi"]');
+  if (roiNavBtn) {
+    roiNavBtn.innerHTML = `<span class="nav-icon">$</span> ${getLanguage() === 'en' ? 'Site Partner Earnings' : '点位方收益测算'}`;
+  }
   syncProposalFormLanguage();
   updateDecisionGuide();
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
@@ -559,7 +563,7 @@ onLanguageChange(() => {
   renderProjects();
 });
 
-/* 页面初始化：恢复当前项目及首页统计 */
+/* 页面初始化：恢复当前项目及首页统计，自动清理旧缓存中的“收益测算参考”文本 */
 function initialize() {
   const project = currentProject();
   if (project) {
@@ -567,8 +571,13 @@ function initialize() {
     else applyScoreForm({ name: project.name, city: project.city });
     if (project.roi) applyROIForm(project.roi);
     else applyROIForm({ location: project.name });
-    if (project.proposal) applyProposalForm(project.proposal);
-    else applyProposalForm({ property: project.name, city: project.city });
+    if (project.proposal) {
+      project.proposal.notes = cleanLegacyNotes(project.proposal.notes);
+      applyProposalForm(project.proposal);
+      persist();
+    } else {
+      applyProposalForm({ property: project.name, city: project.city });
+    }
   } else {
     renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
     applyROIForm();

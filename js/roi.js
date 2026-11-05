@@ -156,11 +156,23 @@ export function renderROI() {
     if (isEn) {
       const expenseLines = [`Labor ${money(input.labor)}`, `Restocking/Travel ${money(input.restock)}`, `Payment/Network ${money(input.serviceCost)}`, `Other ${money(input.other)}`].join(' + ');
       const formula = input.dealType === 'fixedRent' ? `Fixed rent ${money(input.rent)}` : `${money(result.monthlyRevenue)} monthly sales × ${input.shareRate}%`;
-      narrativeEl.innerHTML = `With <strong>${dealText}</strong>, the site partner earns an estimated <strong>${money(result.landlordIncome)}/mo</strong> (Formula: ${formula}). Operator monthly net earnings = Gross profit ${money(result.grossProfit)} - Partner earnings ${money(result.landlordIncome)} - Operating costs ${money(input.opex)} (${expenseLines}) = <strong>${money(result.operatorProfit)}</strong>. Over ${input.period} months, cumulative site partner revenue is est. <strong>${money(result.landlordPeriodIncome)}</strong> and cumulative operator net profit after initial investment is est. <strong>${money(result.operatorPeriodNet)}</strong>. Static estimate based on input assumptions; excludes taxes, depreciation, financing, and shrinkage.`;
+      const paybackStr = result.paybackMonths ? `${result.paybackMonths.toFixed(1)} months` : 'no payback under current assumptions';
+      narrativeEl.innerHTML = `
+        <p class="narrative-item"><strong>1. Site Partner Earnings:</strong> Under <strong>${dealText}</strong>, the site partner receives an estimated <strong>${money(result.landlordIncome)}/mo</strong> (Formula: ${formula}).</p>
+        <p class="narrative-item"><strong>2. Operator Monthly Net:</strong> Gross profit <strong>${money(result.grossProfit)}</strong> minus partner share <strong>${money(result.landlordIncome)}</strong> and operating costs <strong>${money(input.opex)}</strong> (${expenseLines}) = <strong>${money(result.operatorProfit)}/mo</strong>.</p>
+        <p class="narrative-item"><strong>3. ${input.period}-Month Cumulative Summary:</strong> Cumulative site partner revenue is est. <strong>${money(result.landlordPeriodIncome)}</strong>; cumulative operator net profit after initial investment is est. <strong>${money(result.operatorPeriodNet)}</strong> (Est. payback: <strong>${paybackStr}</strong>).</p>
+        <p class="narrative-item"><strong>4. Modeling Note:</strong> Static projection based on input assumptions; excludes taxes, depreciation, financing costs, and inventory shrinkage.</p>
+      `;
     } else {
       const expenseLines = [`人工 ${money(input.labor)}`, `补货 / 交通 ${money(input.restock)}`, `支付 / 网络 ${money(input.serviceCost)}`, `其他 ${money(input.other)}`].join(' + ');
       const formula = input.dealType === 'fixedRent' ? `固定月租 ${money(input.rent)}` : `${money(result.monthlyRevenue)} 月销售额 × ${input.shareRate}%`;
-      narrativeEl.innerHTML = `点位方选择<strong>${dealText}</strong>，每月预计获得 <strong>${money(result.landlordIncome)}</strong>。测算公式：点位方收入 = ${formula}。运营商月净收益 = 商品毛利 ${money(result.grossProfit)} - 点位方收入 ${money(result.landlordIncome)} - 运营成本 ${money(input.opex)} (${expenseLines}) = <strong>${money(result.operatorProfit)}</strong>。${input.period} 个月内点位方累计收入约 <strong>${money(result.landlordPeriodIncome)}</strong>；运营商扣除初始投入后的累计净收益约 <strong>${money(result.operatorPeriodNet)}</strong>。这是基于输入假设的静态估算，不包含税费、折旧、融资成本、库存损耗或未录入成本。`;
+      const paybackStr = result.paybackMonths ? `${result.paybackMonths.toFixed(1)} 个月` : '当前假设下无法回本';
+      narrativeEl.innerHTML = `
+        <p class="narrative-item"><strong>1. 点位方月度收益：</strong>当前采用<strong>${dealText}</strong>模式，点位方预计每月可获得 <strong>${money(result.landlordIncome)}</strong>（测算公式：${formula}）。</p>
+        <p class="narrative-item"><strong>2. 运营商月净收益：</strong>月商品毛利 <strong>${money(result.grossProfit)}</strong> － 点位方收入 <strong>${money(result.landlordIncome)}</strong> － 月运营成本 <strong>${money(input.opex)}</strong>（${expenseLines}）＝ <strong>${money(result.operatorProfit)}</strong>。</p>
+        <p class="narrative-item"><strong>3. ${input.period} 个月周期累计：</strong>合作期内点位方累计收入约 <strong>${money(result.landlordPeriodIncome)}</strong>；运营商扣除初始设备投入后的累计净收益约 <strong>${money(result.operatorPeriodNet)}</strong>（预计回本周期：<strong>${paybackStr}</strong>）。</p>
+        <p class="narrative-item"><strong>4. 测算口径说明：</strong>以上为基于输入假设的静态测算，未计入税费、折旧、融资成本及库存损耗。</p>
+      `;
     }
   }
   return result;
