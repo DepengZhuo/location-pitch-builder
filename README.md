@@ -1,27 +1,22 @@
-# Location Pitch Builder (Fixed Bilingual Edition)
+# Location Pitch Builder | HAHA Vending
 
 智能零售柜点位评估、点位方收益测算、商业提案生成与合规文件中心。
 
-## 本次修复内容说明
+## 最新版本更新亮点
 
-1. **修复 `js/i18n.js` 语法/函数闭合与 `MutationObserver` 循环阻塞问题**：
-   - 增加 `isTranslating` 互斥锁，避免 DOM 翻译更新时触发 `MutationObserver` 递归死循环导致主线程卡死。
-   - 修复中英文双向切换（`中文 <-> EN`）时的文本还原与动态节点更新覆盖问题，注册 `onLanguageChange` 回调自动重绘评分拆解、ROI 测算说明、提案实时预览、合规文件卡片及工作台统计。
-2. **修复 `<select>` 选项值被翻译覆盖导致联动失效问题**：
-   - 为所有 `<option>` 锁定原始业务 `value`，在切换为英文时仅翻译显示文本而不篡改 `option.value`，保证场地类型推荐联系对象、ROI 合作方式切换及提案同步正常运作。
-3. **修复工作台“最近项目”列表“打开”按钮无法点击的问题**：
-   - 在 `updateDashboard()` 渲染 `#recentProjects` 后绑定 `[data-open-project]` 点击事件，确保在工作台可直接点击打开任意最近项目。
-4. **使用页面内弹窗替代原生 `prompt()` / `confirm()` / `alert()`**：
-   - 新增合规文件链接编辑弹窗（`#complianceModal`）与删除项目确认弹窗（`#deleteConfirmModal`），避免现代浏览器或嵌入式沙盒拦截原生弹窗导致按钮点击无响应。
-
-## 本地运行方式
-
-由于项目采用原生 ES Modules (`<script type="module" src="./js/app.js"></script>`)，直接双击 `index.html`（`file://` 协议）会被浏览器的 CORS 策略拦截模块加载。请使用任意本地静态服务器打开：
-
-```bash
-# 方式 1：使用 Python 内置 HTTP 服务
-python3 -m http.server 8080
-# 然后在浏览器访问 http://localhost:8080
-
-# 方式 2：使用 VS Code Live Server 插件右键 index.html -> Open with Live Server
-```
+1. **工作台（Dashboard）**：
+   - 机器视觉图顶部品牌文案统一更新为 `HAHA VENDING`，移除底部占位提示文字。
+2. **点位评估（Location Assessment）**：
+   - 右侧 `LOCATION SCORE` 评分面板支持 Sticky 吸顶悬浮跟随滚动，并在左侧评分表底部同步提供“保存评估”与“下一步：点位方收益测算 →”按钮，无需往回滑动即可直接进入下一步。
+   - 页面切换时自动滚回新页面最顶端。
+3. **点位方收益测算（Site Partner Earnings）**：
+   - 中文名称统一规范为“点位方收益测算”。
+   - “测算周期内点位方累计收入”柱状图在每根柱子顶部直接展示具体累计金额（如 `$4,950`...`$29,700`）。
+   - “测算说明”移至左栏底部，左右两栏等高平齐。
+4. **商业提案生成（Business Proposal）**：
+   - **中英文纯享切换**：切换 `EN / 中文` 时，左侧表单默认/示例文案与右侧提案实时预览全量同步切换，确保英文模式下纯英文、中文模式下纯中文。
+   - **左右文案一一对应**：左侧“补货与维护安排”与右侧 `04 · 日常运营与服务` 完全对应；左侧新增“后续确认事项”输入框与右侧 `06 · 后续确认事项` 实时同步；“其他合作说明”提供零场地改造成本、即插即用、$2M 责任险及 90 天试运营保障条款。
+   - **机型大图与硬核空间指标**：支持加载 `./assets/images/<机型>_front view.webp` 大尺寸正视图；将原先的“预估日均人流”和“点位评估得分”替换为物业最关注的 **设备尺寸 (Dimensions)** 与 **单台占地面积 (Footprint)**。
+   - **合规资料网页版 vs 打印版智能分流**：网页预览与导出 HTML 保留下载链接；打印/保存 PDF（`@media print`）时自动切换为正式纸质资质核验清单（`✓ 资质已备齐`）。
+5. **合规文件中心（Compliance Center）**：
+   - 移除不必要的本地临时预览与查看附件按钮，仅保留清晰的“添加 Drive 链接 / 修改链接”与资料下载入口。

@@ -59,19 +59,18 @@ button{cursor:pointer}
 .text-button:hover{background:rgba(0,0,0,.05)}
 
 /* 工作台 Dashboard */
-.hero-strip{background:#111;color:#fff;border-radius:var(--radius);padding:28px 32px;display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:24px;align-items:center;margin-bottom:28px}
+.hero-strip{background:#111;color:#fff;border-radius:var(--radius);padding:28px 32px;display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:24px;align-items:center;margin-bottom:28px}
 .hero-kicker{font-size:11px;letter-spacing:1.5px;color:#bbb;font-weight:800;display:block;margin-bottom:8px}
 .hero-strip h2{font-size:30px;margin:0 0 8px;font-weight:900;letter-spacing:-.5px}
 .hero-strip p{margin:0;color:#ddd;font-size:14px;line-height:1.6}
-.hero-visual{display:flex;flex-direction:column;align-items:center;gap:8px}
-.visual-frame{width:140px;background:#1f1f1f;border:1px solid #383838;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px}
+.hero-visual{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.visual-frame{width:148px;background:#1f1f1f;border:1px solid #383838;border-radius:12px;padding:12px;display:flex;flex-direction:column;gap:6px}
 .machine-top{font-size:9px;font-weight:800;letter-spacing:1px;color:#fff;display:flex;justify-content:space-between}
-.machine-top span{color:#aaa}
+.machine-top span{color:#ccc}
 .machine-screen{background:#2b2b2b;border-radius:6px;padding:8px;text-align:center;font-size:9px;font-weight:800;color:#fff;letter-spacing:.5px}
 .shelf-row{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;background:#161616;padding:4px;border-radius:4px}
 .shelf-row i{height:10px;background:#444;border-radius:2px;display:block}
 .machine-foot{height:4px;background:#444;border-radius:2px}
-.visual-caption{font-size:11px;color:#aaa;text-align:center}
 
 .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:14px}
 .section-head h2{margin:0;font-size:18px;font-weight:800}
@@ -112,7 +111,7 @@ button{cursor:pointer}
 .notice-bar p{margin:0;line-height:1.5}
 
 /* 表单与点位评分 */
-.two-column-layout{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:18px;align-items:start}
+.two-column-layout{display:grid;grid-template-columns:minmax(0,1fr) 350px;gap:18px;align-items:start}
 .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
 .field{display:flex;flex-direction:column;gap:6px}
 .field.full{grid-column:1/-1}
@@ -141,7 +140,8 @@ input:focus,select:focus,textarea:focus{background:#fff;border-color:#111}
 .factor-weight{font-size:12px;font-weight:700;color:#555;text-align:right}
 
 .method-note{margin-top:16px;padding:12px 14px;background:#f8f8f6;border:1px solid #ebebe8;border-radius:8px;font-size:12px;color:#555;line-height:1.6}
-.score-result-panel{text-align:center}
+.scorer-bottom-actions{margin-top:18px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:flex-end;gap:12px}
+.score-result-panel{text-align:center;position:sticky;top:84px}
 .result-top{padding-bottom:20px;border-bottom:1px solid var(--line)}
 .result-label{font-size:10px;letter-spacing:1.5px;color:#666;font-weight:800}
 .score-ring{width:124px;height:124px;border-radius:50%;background:conic-gradient(#111 0deg,#e9e9e9 0deg);margin:16px auto;display:grid;place-items:center;position:relative}
@@ -163,9 +163,13 @@ input:focus,select:focus,textarea:focus{background:#fff;border-color:#111}
 .next-step-box p{margin:0;color:#444;line-height:1.5}
 .button-row{display:flex;gap:10px;margin-top:14px}
 
-/* ROI 测算 */
-.roi-layout{display:grid;grid-template-columns:minmax(0,.95fr) minmax(390px,1.05fr);gap:18px;align-items:start}
-.roi-results{display:flex;flex-direction:column;gap:16px}
+/* 点位方收益测算 ROI —— 左右两列等高对齐 */
+.roi-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(390px,1fr);gap:18px;align-items:stretch}
+.roi-left-col{display:flex;flex-direction:column;gap:16px;height:100%}
+.roi-left-col .narrative-panel{flex:1;display:flex;flex-direction:column}
+.roi-left-col .narrative-box{flex:1}
+.roi-results{display:flex;flex-direction:column;gap:16px;height:100%}
+.roi-results .metrics-panel{flex:1;display:flex;flex-direction:column}
 .range-line{display:flex;align-items:center;gap:12px}
 .range-line input[type=range]{flex:1;padding:0;border:0;background:transparent}
 .landlord-card{background:#111;color:#fff;border-radius:var(--radius);padding:24px 26px;display:flex;justify-content:space-between;align-items:center}
@@ -180,55 +184,73 @@ input:focus,select:focus,textarea:focus{background:#fff;border-color:#111}
 .metric-card span{font-size:11px;color:#555;display:block;font-weight:600}
 .metric-card strong{font-size:20px;font-weight:900;display:block;margin:6px 0 4px;color:#111}
 .metric-card small{font-size:11px;color:#666;display:block}
-.chart-wrap{background:var(--soft);border:1px solid #ebebe8;border-radius:10px;padding:16px}
-.chart-title{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:14px}
+.chart-wrap{background:var(--soft);border:1px solid #ebebe8;border-radius:10px;padding:18px 16px 14px;margin-bottom:6px}
+.chart-title{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px}
 .chart-title strong{font-size:13px;color:#111}
 .chart-title small{font-size:11px;color:#555}
-.simple-chart{height:120px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end;padding-top:10px}
+.simple-chart{height:165px;display:grid;grid-template-columns:repeat(6,1fr);gap:10px;align-items:end;padding-top:22px}
 .chart-bar-wrap{height:100%;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:6px}
-.chart-bar{width:100%;background:#bbb;border-radius:6px 6px 2px 2px;min-height:4px;transition:height .2s ease}
+.chart-bar-value{font-size:11px;font-weight:800;color:#333;white-space:nowrap;line-height:1}
+.chart-bar-wrap.highlight .chart-bar-value{color:#111;font-size:12px}
+.chart-bar{width:100%;background:#bbb;border-radius:6px 6px 2px 2px;min-height:6px;transition:height .2s ease}
 .chart-bar.highlight{background:#111}
-.chart-bar-wrap small{font-size:10px;color:#555}
-.narrative-box{font-size:13px;line-height:1.7;color:#333;background:var(--soft);padding:16px;border-radius:10px;border:1px solid #ebebe8}
+.chart-bar-wrap small{font-size:11px;color:#555;font-weight:600}
+.narrative-box{font-size:13px;line-height:1.75;color:#333;background:var(--soft);padding:16px;border-radius:10px;border:1px solid #ebebe8}
 
 /* 商业提案 Proposal */
-.proposal-layout{display:grid;grid-template-columns:minmax(320px,.78fr) minmax(430px,1.22fr);gap:18px;align-items:start}
+.proposal-layout{display:grid;grid-template-columns:minmax(330px,.76fr) minmax(460px,1.24fr);gap:18px;align-items:start}
 .proposal-form .form-grid{gap:12px}
 .doc-select-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:#f8f8f7;border:1px solid #e5e5e2;border-radius:8px;padding:12px;margin-top:6px}
 .doc-select-grid label{font-size:12px;color:#222;display:flex;align-items:center;gap:6px;cursor:pointer}
 .doc-select-grid input[type=checkbox]{width:auto;margin:0}
 .muted-mini{font-size:11px;color:#555;margin-top:6px;display:block}
 .form-actions{margin-top:16px;display:flex;align-items:center;gap:10px;flex-wrap:wrap}
-.proposal-preview-wrap{background:#262626;padding:18px;border-radius:var(--radius);color:#fff}
+.proposal-preview-wrap{background:#262626;padding:18px;border-radius:var(--radius);color:#fff;position:sticky;top:84px}
 .preview-toolbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;font-size:12px;color:#ddd}
 .preview-toolbar i{width:8px;height:8px;background:#2ecc71;border-radius:50%;display:inline-block;margin-right:6px}
 .preview-toolbar .text-button{color:#fff;background:rgba(255,255,255,.1);padding:6px 12px;border-radius:6px}
 .preview-toolbar .text-button:hover{background:rgba(255,255,255,.2)}
-.proposal-paper{background:#fff;color:#111;padding:32px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
+.proposal-paper{background:#fff;color:#111;padding:34px;border-radius:10px;box-shadow:0 10px 30px rgba(0,0,0,.25)}
 .proposal-brand{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:14px}
 .proposal-logo{font-weight:900;letter-spacing:1px;font-size:15px}
 .proposal-doc-type{font-size:11px;letter-spacing:1.2px;color:#555;font-weight:700}
 .proposal-title{margin:22px 0 8px;font-size:24px;line-height:1.3}
 .proposal-subtitle{font-size:13px;color:#555;margin-bottom:18px}
-.proposal-section{margin:20px 0}
-.proposal-section h3{font-size:15px;margin:0 0 8px;padding-bottom:6px;border-bottom:1px solid #e5e5e2}
+.proposal-section{margin:22px 0}
+.proposal-section h3{font-size:15px;margin:0 0 10px;padding-bottom:6px;border-bottom:1px solid #e5e5e2}
 .proposal-section p,.proposal-section li{font-size:13px;line-height:1.7;color:#333;margin:0 0 6px}
 .proposal-section ul{padding-left:18px;margin:6px 0}
-.proposal-overview{display:grid;grid-template-columns:minmax(0,1fr) 205px;gap:12px;align-items:stretch;margin:12px 0}
-.proposal-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;background:#f5f5f4;padding:14px;border-radius:8px;align-content:start}
-.proposal-meta div span{font-size:11px;color:#666;display:block;margin-bottom:3px}
+.proposal-overview{display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:16px;align-items:stretch;margin:14px 0}
+.proposal-meta{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;background:#f5f5f4;padding:16px;border-radius:10px;align-content:center}
+.proposal-meta div span{font-size:11px;color:#666;display:block;margin-bottom:4px}
 .proposal-meta div strong{font-size:13px;color:#111;overflow-wrap:anywhere}
-.proposal-machine-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:1px solid #ddd;border-radius:8px;background:#fcfcfb;padding:12px;text-align:center}
-.proposal-machine-card img{width:100%;height:140px;object-fit:contain}
-.proposal-machine-card strong{font-size:14px;color:#111}
-.proposal-machine-card span{display:block;color:#555;font-size:11px;line-height:1.4}
-.machine-image-pending{height:110px;display:grid;place-items:center;color:#666;font-size:12px}
-.proposal-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
-.proposal-stat{background:#111;color:#fff;padding:12px;border-radius:8px}
+.proposal-machine-card{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;border:1px solid #e2e2df;border-radius:10px;background:#fcfcfb;padding:16px;text-align:center}
+.proposal-machine-card img{width:100%;height:230px;object-fit:contain;display:block}
+.proposal-machine-card strong{font-size:14px;color:#111;background:#f0f0ee;padding:4px 12px;border-radius:999px}
+.machine-image-pending{height:200px;display:grid;place-items:center;color:#666;font-size:12px}
+.proposal-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}
+.proposal-stat{background:#111;color:#fff;padding:13px 14px;border-radius:8px}
 .proposal-stat span{font-size:11px;color:#ccc;display:block}
-.proposal-stat strong{font-size:15px;display:block;margin-top:5px;color:#fff}
-.proposal-callout{background:#f3f3f3;border-left:3px solid #111;padding:12px;font-size:12px;line-height:1.6;color:#333;border-radius:0 6px 6px 0;margin-top:8px}
+.proposal-stat strong{font-size:14px;display:block;margin-top:5px;color:#fff;line-height:1.35}
+.proposal-callout{background:#f3f3f3;border-left:3px solid #111;padding:12px 14px;font-size:12px;line-height:1.65;color:#333;border-radius:0 6px 6px 0;margin-top:10px}
 .proposal-footer{border-top:1px solid #ddd;margin-top:24px;padding-top:12px;display:flex;justify-content:space-between;color:#555;font-size:11px;flex-wrap:wrap;gap:8px}
+
+/* 合规资料在网页预览 vs 打印模式下的区分呈现 */
+.doc-print-only{display:none}
+.doc-web-link{color:#111;font-weight:700;text-decoration:underline}
+.doc-web-status{color:#555;font-size:12px}
+@media print{
+  body{background:#fff}
+  .sidebar,.topbar,.page-heading,.proposal-form,.preview-toolbar,.app-footer,.toast,.modal-backdrop{display:none!important}
+  .main-area{margin-left:0!important}
+  .page-content{padding:0!important;max-width:100%!important}
+  .proposal-layout{grid-template-columns:1fr!important}
+  .proposal-preview-wrap{background:transparent!important;padding:0!important;position:static!important}
+  .proposal-paper{box-shadow:none!important;padding:20px 28px!important}
+  .doc-web-only{display:none!important}
+  .doc-print-only{display:inline!important;color:#333;font-size:12px}
+  .doc-web-footnote{display:none!important}
+}
 
 /* 合规文件中心 Compliance */
 .compliance-banner{background:#111;color:#fff;border-radius:var(--radius);padding:24px 28px;display:flex;justify-content:space-between;align-items:center;gap:20px;margin-bottom:20px}
@@ -250,7 +272,7 @@ input:focus,select:focus,textarea:focus{background:#fff;border-color:#111}
 .document-card p{margin:0;font-size:12px;color:#444;line-height:1.5}
 .doc-meta{font-size:11px;color:#666;word-break:break-all}
 .doc-actions{display:flex;gap:8px;margin-top:auto;padding-top:10px;border-top:1px dashed var(--line);flex-wrap:wrap}
-.doc-actions button{flex:1;padding:7px 10px;border-radius:7px;border:1px solid #d0d0ce;background:#fff;font-size:12px;font-weight:700;color:#111}
+.doc-actions button{flex:1;padding:8px 12px;border-radius:7px;border:1px solid #d0d0ce;background:#fff;font-size:12px;font-weight:700;color:#111}
 .doc-actions button:hover{border-color:#111;background:var(--soft)}
 .doc-download{display:flex;justify-content:center;align-items:center;text-align:center;min-height:36px;margin-top:4px;padding:8px 10px;border:1px solid #111;border-radius:8px;background:#111;color:#fff;font-size:12px;font-weight:700;text-decoration:none}
 .doc-download:hover{background:#333}
@@ -298,6 +320,7 @@ body[data-language="en"]{font-family:Arial,"Segoe UI",Roboto,"Microsoft YaHei",s
   .page-content{padding:28px 24px}
   .topbar{padding:0 24px}
   .proposal-layout{grid-template-columns:1fr}
+  .proposal-preview-wrap{position:static}
   .proposal-paper{max-width:780px;margin:0 auto}
 }
 @media(max-width:900px){
@@ -306,6 +329,7 @@ body[data-language="en"]{font-family:Arial,"Segoe UI",Roboto,"Microsoft YaHei",s
   .main-area{margin-left:0}
   .mobile-menu{display:block}
   .two-column-layout,.roi-layout,.dashboard-grid,.hero-strip{grid-template-columns:1fr}
+  .score-result-panel{position:static}
   .stats-grid{grid-template-columns:1fr 1fr}
 }
 @media(max-width:600px){

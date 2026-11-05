@@ -18,7 +18,7 @@
       <nav class="main-nav" aria-label="主导航">
         <button class="nav-item active" type="button" data-page="dashboard"><span class="nav-icon">▤</span> 工作台</button>
         <button class="nav-item" type="button" data-page="scorer"><span class="nav-icon">◉</span> 点位评估</button>
-        <button class="nav-item" type="button" data-page="roi"><span class="nav-icon">$</span> 点位收益测算</button>
+        <button class="nav-item" type="button" data-page="roi"><span class="nav-icon">$</span> 点位方收益测算</button>
         <button class="nav-item" type="button" data-page="proposal"><span class="nav-icon">≡</span> 商业提案</button>
         <button class="nav-item" type="button" data-page="compliance"><span class="nav-icon">⬡</span> 合规文件中心</button>
         <button class="nav-item" type="button" data-page="projects"><span class="nav-icon">▨</span> 我的项目</button>
@@ -59,14 +59,13 @@
             </div>
             <div class="hero-visual">
               <div class="visual-frame">
-                <div class="machine-top">HAHA <span>SMART RETAIL</span></div>
+                <div class="machine-top">HAHA <span>VENDING</span></div>
                 <div class="machine-screen"><div class="screen-label">SMART<br/>COOLER</div></div>
                 <div class="shelf-row"><i></i><i></i><i></i><i></i><i></i></div>
                 <div class="shelf-row"><i></i><i></i><i></i><i></i><i></i></div>
                 <div class="shelf-row"><i></i><i></i><i></i><i></i><i></i></div>
                 <div class="machine-foot"></div>
               </div>
-              <span class="visual-caption">产品效果图位置 · 后续替换为官方机器素材</span>
             </div>
           </div>
           <div class="section-head">
@@ -146,6 +145,10 @@
               <div class="subsection-title"><div><h3>点位质量评分</h3><p>每项选择 1-5 分：1 分较弱，5 分优秀</p></div><span class="muted-mini">可按实际业务调整</span></div>
               <div id="scoreFactors" class="score-factors"></div>
               <div class="method-note">评分模型为本工具的初始建议：人流量 25%、场地匹配度 20%、目标人群 15%、消费便利性 15%、竞争情况 10%、合作期限 10%、决策人可触达性 5%。请结合实际运营数据持续校准。</div>
+              <div class="scorer-bottom-actions">
+                <button class="button button-outline" id="saveScoreBottom" type="button">保存评估</button>
+                <button class="button button-dark" id="scoreToRoiBottom" type="button">下一步：点位方收益测算 →</button>
+              </div>
             </div>
             <aside class="panel score-result-panel">
               <div class="result-top">
@@ -156,17 +159,17 @@
               </div>
               <div class="result-breakdown"><h3>评分拆解</h3><div id="scoreBreakdown"></div></div>
               <div class="next-step-box"><strong>建议下一步</strong><p id="scoreNextStep">先补充人流量、场地类型和决策人信息。</p></div>
-              <div class="button-row"><button class="button button-dark button-wide" id="scoreToRoi" type="button">下一步：点位收益测算 →</button></div>
+              <div class="button-row"><button class="button button-dark button-wide" id="scoreToRoi" type="button">下一步：点位方收益测算 →</button></div>
             </aside>
           </div>
         </section>
 
-        <!-- 页面三：ROI 测算 -->
+        <!-- 页面三：点位方收益测算 -->
         <section class="page" id="page-roi">
           <div class="page-heading">
             <div>
               <div class="eyebrow">02 / PROPERTY EARNINGS ESTIMATE</div>
-              <h1>点位收益测算</h1>
+              <h1>点位方收益测算</h1>
               <p>先选择固定月租或按销售额分成，再查看点位方收益与运营商回本周期估算。</p>
             </div>
             <div class="heading-actions">
@@ -175,30 +178,36 @@
             </div>
           </div>
           <div class="roi-layout">
-            <div class="panel form-panel">
-              <div class="panel-head"><div><h3>经营参数</h3><p>根据点位和运营方案输入预估数据；初始数字仅为示例</p></div><span class="step-tag">INPUT</span></div>
-              <div class="form-grid">
-                <label class="field"><span>点位名称</span><input id="roiLocation" placeholder="例如: Sunrise Apartments" /></label>
-                <label class="field"><span>机器 / 项目初始投入 ($)</span><input id="roiInvestment" type="number" min="0" value="5500" /></label>
-                <label class="field"><span>日均销售商品件数 (件)</span><input id="roiOrders" type="number" min="0" value="50" /></label>
-                <label class="field"><span>平均商品售价 ($ / 件)</span><input id="roiTicket" type="number" min="0" step="0.01" value="5.50" /></label>
-                <label class="field"><span>每月营业天数</span><input id="roiDays" type="number" min="0" max="31" value="30" /></label>
-                <label class="field"><span>商品成本率 (%)</span><input id="roiCogs" type="number" min="0" max="100" value="45" /></label>
-                <label class="field"><span>合作方式</span>
-                  <select id="roiDealType">
-                    <option value="revenueShare">按销售额分成</option>
-                    <option value="fixedRent">固定月租</option>
-                  </select>
-                </label>
-                <label class="field" id="roiShareField"><span>点位方销售额分成 (%)</span><input id="roiShare" type="number" min="0" max="100" value="10" /></label>
-                <label class="field" id="roiRentField" hidden><span>固定场地租金 (月 / $)</span><input id="roiRent" type="number" min="0" value="0" /></label>
-                <label class="field"><span>每月运营人工成本 ($)</span><input id="roiLabor" type="number" min="0" value="0" /></label>
-                <label class="field"><span>每月补货 / 交通成本 ($)</span><input id="roiRestock" type="number" min="0" value="150" /></label>
-                <label class="field"><span>每月支付 / 网络成本 ($)</span><input id="roiServiceCost" type="number" min="0" value="50" /></label>
-                <label class="field"><span>其他月运营成本 ($)</span><input id="roiOpex" type="number" min="0" value="50" /></label>
-                <label class="field full"><span>预计合作测算期 (月)</span><div class="range-line"><input id="roiPeriod" type="range" min="12" max="60" step="6" value="36"/><strong id="roiPeriodLabel">36 个月</strong></div></label>
+            <div class="roi-left-col">
+              <div class="panel form-panel">
+                <div class="panel-head"><div><h3>经营参数</h3><p>根据点位和运营方案输入预估数据；初始数字仅为示例</p></div><span class="step-tag">INPUT</span></div>
+                <div class="form-grid">
+                  <label class="field"><span>点位名称</span><input id="roiLocation" placeholder="例如: Sunrise Apartments" /></label>
+                  <label class="field"><span>机器 / 项目初始投入 ($)</span><input id="roiInvestment" type="number" min="0" value="5500" /></label>
+                  <label class="field"><span>日均销售商品件数 (件)</span><input id="roiOrders" type="number" min="0" value="50" /></label>
+                  <label class="field"><span>平均商品售价 ($ / 件)</span><input id="roiTicket" type="number" min="0" step="0.01" value="5.50" /></label>
+                  <label class="field"><span>每月营业天数</span><input id="roiDays" type="number" min="0" max="31" value="30" /></label>
+                  <label class="field"><span>商品成本率 (%)</span><input id="roiCogs" type="number" min="0" max="100" value="45" /></label>
+                  <label class="field"><span>合作方式</span>
+                    <select id="roiDealType">
+                      <option value="revenueShare">按销售额分成</option>
+                      <option value="fixedRent">固定月租</option>
+                    </select>
+                  </label>
+                  <label class="field" id="roiShareField"><span>点位方销售额分成 (%)</span><input id="roiShare" type="number" min="0" max="100" value="10" /></label>
+                  <label class="field" id="roiRentField" hidden><span>固定场地租金 (月 / $)</span><input id="roiRent" type="number" min="0" value="0" /></label>
+                  <label class="field"><span>每月运营人工成本 ($)</span><input id="roiLabor" type="number" min="0" value="0" /></label>
+                  <label class="field"><span>每月补货 / 交通成本 ($)</span><input id="roiRestock" type="number" min="0" value="150" /></label>
+                  <label class="field"><span>每月支付 / 网络成本 ($)</span><input id="roiServiceCost" type="number" min="0" value="50" /></label>
+                  <label class="field"><span>其他月运营成本 ($)</span><input id="roiOpex" type="number" min="0" value="50" /></label>
+                  <label class="field full"><span>预计合作测算期 (月)</span><div class="range-line"><input id="roiPeriod" type="range" min="12" max="60" step="6" value="36"/><strong id="roiPeriodLabel">36 个月</strong></div></label>
+                </div>
+                <div class="method-note">月销售额 = 日均销量 × 平均售价 × 营业天数。运营商月净收益 = 商品毛利 - 点位分成或固定租金 - 人工 - 补货交通 - 支付网络 - 其他运营成本；每项成本都会计入计算。未计入税费、折旧、融资成本及库存损耗。</div>
               </div>
-              <div class="method-note">月销售额 = 日均销量 × 平均售价 × 营业天数。运营商月净收益 = 商品毛利 - 点位分成或固定租金 - 人工 - 补货交通 - 支付网络 - 其他运营成本；每项成本都会计入计算。未计入税费、折旧、融资成本及库存损耗。</div>
+              <div class="panel narrative-panel">
+                <div class="panel-head"><div><h3>测算说明</h3><p>帮助物业理解收益来源</p></div></div>
+                <div id="roiNarrative" class="narrative-box"></div>
+              </div>
             </div>
             <div class="roi-results">
               <div class="landlord-card"><div><span class="result-label">PROPERTY · ESTIMATED EARNINGS</span><h3>物业预计每月可获得</h3><strong id="landlordMonthly">$0</strong><small id="landlordAnnual">年预计 $0</small></div><div class="landlord-symbol">$</div></div>
@@ -209,9 +218,8 @@
                   <div class="chart-title"><strong>测算周期内点位方累计收入</strong><small>估算累计值 · 美元</small></div>
                   <div id="roiChart" class="simple-chart"></div>
                 </div>
-                <div class="button-row"><button class="button button-dark button-wide" id="roiToProposal" type="button">下一步：创建商业提案 →</button></div>
+                <div class="button-row" style="margin-top:auto;padding-top:18px;"><button class="button button-dark button-wide" id="roiToProposal" type="button">下一步：创建商业提案 →</button></div>
               </div>
-              <div class="panel"><div class="panel-head"><div><h3>测算说明</h3><p>帮助物业理解收益来源</p></div></div><div id="roiNarrative" class="narrative-box"></div></div>
             </div>
           </div>
         </section>
@@ -251,7 +259,6 @@
                     <option value="其他">其他</option>
                   </select>
                 </label>
-                <label class="field"><span>预计日均人流量</span><input id="propTraffic" type="number" min="0" placeholder="例如: 300" /></label>
                 <label class="field"><span>建议机器型号</span>
                   <select id="propMachine">
                     <option value="" disabled>请选择型号</option>
@@ -275,8 +282,15 @@
                 <label class="field" id="propRentField" hidden><span>固定月租 ($)</span><input id="propRent" type="number" min="0" value="0" /></label>
                 <label class="field"><span>预计上线时间</span><input id="propLaunch" placeholder="例如: 双方确认后 2-4 周" /></label>
                 <label class="field full"><span>商品组合 / Planogram</span><textarea id="propPlanogram" rows="3">饮料、瓶装水、健康零食、方便食品及日常必需品。具体 SKU 根据物业人群和销售反馈调整。</textarea></label>
-                <label class="field full"><span>补货与维护安排</span><textarea id="propService" rows="3">运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。</textarea></label>
-                <label class="field full"><span>其他合作说明</span><textarea id="propNotes" rows="3" placeholder="可填写电费、网络、访问权限、营业时间等需要进一步确认的事项"></textarea></label>
+                <label class="field full"><span>补货与维护安排（04 · 日常运营与服务）</span><textarea id="propService" rows="5">运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。
+- 商品补货与库存管理：由运营商负责，具体频率根据销售情况确定。
+- 设备维护与故障响应：双方确认服务时间、报修渠道及响应标准。
+- 现场运营协调：明确设备投放区域、营业时间、用电及网络安排。</textarea></label>
+                <label class="field full"><span>后续确认事项（06 · 后续确认事项）</span><textarea id="propConfirmItems" rows="4">- 现场安装位置、尺寸、电源和网络条件。
+- 合作期限、分成基数、对账依据和付款日期。
+- 电费承担、保险与赔偿责任、访问权限和营业时间。
+- 合同终止、续租、独家经营及设备移除安排。</textarea></label>
+                <label class="field full"><span>其他合作说明（场地免责与试运营保障）</span><textarea id="propNotes" rows="3" placeholder="可填写零成本接入、保险保障、试运营机制等补充说明">零场地改造成本：设备即插即用（仅需标准 110V 电源插座，内置 4G/LTE 无线通信模块，无需拉网线）；运营商承担 100% 设备投放、安装、日常补货、维保及 $2M 商业责任险费用；支持首期 90 天试运营评估与灵活退换机制。</textarea></label>
                 <div class="field full">
                   <span>提案附带的合规资料（仅勾选本次需要分享的文件）</span>
                   <div class="doc-select-grid">
@@ -288,7 +302,7 @@
                     <label><input type="checkbox" name="propDoc" value="coi"> COI 责任保险证明</label>
                     <label><input type="checkbox" name="propDoc" value="w9"> W-9 税务表格</label>
                   </div>
-                  <small class="muted-mini">只将已确认可向该物业分享的文件链接写入导出的提案；W-9 等敏感文件请谨慎选择。</small>
+                  <small class="muted-mini">导出网页版提案时将附带已配置的文件下载链接；打印或保存 PDF 时将自动转换为正式的纸质资质核验清单。</small>
                 </div>
               </div>
               <div class="form-actions">
@@ -323,7 +337,7 @@
             <div>
               <span class="eyebrow">DOCUMENT READINESS</span>
               <h2>让物业审查更清晰、更高效。</h2>
-              <p>上传真实证书，或填写权限受控的 Google Drive 文件链接。当前页面不包含任何虚构认证。</p>
+              <p>填写权限受控的 Google Drive 或 HTTPS 文件链接。当前页面不包含任何虚构认证。</p>
             </div>
             <div class="compliance-progress">
               <strong id="complianceCount">0 / 7</strong>
@@ -390,7 +404,7 @@
     </div>
   </div>
 
-  <!-- 合规文件编辑 / 新增弹窗（替代可能被浏览器拦截的 prompt 弹窗） -->
+  <!-- 合规文件编辑 / 新增弹窗 -->
   <div class="modal-backdrop" id="complianceModal" hidden>
     <div class="modal">
       <button class="modal-close" id="closeComplianceModal" type="button" aria-label="关闭">×</button>
@@ -416,7 +430,7 @@
     </div>
   </div>
 
-  <!-- 删除项目确认弹窗（替代可能被拦截的 confirm 弹窗） -->
+  <!-- 删除项目确认弹窗 -->
   <div class="modal-backdrop" id="deleteConfirmModal" hidden>
     <div class="modal">
       <button class="modal-close" id="closeDeleteModal" type="button" aria-label="关闭">×</button>

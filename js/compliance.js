@@ -1,11 +1,9 @@
 /* ==================================================
-   合规文件中心：文件信息与 Google Drive 链接保存在本地
-   使用页面内弹窗替代 window.prompt/alert，避免被浏览器或沙盒拦截。
+   合规文件中心：仅保留添加链接 / 修改链接与打开下载
    ================================================== */
 import { DEFAULT_DOCS, escapeHTML, safeURL } from './data.js';
 import { t } from './i18n.js';
 
-const temporaryFiles = new Map();
 let onChangeCallback = () => {};
 let onToastCallback = () => {};
 let docsCache = DEFAULT_DOCS;
@@ -36,36 +34,24 @@ export function renderCompliance(docs = docsCache) {
   if (!gridEl) return;
 
   gridEl.innerHTML = list.map(doc => {
-    const temp = temporaryFiles.get(doc.id);
     const safeLink = safeURL(doc.url) || doc.downloadPath;
     const ready = Boolean(safeLink);
-    const status = ready ? t('已配置链接') : temp ? t('临时附件') : t('待补充');
-    const statusClass = ready ? 'linked' : temp ? 'ready' : '';
+    const status = ready ? t('已配置链接') : t('待补充');
+    const statusClass = ready ? 'linked' : '';
     return `<article class="document-card" data-doc="${doc.id}">
       <div class="doc-top"><div class="doc-icon">▤</div><span class="doc-status ${statusClass}">${status}</span></div>
       <h3>${escapeHTML(t(doc.title))}</h3><p>${escapeHTML(t(doc.desc))}</p>
       <div class="doc-meta">${escapeHTML(t(doc.category))} · ${escapeHTML(t(doc.note || '待补充'))}</div>
-      ${ready ? `<div class="doc-meta">${doc.downloadPath ? t('仓库认证文件') : t(`链接：${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : temp ? `<div class="doc-meta">${t(`本次会话：${escapeHTML(temp.name)}`)}</div>` : ''}
+      ${ready ? `<div class="doc-meta">${doc.downloadPath && !doc.url ? t('仓库认证文件') : t(`链接：${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : ''}
       <div class="doc-actions">
         <button type="button" data-action="link" data-id="${doc.id}">${doc.url ? t('修改链接') : t('添加 Drive 链接')}</button>
-        <button type="button" data-action="upload" data-id="${doc.id}">${t('本地预览')}</button>
-        ${temp ? `<button type="button" data-action="temp" data-id="${doc.id}">${t('查看附件 ↗')}</button>` : ''}
       </div>
-      ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" download>${doc.downloadPath ? t('下载认证资料 ↓') : t('打开 / 下载资料 ↗')}</a>` : `<button type="button" class="doc-download" disabled>${t('下载资料 (待补充)')}</button>`}
+      ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" download>${doc.downloadPath && !doc.url ? t('下载认证资料 ↓') : t('打开 / 下载资料 ↗')}</a>` : `<button type="button" class="doc-download" disabled>${t('下载资料 (待补充)')}</button>`}
     </article>`;
   }).join('');
 
   gridEl.querySelectorAll('[data-action="link"]').forEach(button => {
     button.addEventListener('click', () => openComplianceModal(button.dataset.id));
-  });
-  gridEl.querySelectorAll('[data-action="upload"]').forEach(button => {
-    button.addEventListener('click', () => chooseFile(button.dataset.id));
-  });
-  gridEl.querySelectorAll('[data-action="temp"]').forEach(button => {
-    button.addEventListener('click', () => {
-      const item = temporaryFiles.get(button.dataset.id);
-      if (item?.url) window.open(item.url, '_blank', 'noopener,noreferrer');
-    });
   });
 }
 
@@ -121,7 +107,7 @@ function saveComplianceModal() {
   } else {
     const title = titleInput?.value.trim() || '';
     if (!title) {
-      onToastCallback(t('请填写点位名称。'));
+      onToastCallback(t('请先填写点位名称。'));
       titleInput?.focus();
       return;
     }
@@ -137,23 +123,6 @@ function saveComplianceModal() {
     onChangeCallback(docsCache);
   }
   closeComplianceModal();
-}
-
-function chooseFile(id) {
-  const input = document.createElement('input');
-  input.type = 'file';
-  input.accept = '.pdf,.png,.jpg,.jpeg,.webp';
-  input.onchange = () => {
-    const file = input.files?.[0];
-    if (!file) return;
-    const previous = temporaryFiles.get(id);
-    if (previous?.url) URL.revokeObjectURL(previous.url);
-    const fileURL = URL.createObjectURL(file);
-    temporaryFiles.set(id, { name: file.name, url: fileURL, type: file.type });
-    renderCompliance(docsCache);
-    onToastCallback(`${file.name} ${t('本地预览')}`);
-  };
-  input.click();
 }
 
 export function bindComplianceAddButton(docs) {

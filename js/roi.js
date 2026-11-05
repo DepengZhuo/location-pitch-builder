@@ -1,5 +1,5 @@
 /* =========================================================
-   点位收益模型：固定月租或销售额分成（二选一）
+   点位方收益测算模型：固定月租或销售额分成（二选一）
    ========================================================= */
 import { money } from './data.js';
 import { getLanguage, t } from './i18n.js';
@@ -156,7 +156,7 @@ export function renderROI() {
     if (isEn) {
       const expenseLines = [`Labor ${money(input.labor)}`, `Restocking/Travel ${money(input.restock)}`, `Payment/Network ${money(input.serviceCost)}`, `Other ${money(input.other)}`].join(' + ');
       const formula = input.dealType === 'fixedRent' ? `Fixed rent ${money(input.rent)}` : `${money(result.monthlyRevenue)} monthly sales × ${input.shareRate}%`;
-      narrativeEl.innerHTML = `With <strong>${dealText}</strong>, the site partner earns an estimated <strong>${money(result.landlordIncome)}/mo</strong> (Formula: ${formula}). Operator monthly net earnings = Gross profit ${money(result.grossProfit)} - Partner earnings ${money(result.landlordIncome)} - Operating costs ${money(input.opex)} (${expenseLines}) = <strong>${money(result.operatorProfit)}</strong>. Over ${input.period} months, cumulative site partner revenue is est. <strong>${money(result.landlordPeriodIncome)}</strong> and cumulative operator net profit after initial investment is est. <strong>${money(result.operatorPeriodNet)}</strong>.`;
+      narrativeEl.innerHTML = `With <strong>${dealText}</strong>, the site partner earns an estimated <strong>${money(result.landlordIncome)}/mo</strong> (Formula: ${formula}). Operator monthly net earnings = Gross profit ${money(result.grossProfit)} - Partner earnings ${money(result.landlordIncome)} - Operating costs ${money(input.opex)} (${expenseLines}) = <strong>${money(result.operatorProfit)}</strong>. Over ${input.period} months, cumulative site partner revenue is est. <strong>${money(result.landlordPeriodIncome)}</strong> and cumulative operator net profit after initial investment is est. <strong>${money(result.operatorPeriodNet)}</strong>. Static estimate based on input assumptions; excludes taxes, depreciation, financing, and shrinkage.`;
     } else {
       const expenseLines = [`人工 ${money(input.labor)}`, `补货 / 交通 ${money(input.restock)}`, `支付 / 网络 ${money(input.serviceCost)}`, `其他 ${money(input.other)}`].join(' + ');
       const formula = input.dealType === 'fixedRent' ? `固定月租 ${money(input.rent)}` : `${money(result.monthlyRevenue)} 月销售额 × ${input.shareRate}%`;
@@ -172,8 +172,16 @@ function renderChart(result) {
   const buckets = 6;
   const values = Array.from({ length: buckets }, (_, i) => result.landlordIncome * result.period * ((i + 1) / buckets));
   const max = Math.max(1, ...values);
-  chartEl.innerHTML = values.map((value, i) => `
-    <div class="chart-bar-wrap"><div class="chart-bar ${i === buckets - 1 ? 'highlight' : ''}" style="height:${Math.max(3, value / max * 100)}%" title="${money(value)}"></div><small>${t(`${Math.round(result.period * (i + 1) / buckets)}个月`)}</small></div>`).join('');
+  chartEl.innerHTML = values.map((value, i) => {
+    const isLast = i === buckets - 1;
+    const months = Math.round(result.period * (i + 1) / buckets);
+    return `
+      <div class="chart-bar-wrap ${isLast ? 'highlight' : ''}">
+        <span class="chart-bar-value">${money(value)}</span>
+        <div class="chart-bar ${isLast ? 'highlight' : ''}" style="height:${Math.max(6, value / max * 100)}%" title="${money(value)}"></div>
+        <small>${t(`${months}个月`)}</small>
+      </div>`;
+  }).join('');
 }
 
 export function bindROIInputs(onUpdate = () => {}) {

@@ -1,10 +1,41 @@
 /* =========================================================
    中英文切换模块（i18n）
-   修复要点：
-   1. 防止 MutationObserver 自触发递归与主线程锁死（isTranslating 互斥锁）
-   2. 保护 <select> 的 option.value 不被英文翻译覆盖，确保评分/建议/同步逻辑正常
-   3. 支持正反向词典与动态组件重渲染回调，切换中文/英文双向 100% 还原
+   确保英文模式下全站（含表单默认/示例文案与右侧提案）100%纯英文，
+   中文模式下 100%纯中文。
    ========================================================= */
+export const PROPOSAL_DEFAULTS = {
+  zh: {
+    title: '智能零售柜点位合作提案',
+    launch: '双方确认后 2-4 周',
+    planogram: '饮料、瓶装水、健康零食、方便食品及日常必需品。具体 SKU 根据物业人群和销售反馈调整。',
+    planogramExample: '瓶装水、运动饮料、碳酸饮料、健康零食、方便食品及日常必需品。根据住户画像和销售数据持续优化 SKU。',
+    service: `运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。
+- 商品补货与库存管理：由运营商负责，具体频率根据销售情况确定。
+- 设备维护与故障响应：双方确认服务时间、报修渠道及响应标准。
+- 现场运营协调：明确设备投放区域、营业时间、用电及网络安排。`,
+    confirmItems: `- 现场安装位置、尺寸、电源和网络条件。
+- 合作期限、分成基数、对账依据和付款日期。
+- 电费承担、保险与赔偿责任、访问权限和营业时间。
+- 合同终止、续租、独家经营及设备移除安排。`,
+    notes: '零场地改造成本：设备即插即用（仅需标准 110V 电源插座，内置 4G/LTE 无线通信模块，无需拉网线）；运营商承担 100% 设备投放、安装、日常补货、维保及 $2M 商业责任险费用；支持首期 90 天试运营评估与灵活退换机制。'
+  },
+  en: {
+    title: 'Smart Retail Amenity Partnership Proposal',
+    launch: '2-4 weeks after approval',
+    planogram: 'Beverages, bottled water, healthy snacks, convenience foods, and daily essentials. Exact SKU mix is tailored to resident/visitor preferences and sales data.',
+    planogramExample: 'Bottled water, sports drinks, soft drinks, healthy snacks, grab-and-go meals, and daily essentials. Continuously optimized based on resident demographics and sales velocity.',
+    service: `The operator handles product sourcing, scheduled restocking, machine cleaning, and daily operations, with maintenance response tailored to site needs.
+- Restocking & inventory management: Handled by the operator with frequency adjusted to actual sales.
+- Equipment maintenance & support: Service hours, reporting channels, and response SLAs confirmed by both parties.
+- On-site coordination: Confirm placement area, operating hours, power outlet, and network connectivity.`,
+    confirmItems: `- Installation location, dimensions, power outlet, and network conditions.
+- Partnership term, revenue share basis, reconciliation statements, and payout schedule.
+- Utility responsibility, insurance and indemnification, building access, and operating hours.
+- Termination, renewal, exclusivity, and equipment removal provisions.`,
+    notes: 'Zero cost to property: Plug-and-play setup requiring only a standard 110V outlet with built-in 4G/LTE connectivity (no property Wi-Fi needed). Operator covers 100% of equipment, installation, restocking, maintenance, and $2M liability insurance, with a flexible 90-day pilot evaluation option.'
+  }
+};
+
 const translations = {
   '工作空间': 'Workspace',
   '工作台': 'Dashboard',
@@ -27,7 +58,6 @@ const translations = {
   '把每一个点位，变成新的商业机会。': 'Turn every location into a new business opportunity.',
   '从点位评估、收益测算到商务提案与合规资料，一站式完成点位开发准备。': 'Prepare for location development with assessment, earnings estimates, proposals, and compliance files in one place.',
   '用清晰的数据和专业的材料，让物业更容易理解合作价值。': 'Present a clear business case with useful data and professional materials.',
-  '产品效果图位置 · 后续替换为官方机器素材': 'Product image placeholder · Replace with official machine artwork',
   '项目概览': 'Project Overview',
   '当前浏览器中保存的点位开发项目': 'Location projects saved in this browser',
   '查看全部项目 →': 'View All Projects →',
@@ -50,6 +80,7 @@ const translations = {
   '本工具为第一版本本地原型。当前数据只保存在本浏览器，不会自动同步到其他设备；收益数据为测算结果，不构成销售或经营承诺。': 'This is an early local prototype. Data stays in this browser and is not synced to other devices. Earnings are estimates, not sales or operating guarantees.',
   '重置评分': 'Reset Scores',
   '保存评估': 'Save Assessment',
+  '先判断这个点位是否值得投入时间开发。评分规则可调整，当前权重为原型默认值。': 'Evaluate whether this location is worth developing. Default weights can be adjusted to fit your operation.',
   '点位基本信息': 'Location Details',
   '根据已知情况填写，未知项可以暂时留空': 'Enter what you know; unknown fields can be left blank.',
   '点位名称': 'Location Name',
@@ -74,6 +105,8 @@ const translations = {
   '评分拆解': 'Score Breakdown',
   '建议下一步': 'Recommended Next Step',
   '先补充人流量、场地类型和决策人信息。': 'Add foot traffic, venue type, and decision maker details.',
+  '下一步：点位方收益测算 →': 'Next: Site Partner Earnings →',
+  '下一步：点位方收益测算': 'Next: Site Partner Earnings',
   '下一步：点位收益测算 →': 'Next: Site Partner Earnings →',
   '下一步：点位收益测算': 'Next: Site Partner Earnings',
   '恢复示例参数': 'Restore Example Inputs',
@@ -125,9 +158,12 @@ const translations = {
   '预计上线时间': 'Estimated Launch Date',
   '商品组合 / Planogram': 'Product Mix / Planogram',
   '补货与维护安排': 'Restocking and Maintenance',
+  '补货与维护安排（04 · 日常运营与服务）': 'Restocking & Maintenance (04 · Operations & Service)',
+  '后续确认事项（06 · 后续确认事项）': 'Items to Confirm (06 · Next Steps)',
   '其他合作说明': 'Other Partnership Notes',
+  '其他合作说明（场地免责与试运营保障）': 'Additional Terms (Zero-Cost Setup & Pilot Guarantee)',
   '提案附带的合规资料（仅勾选本次需要分享的文件）': 'Compliance documents to include (select only files approved for sharing)',
-  '只将已确认可向该物业分享的文件链接写入导出的提案；W-9 等敏感文件请谨慎选择。': 'Only include file links approved for sharing with this property. Use care with sensitive files such as W-9 forms.',
+  '导出网页版提案时将附带已配置的文件下载链接；打印或保存 PDF 时将自动转换为正式的纸质资质核验清单。': 'Exported web proposals include download links for configured files; printing or saving as PDF automatically formats them as a formal verification checklist.',
   '同步收益测算数据': 'Sync Earnings Estimate',
   '保存到当前项目': 'Save to Current Project',
   '提案预览会随输入自动更新': 'The proposal preview updates as you edit',
@@ -136,7 +172,7 @@ const translations = {
   '集中管理设备认证、食品安全资料、保险证明和税务文件，按物业要求整理材料。': 'Organize equipment certificates, food safety materials, insurance, and tax documents for property reviews.',
   '添加文件链接': 'Add File Link',
   '让物业审查更清晰、更高效。': 'Make property reviews clearer and more efficient.',
-  '上传真实证书，或填写权限受控的 Google Drive 文件链接。当前页面不包含任何虚构认证。': 'Upload a genuine certificate or add a restricted Google Drive link. No fictional certifications are included.',
+  '填写权限受控的 Google Drive 或 HTTPS 文件链接。当前页面不包含任何虚构认证。': 'Add access-controlled Google Drive or HTTPS file links. No fictional certifications are included.',
   '已配置文件': 'Files configured',
   '资料管理注意事项': 'Document Handling Notice',
   'W-9 可能包含企业税务识别信息，COI 也可能包含保单信息。建议放在有访问权限控制的 Google Drive 中，不要将敏感文件提交到公开 GitHub 仓库。ADA 通常应作为无障碍合规说明或适用性资料呈现，不应在未核实的情况下称为“认证”。': 'W-9 forms may contain tax IDs and COI files may contain policy details. Keep them in access-controlled Google Drive folders rather than public GitHub repositories. Present ADA details as accessibility guidance rather than an unverified certification.',
@@ -232,8 +268,10 @@ const translations = {
   '保险文件': 'Insurance',
   '税务文件': 'Tax Document',
   '补充文件': 'Supplemental Document',
+  '自定义补充资料，请核对文件内容及有效期。': 'Custom supplemental document. Please verify content and validity.',
+  '自定义资料': 'Custom document',
   '仓库当前提供的 NAMA 认证文件。分享前请确认文件适用范围及接收对象。': 'NAMA certification file included in the repository. Verify applicability and recipient before sharing.',
-  '用于说明设备电气安全测试或认证情况。请上传适用于对应机器型号的真实证书。': 'Documents electrical safety testing and certification. Upload the certificate matching the selected machine model.',
+  '用于说明设备电气安全测试或认证情况。请上传适用于对应机器型号的真实证书。': 'Documents electrical safety testing and certification. Provide the certificate matching the selected machine model.',
   '用于回应物业对食品接触材料、卫生或相关标准的审查要求。': 'Addresses property review requirements regarding food-contact materials and sanitation standards.',
   '用于说明设备内无线通信模块或相关电子设备的 FCC 合规信息。': 'Details FCC compliance for wireless communication modules and electronics inside the machine.',
   '用于说明设备布置和使用流程对无障碍要求的考虑。不是默认存在的“ADA 认证”。': 'Explains placement and operational accessibility considerations. Not a standalone "ADA certificate".',
@@ -247,16 +285,13 @@ const translations = {
   '检查被保险人、保额、有效期及附加被保险人要求': 'Check insured entity, coverage limits, expiration, and additional insured terms',
   '建议仅通过授权受控渠道分享': 'Share only through access-controlled channels',
   '已配置链接': 'Link Configured',
-  '临时附件': 'Session File',
   '待补充': 'To Be Provided',
   '仓库认证文件': 'Repository Certificate File',
   '修改链接': 'Edit Link',
   '添加 Drive 链接': 'Add Drive Link',
-  '本地预览': 'Local Preview',
-  '查看附件 ↗': 'View File ↗',
   '下载认证资料 ↓': 'Download Certificate ↓',
   '打开 / 下载资料 ↗': 'Open / Download File ↗',
-  '下载资料 (待补充)': 'Download (Not Configured)',
+  '下载资料 (待补充)': 'Link Not Configured',
   '已评估': 'Assessed',
   '进行中': 'In Progress',
   '当前项目': 'Current Project',
@@ -279,7 +314,7 @@ const translations = {
   '运营公司名称': 'Operator company name',
   '姓名': 'Full name',
   '例如: 双方确认后 2-4 周': 'e.g. 2-4 weeks after approval',
-  '可填写电费、网络、访问权限、营业时间等需要进一步确认的事项': 'Add items to confirm such as utilities, network, access permissions, and operating hours',
+  '可填写零成本接入、保险保障、试运营机制等补充说明': 'Add notes on zero-cost setup, insurance coverage, pilot period, etc.',
   '例如: 设备规格表 / 保险附加被保险人证明': 'e.g. Machine Spec Sheet / Additional Insured Endorsement',
   '智能零售柜点位合作提案': 'Smart Retail Amenity Partnership Proposal',
   '为物业空间提供便捷的智能零售服务合作方案': 'A turnkey smart retail amenity proposal tailored for your property',
@@ -292,16 +327,17 @@ const translations = {
   '提案对象': 'Prepared For',
   '合作运营商': 'Operating Partner',
   '建议部署数量': 'Recommended Units',
-  '预估日均人流': 'Est. Daily Foot Traffic',
-  '点位评估得分': 'Location Score',
+  '设备尺寸 (宽×深×高)': 'Machine Dimensions (W×D×H)',
+  '单台占地面积': 'Footprint per Machine',
   '请先选择机器型号': 'Select a machine model first',
   '待选择型号': 'Model to be selected',
   '提案草案 · 以双方最终书面协议为准': 'Proposal Draft · Subject to final written agreement',
-  '文件链接待补充': 'File link to be provided',
+  '可按需提供电子版': 'Digital copy available upon request',
+  '资质已备齐，随提案附交或按需提供': 'Verified & available for property review',
   '本次提案暂未附带合规文件。根据物业审查要求，可在合规文件中心配置资料链接后重新勾选。': 'No compliance documents are attached to this proposal yet. Configure links in the Compliance Center and check the items to include.',
-  '最终点位布局、用电、网络、安装位置、访问权限及合同条款，以双方现场确认和书面协议为准。': 'Final placement, power, network, installation area, access permissions, and contract terms are subject to site walk-through and written agreement.',
   '文件链接的可访问权限和有效期由资料提供方负责确认；敏感文件仅向授权接收人分享。': 'Link permissions and validity are managed by the document provider; sensitive files are shared only with authorized recipients.',
   '以上为输入参数下的测算示例，不构成销售额或点位方收益保证。实际结果取决于现场客流、商品、价格、营业时间及运营情况。': 'The figures above are model estimates based on input assumptions and do not guarantee sales or property revenue. Actual results depend on foot traffic, product mix, pricing, and operating hours.',
+  '运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。': 'The operator handles product sourcing, scheduled restocking, machine cleaning, and daily operations, with maintenance response tailored to site needs.',
   '商品补货与库存管理：由运营商负责，具体频率根据销售情况确定。': 'Restocking & inventory management: Handled by the operator with frequency adjusted to actual sales.',
   '设备维护与故障响应：双方确认服务时间、报修渠道及响应标准。': 'Equipment maintenance & support: Service hours, reporting channels, and response SLAs confirmed by both parties.',
   '现场运营协调：明确设备投放区域、营业时间、用电及网络安排。': 'On-site coordination: Confirm placement area, operating hours, power outlet, and network connectivity.',
@@ -309,22 +345,26 @@ const translations = {
   '合作期限、分成基数、对账依据和付款日期。': 'Partnership term, revenue share basis, reconciliation statements, and payout schedule.',
   '电费承担、保险与赔偿责任、访问权限和营业时间。': 'Utility responsibility, insurance and indemnification, building access, and operating hours.',
   '合同终止、续租、独家经营及设备移除安排。': 'Termination, renewal, exclusivity, and equipment removal provisions.',
+  '饮料、瓶装水、健康零食、方便食品及日常必需品。具体 SKU 根据物业人群和销售反馈调整。': 'Beverages, bottled water, healthy snacks, convenience foods, and daily essentials. Exact SKU mix is tailored to resident/visitor preferences and sales data.',
+  '瓶装水、运动饮料、碳酸饮料、健康零食、方便食品及日常必需品。根据住户画像和销售数据持续优化 SKU。': 'Bottled water, sports drinks, soft drinks, healthy snacks, grab-and-go meals, and daily essentials. Continuously optimized based on resident demographics and sales velocity.',
+  '零场地改造成本：设备即插即用（仅需标准 110V 电源插座，内置 4G/LTE 无线通信模块，无需拉网线）；运营商承担 100% 设备投放、安装、日常补货、维保及 $2M 商业责任险费用；支持首期 90 天试运营评估与灵活退换机制。': 'Zero cost to property: Plug-and-play setup requiring only a standard 110V outlet with built-in 4G/LTE connectivity (no property Wi-Fi needed). Operator covers 100% of equipment, installation, restocking, maintenance, and $2M liability insurance, with a flexible 90-day pilot evaluation option.',
+  '双方确认后 2-4 周': '2-4 weeks after approval',
   '打开菜单': 'Open menu',
   '关闭': 'Close',
   'HAHA Vending 首页': 'HAHA Vending Home',
   '主导航': 'Main Navigation',
   '请先填写点位名称。': 'Please enter a location name first.',
   '点位评估已保存到本地项目。': 'Location assessment saved to local project.',
-  'ROI 测算已保存到当前项目。': 'ROI estimate saved to current project.',
+  'ROI 测算已保存到当前项目。': 'Earnings estimate saved to current project.',
   '提案信息已保存到当前项目。': 'Proposal details saved to current project.',
   '请填写项目名称。': 'Please enter a project name.',
   '项目已创建，开始填写点位信息。': 'Project created. Start entering location details.',
   '点位评估参数已重置。': 'Assessment scores reset to default (3).',
-  'ROI 参数已恢复为示例值。': 'ROI assumptions restored to example values.',
+  'ROI 参数已恢复为示例值。': 'Assumptions restored to example values.',
   '建议先填写物业 / 点位名称，再导出提案。': 'Please enter the property or location name before exporting.',
   '已导出独立提案网页 HTML。': 'Standalone proposal HTML exported.',
   '已载入示例提案内容，请替换为真实信息。': 'Example proposal loaded. Replace with actual property details.',
-  '合作提案已下载；所选认证资料可在提案中直接下载。': 'Proposal downloaded. Selected certificates are linked in the proposal.',
+  '已同步点位方收益测算数据到提案。': 'Synced site partner earnings data to proposal.',
   '文件链接信息已保存到本地。': 'Document link saved locally.',
   '项目已删除。': 'Project deleted.',
   '本地保存失败，请检查浏览器存储空间或隐私设置。': 'Local save failed. Please check browser storage or privacy settings.',
@@ -370,6 +410,9 @@ export function translate(value) {
   match = key.match(/^已打开项目：(.+)$/);
   if (match) return `Opened project: ${match[1]}`;
 
+  match = key.match(/^确定删除「(.+)」吗？此操作不可恢复。$/);
+  if (match) return `Delete project "${match[1]}"? This action cannot be undone.`;
+
   match = key.match(/^(\d+) 个项目$/);
   if (match) return `${match[1]} projects`;
 
@@ -401,10 +444,13 @@ export function translate(value) {
   if (match) return `${match[1]} people`;
 
   match = key.match(/^(\d+) 台$/);
-  if (match) return `${match[1]} units`;
+  if (match) return `${match[1]} unit(s)`;
+
+  match = key.match(/^更新于 (.+)$/);
+  if (match) return `Updated ${translate(match[1])}`;
 
   match = key.match(/^(.+) · 更新于 (.+)$/);
-  if (match) return `${translate(match[1])} · Updated ${ translate(match[2]) }`;
+  if (match) return `${translate(match[1])} · Updated ${translate(match[2])}`;
 
   match = key.match(/^点位评分：(.+) \/ 100$/);
   if (match) return `Score: ${translate(match[1])} / 100`;
@@ -415,20 +461,51 @@ export function translate(value) {
     return `Verify first: ${parts}. Gather site details before committing proposal resources.`;
   }
 
+  match = key.match(/^查看 \/ 下载 (.+) ↗$/);
+  if (match) return `View / Download ${translate(match[1])} ↗`;
+
   match = key.match(/^下载 (.+) ↓$/);
   if (match) return `Download ${translate(match[1])} ↓`;
 
   match = key.match(/^链接：(.+)$/);
   if (match) return `Link: ${match[1]}`;
 
-  match = key.match(/^本次会话：(.+)$/);
-  if (match) return `Session file: ${match[1]}`;
+  return value;
+}
 
+export function translateToZh(value) {
+  const key = normalize(value);
+  if (!key) return value;
+  if (reverseTranslations[key]) return reverseTranslations[key];
   return value;
 }
 
 export function t(value) {
-  return language === 'en' ? translate(value) : value;
+  return language === 'en' ? translate(value) : translateToZh(value);
+}
+
+export function translateMultiline(text) {
+  if (!text) return '';
+  const raw = String(text).trim();
+  for (const field of Object.keys(PROPOSAL_DEFAULTS.zh)) {
+    if (raw === PROPOSAL_DEFAULTS.zh[field].trim()) {
+      return language === 'en' ? PROPOSAL_DEFAULTS.en[field] : PROPOSAL_DEFAULTS.zh[field];
+    }
+    if (raw === PROPOSAL_DEFAULTS.en[field].trim()) {
+      return language === 'en' ? PROPOSAL_DEFAULTS.en[field] : PROPOSAL_DEFAULTS.zh[field];
+    }
+  }
+  return String(text)
+    .split('\n')
+    .map(line => {
+      const trimmed = line.trim();
+      if (!trimmed) return '';
+      const isBullet = /^[-•*]\s+/.test(trimmed);
+      const core = trimmed.replace(/^[-•*]\s+/, '');
+      const converted = language === 'en' ? translate(core) : translateToZh(core);
+      return isBullet ? `- ${converted}` : converted;
+    })
+    .join('\n');
 }
 
 function translateTextNode(node, restore = false) {

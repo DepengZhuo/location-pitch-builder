@@ -6,9 +6,9 @@ import { DEFAULT_SCORE, DEFAULT_DOCS, dateLabel, money, escapeHTML } from './dat
 import { loadStore, saveStore, createProject } from './storage.js';
 import { renderScoreFactors, calculateScore, paintScoreResult } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
-import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs } from './proposal.js';
+import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage } from './proposal.js';
 import { renderCompliance, normalizeDocs, setComplianceChangeHandler, bindComplianceAddButton } from './compliance.js';
-import { initializeLanguageToggle, onLanguageChange, t } from './i18n.js';
+import { initializeLanguageToggle, onLanguageChange, t, PROPOSAL_DEFAULTS, getLanguage } from './i18n.js';
 
 const store = loadStore();
 store.docs = normalizeDocs(store.docs?.length ? store.docs : DEFAULT_DOCS);
@@ -218,7 +218,7 @@ function loadProject(project) {
   toast(`已打开项目：${project.name}`);
 }
 
-/* 导航：切换单页应用中的主内容区域 */
+/* 导航：切换单页应用中的主内容区域，并自动滚回页面最顶端 */
 function setPage(page) {
   if (!$(`page-${page}`)) return;
   currentPage = page;
@@ -227,7 +227,7 @@ function setPage(page) {
   const names = {
     dashboard: '工作台',
     scorer: '点位评估',
-    roi: '点位收益测算',
+    roi: '点位方收益测算',
     proposal: '商业提案',
     compliance: '合规文件中心',
     projects: '我的项目'
@@ -238,6 +238,9 @@ function setPage(page) {
   if (page === 'projects') renderProjects();
   if (page === 'compliance') renderCompliance(store.docs);
   if (page === 'proposal') refreshProposalPreview();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+  document.documentElement.scrollTop = 0;
+  document.body.scrollTop = 0;
 }
 
 document.querySelectorAll('.nav-item').forEach(button => {
@@ -402,19 +405,21 @@ $('confirmNewProject')?.addEventListener('click', () => {
 /* 点位评估 */
 renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
 updateDecisionGuide();
-$('saveScore')?.addEventListener('click', saveScore);
+['saveScore', 'saveScoreBottom'].forEach(id => {
+  $(id)?.addEventListener('click', saveScore);
+});
 $('resetScore')?.addEventListener('click', () => {
   scoreValues = { ...DEFAULT_SCORE };
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
   updateScoring();
   toast('点位评估参数已重置。');
 });
-$('scoreToRoi')?.addEventListener('click', () => {
+
+function advanceScoreToRoi() {
   const location = readScoreForm();
   if (location.name && $('propProperty')) $('propProperty').value = location.name;
   if (location.city && $('propCity')) $('propCity').value = location.city;
   if (location.type && $('propVenue')) $('propVenue').value = location.type;
-  if (location.traffic && $('propTraffic')) $('propTraffic').value = location.traffic;
   if (currentProject()) {
     currentProject().score = { ...location, result: calculateScore(scoreValues) };
     persist();
@@ -422,7 +427,12 @@ $('scoreToRoi')?.addEventListener('click', () => {
   if (location.name && $('roiLocation')) $('roiLocation').value = location.name;
   renderROI();
   setPage('roi');
+}
+
+['scoreToRoi', 'scoreToRoiBottom'].forEach(id => {
+  $(id)?.addEventListener('click', advanceScoreToRoi);
 });
+
 ['locName', 'locCity', 'locType', 'locTraffic', 'locAudience', 'locTerm', 'locDecision', 'locSource', 'locNotes'].forEach(id => {
   $(id)?.addEventListener('input', () => {
     if (id === 'locType') updateDecisionGuide();
@@ -440,7 +450,7 @@ $('scoreToRoi')?.addEventListener('click', () => {
   });
 });
 
-/* ROI 测算 */
+/* 点位方收益测算 */
 bindROIInputs(result => {
   const project = currentProject();
   if (project) {
@@ -463,7 +473,6 @@ $('roiToProposal')?.addEventListener('click', () => {
   const scoreData = readScoreForm();
   if (scoreData.city && $('propCity')) $('propCity').value = scoreData.city;
   if (scoreData.type && $('propVenue')) $('propVenue').value = scoreData.type;
-  if (scoreData.traffic && $('propTraffic')) $('propTraffic').value = scoreData.traffic;
   applyROIToProposal(roi);
   refreshProposalPreview();
   setPage('proposal');
@@ -487,23 +496,24 @@ $('printProposal')?.addEventListener('click', () => {
   window.print();
 });
 $('loadProposalExample')?.addEventListener('click', () => {
+  const d = PROPOSAL_DEFAULTS[getLanguage() === 'en' ? 'en' : 'zh'];
   applyProposalForm({
-    title: '智能零售柜点位合作提案',
+    title: d.title,
     property: 'Sunrise Apartments',
     city: 'Tampa, FL',
     operator: 'Independent Vending Operator',
     contactName: 'Property Management Team',
     contactEmail: 'leasing@sunrise-apts.example.com',
     venue: '公寓 / 多户住宅',
-    traffic: 300,
     machine: 'Mini 360',
     quantity: 1,
     deal: 'revenueShare',
     share: 10,
-    launch: '双方确认后 2-4 周',
-    planogram: '瓶装水、运动饮料、碳酸饮料、健康零食、方便食品及日常必需品。根据住户画像和销售数据持续优化 SKU。',
-    service: '运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。',
-    notes: '需进一步确认设备摆放区域、电源及网络条件、电费承担方式、物业访问权限和最终合作协议。'
+    launch: d.launch,
+    planogram: d.planogramExample,
+    service: d.service,
+    confirmItems: d.confirmItems,
+    notes: d.notes
   });
   updateProposalAutoSave();
   toast('已载入示例提案内容，请替换为真实信息。');
@@ -512,11 +522,8 @@ $('syncFromRoi')?.addEventListener('click', () => {
   const roi = calculateROI(readROIForm());
   if (roi.location && $('propProperty')) $('propProperty').value = roi.location;
   applyROIToProposal(roi);
-  if ($('propNotes')) {
-    $('propNotes').value = `收益测算参考：预计月销售额 ${money(roi.monthlyRevenue)}；点位方预计月收益 ${money(roi.landlordIncome)}。合作方式：${roi.dealType === 'fixedRent' ? `固定月租 ${money(roi.rent)}` : `销售额分成 ${roi.shareRate}%`}。以上为假设测算，非收益承诺。`;
-  }
   updateProposalAutoSave();
-  toast('合作提案已下载；所选认证资料可在提案中直接下载。');
+  toast('已同步点位方收益测算数据到提案。');
 });
 
 /* 合规文件中心 */
@@ -530,17 +537,18 @@ setComplianceChangeHandler(docs => {
 bindComplianceAddButton(store.docs);
 renderCompliance(store.docs);
 
-/* 语言切换时同步重绘所有动态内容 */
+/* 语言切换时同步重绘所有动态内容（含提案输入框双语模板切换） */
 onLanguageChange(() => {
   const names = {
     dashboard: '工作台',
     scorer: '点位评估',
-    roi: '点位收益测算',
+    roi: '点位方收益测算',
     proposal: '商业提案',
     compliance: '合规文件中心',
     projects: '我的项目'
   };
   if ($('breadcrumbCurrent')) $('breadcrumbCurrent').textContent = t(names[currentPage] || '工作台');
+  syncProposalFormLanguage();
   updateDecisionGuide();
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
   paintScoreResult(calculateScore(scoreValues));
