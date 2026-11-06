@@ -1,7 +1,7 @@
 /* =========================================================
    中英文切换模块（i18n）
-   确保英文模式下全站（含表单默认/示例文案与右侧提案）100%纯英文，
-   中文模式下 100%纯中文，且反向映射 'Site Partner Earnings' -> '点位方收益测算'。
+   确保英文模式下全站（含点位评估新模块、表单默认/示例文案与右侧提案）100%纯英文，
+   中文模式下 100%纯中文。
    ========================================================= */
 export const PROPOSAL_DEFAULTS = {
   zh: {
@@ -80,9 +80,10 @@ const translations = {
   '本工具为第一版本本地原型。当前数据只保存在本浏览器，不会自动同步到其他设备；收益数据为测算结果，不构成销售或经营承诺。': 'This is an early local prototype. Data stays in this browser and is not synced to other devices. Earnings are estimates, not sales or operating guarantees.',
   '重置评分': 'Reset Scores',
   '保存评估': 'Save Assessment',
-  '先判断这个点位是否值得投入时间开发。评分规则可调整，当前权重为原型默认值。': 'Evaluate whether this location is worth developing. Default weights can be adjusted to fit your operation.',
+  '先判断这个点位是否值得投入时间开发。回答 5 个快速问题即可评估潜力，无需精确人流统计。': 'Answer five quick questions to understand a location’s potential. You can use your best estimate — exact traffic data is not required.',
+  '1. 点位基本信息': '1. Location Details',
   '点位基本信息': 'Location Details',
-  '根据已知情况填写，未知项可以暂时留空': 'Enter what you know; unknown fields can be left blank.',
+  '根据已知情况填写，未知项可以暂时留空；基本信息不影响分数计算。': 'A few basics to identify the site. These fields do not affect the score.',
   '点位名称': 'Location Name',
   '城市 / 州': 'City / State',
   '场地类型': 'Venue Type',
@@ -96,15 +97,104 @@ const translations = {
   '现场观察与备注': 'Site Observations and Notes',
   '建议联系对象': 'Recommended Contact',
   '选择场地类型后，这里会显示通常需要联系的关键决策人。': 'Choose a venue type to see the usual decision maker.',
-  '点位质量评分': 'Location Quality Score',
-  '每项选择 1-5 分：1 分较弱，5 分优秀': 'Rate each item from 1 to 5: 1 is weak, 5 is excellent.',
-  '可按实际业务调整': 'Adjust to fit your operation',
-  '评分模型为本工具的初始建议：人流量 25%、场地匹配度 20%、目标人群 15%、消费便利性 15%、竞争情况 10%、合作期限 10%、决策人可触达性 5%。请结合实际运营数据持续校准。': 'Default weighting: Foot Traffic 25%, Venue Fit 20%, Audience Fit 15%, Convenience 15%, Competition 10%, Term Stability 10%, Decision Maker Access 5%. Adjust with real operating data.',
-  '等待填写': 'Waiting for input',
-  '填写左侧信息后，系统将生成点位评估结果。': 'Complete the details on the left to generate an assessment.',
-  '评分拆解': 'Score Breakdown',
-  '建议下一步': 'Recommended Next Step',
-  '先补充人流量、场地类型和决策人信息。': 'Add foot traffic, venue type, and decision maker details.',
+  '2. 点位条件评估': '2. Rate the Location',
+  '每项选择一个最符合现场情况的答案；如果暂时不确定，可以选择“待确认”。': 'Choose one answer for each item. Select "Not sure" when you need to check.',
+  '5 项 · 2–3 分钟': '5 items · 2–3 min',
+  '人流量与稳定性': 'Foot Traffic & Consistency',
+  '人流量': 'Foot traffic',
+  '这里平时人流稳定吗？': 'Are people here regularly?',
+  '观察日常全天的繁忙程度，而不仅是最高峰的那一小时。': 'Think about how busy the location is during a normal day — not just its busiest hour.',
+  '强：全天人流活动稳定': 'Strong: steady activity throughout the day',
+  '一般：仅在特定时段繁忙': 'Average: busy at certain times',
+  '弱：日常人流活动有限': 'Weak: limited daily activity',
+  '建议在高峰和平峰时段分别实地观察，核实全天真实人流的稳定性。': 'Visit during both busy and quiet hours to see how steady the traffic really is.',
+  '目标客群匹配度': 'Target Customer Fit',
+  '客群匹配': 'Customer fit',
+  '来往的是目标客群吗？': 'Are the right people here?',
+  '考虑人群在此停留的时间，以及使用便捷零食或饮料柜的可能性。': 'Consider whether people spend enough time here and are likely to use a convenient snack or drink option.',
+  '强：住户、员工、学生或住客': 'Strong: residents, employees, students or guests',
+  '一般：有一定潜在购买人群': 'Average: some potential buyers',
+  '弱：以匆忙路过的访客为主': 'Weak: mostly pass-through visitors',
+  '明确哪些人群最可能高频使用设备，以及他们产生即时消费需求的时间段。': 'Identify who is most likely to use the machine and when they would need it.',
+  '消费需求与便利性': 'Consumer Need & Convenience',
+  '消费需求': 'Consumer need',
+  '周边买东西方便吗？': 'Is it easy to buy nearby?',
+  '观察附近的便利店、咖啡馆和餐饮选择，是否存在未被满足的即时便利需求？': 'Look at nearby stores, cafés and food options. Is there an unmet need for convenient access?',
+  '强：周边几乎没有便利替代选项': 'Strong: few convenient options nearby',
+  '一般：有替代选项但营业或距离受限': 'Average: alternatives exist but have limits',
+  '弱：现有消费需求已被充分满足': 'Weak: needs are already well served',
+  '核查周边便利店和餐饮的营业时间与距离，找出场地内难以即时买到的高频商品。': 'Check nearby stores, their hours and the products people cannot easily get on site.',
+  '摆放位置可见度与动线': 'Placement Visibility & Access',
+  '位置可见度': 'Placement',
+  '大家容易看到和走到吗？': 'Can people easily see and reach it?',
+  '考虑在人群进出该场地的日常必经动线上，是否有显眼、方便停留的位置。': 'Think about a visible, convenient spot along the normal path people take through the location.',
+  '强：显眼的公共区域或主通道': 'Strong: visible common area or main walkway',
+  '一般：位置可用，但偏离主动线': 'Average: usable, but off the main path',
+  '弱：位置隐蔽或难以到达': 'Weak: hidden or hard to access',
+  '沿用户日常进出动线走一遍，确认一个显眼、驻足方便且不影响通行的具体点位。': 'Walk the normal customer route and identify a visible, convenient placement spot.',
+  '运营与补货可行性': 'Operational Feasibility',
+  '运营可行性': 'Operations',
+  '日常运营省心吗？': 'Can you operate it without hassle?',
+  '综合考虑摆放空间、电源插座、网络信号，以及日常补货和设备维护的便利程度。': 'Consider space, power, network signal, and how easy it is to restock and service the machine.',
+  '强：空间、电源与补货都很顺畅': 'Strong: space, power and restocking are easy',
+  '一般：有少数条件需进一步核实': 'Average: a few items need checking',
+  '弱：存在明显的进场或安装障碍': 'Weak: major access or setup issues',
+  '现场确认安装空间尺寸、独立电源插座、4G/网络信号强度以及补货推车进出路线。': 'Confirm space, power, network signal and a practical route for restocking.',
+  '强': 'Strong',
+  '一般': 'Average',
+  '弱': 'Weak',
+  '待确认': 'Not sure',
+  '3. 部署准备度核查': '3. Deployment Readiness',
+  '以下检查项不影响点位评分，用于梳理正式进场安装前必须落实的条件。': 'These checks do not affect the location score. They help identify what must be confirmed before installation.',
+  '独立核查项': 'Separate check',
+  '物业审批许可': 'Property approval',
+  '物业方是否已批准投放智能零售柜？': 'Has the property approved a vending machine?',
+  '空间与电源条件': 'Space & power',
+  '现场是否有足够摆放空间和合适的电源插座？': 'Is there enough space and a suitable power outlet?',
+  '补货与维保通行': 'Restocking access',
+  '运营人员是否方便进出场地进行补货与维护？': 'Can you access the location for restocking and service?',
+  '物业对接人与合作条款': 'Property contact & terms',
+  '是否已明确关键决策人及基本合作条件？': 'Do you know who makes the decision and the basic terms?',
+  '待核实': 'Need to check',
+  '已确认': 'Confirmed',
+  '不具备 / 不允许': 'Not available / Not permitted',
+  '提示：选择“待核实”完全正常，仅代表该事项需要在正式推进安装前与物业进一步确认。': 'Tip: "Need to check" is a perfectly valid answer. It simply means this item should be confirmed before you move forward.',
+  '评估总结分析': 'Assessment Summary',
+  '快速梳理当前点位的核心优势与需要重点核实的事项。': 'A quick snapshot of what looks promising and what needs attention.',
+  '行动建议': 'Your next move',
+  '优势亮点': 'What looks promising',
+  '待关注项': 'What needs attention',
+  '暂无突出优势项，建议结合现场情况复核评分与细节。': 'No standout strengths yet. Review the ratings and site details.',
+  '五项核心评分中未发现明显短板。': 'No major gaps were identified in the five ratings.',
+  '主要顾虑': 'main concern',
+  '有提升空间': 'could be improved',
+  '建议下一步行动': 'Recommended next step',
+  '实地考察点位': 'Visit the location',
+  '确认高峰时段人流、最佳摆放位置以及基本运营条件。': 'Confirm the busiest hours, best placement area and basic operating conditions.',
+  '现场确认部署条件': 'Confirm the site in person',
+  '五项核心条件表现良好。建议实地拜访点位，核实安装条件并与物业负责人深入沟通。': 'The five core factors look positive. Visit the site, confirm deployment conditions and speak with the property contact.',
+  '本评分为基于当前已知信息的初步场地评估，不构成销售额预测或经营结果承诺。实际表现取决于客流需求、商品选品、定价、摆放位置及日常运营质量。': 'This score is an initial site assessment based on the information provided. It is not a sales forecast or a guarantee of performance. Actual results depend on customer demand, product selection, pricing, placement and day-to-day operations.',
+  '未开始': 'Not completed',
+  '评估进行中': 'In progress',
+  '潜力优秀': 'Strong Potential',
+  '值得跟进': 'Worth Exploring',
+  '优先级较低': 'Lower Priority',
+  '评分拆解': 'SCORE BREAKDOWN',
+  '部署准备状态': 'DEPLOYMENT STATUS',
+  '核查项待确认': 'Checks not completed',
+  '进场安装前请核实左侧 4 项基础部署条件。': 'Review the four conditions on the left before installation.',
+  '安装前需解决阻碍': 'Resolve before installation',
+  '有待进一步确认': 'Confirmation needed',
+  '已具备推进条件': 'Ready for the next step',
+  '四项部署准备条件均已确认为具备。': 'All four deployment conditions are marked as confirmed.',
+  '计分规则说明': 'How scoring works',
+  '化繁为简：为每项选择最符合现场实际情况的描述。': 'Keep it simple: choose the answer that best describes the site.',
+  '获得 100% 权重分': '100% of points',
+  '获得 50% 权重分': '50% of points',
+  '0 分': '0 points',
+  '暂不计分': 'Not scored',
+  '“待确认”不会扣分。完成全部 5 项有效评估后即可生成最终总分。': '"Not sure" is not a penalty. Complete all five ratings to receive a final score.',
+  '实时评估结果': 'Live assessment results',
   '下一步：点位收益测算 →': 'Next: Site Partner Earnings →',
   '下一步：点位收益测算': 'Next: Site Partner Earnings',
   '下一步：点位方收益测算 →': 'Next: Site Partner Earnings →',
@@ -200,29 +290,6 @@ const translations = {
   '已填写提案内容': 'Proposals with saved details',
   '暂无项目数据': 'No projects yet',
   '暂无相关项目': 'No matching projects',
-  '人流量与可见度': 'Foot Traffic and Visibility',
-  '人流是否稳定，机器是否容易被看到': 'Traffic stability and machine visibility',
-  '场地类型匹配度': 'Venue Fit',
-  '场地是否适合无人零售柜长期运营': 'Suitability for unattended retail',
-  '目标人群匹配度': 'Audience Fit',
-  '住户、员工、访客是否有即时消费需求': 'Immediate needs of residents, employees, and visitors',
-  '消费便利性': 'Convenience',
-  '营业时间、进出便利性和摆放位置': 'Hours, access, and placement',
-  '周边竞争情况': 'Nearby Competition',
-  '附近是否有便利店、自动售货机等替代选择': 'Nearby convenience stores or vending alternatives',
-  '合作期限与稳定性': 'Partnership Term and Stability',
-  '租期、物业稳定性及续约可能性': 'Term, property stability, and renewal potential',
-  '决策人可触达性': 'Decision Maker Access',
-  '是否找到物业经理或实际决策人': 'Whether the property manager or decision maker is known',
-  '优质点位': 'Strong Location',
-  '值得重点跟进': 'Worth Prioritizing',
-  '建议补充信息': 'More Information Needed',
-  '暂不建议优先投入': 'Low Priority for Now',
-  '当前条件较好，可以进入商务沟通和收益测算阶段。': 'Conditions look strong. Proceed to partner discussions and earnings modeling.',
-  '点位具备开发潜力，建议核实关键经营条件后推进。': 'Promising location. Verify key operating conditions before moving forward.',
-  '目前存在一些信息缺口或经营风险，建议先补充调研。': 'Information gaps or operating risks remain. Conduct further site research first.',
-  '现阶段经营条件偏弱，建议谨慎投入开发资源。': 'Current site conditions are weak. Be cautious with development resources.',
-  '准备初次沟通材料，联系物业或场地负责人，确认合作方式与现场条件。': 'Prepare outreach materials and contact the property manager to confirm partnership terms and site conditions.',
   '预计月销售额': 'Estimated Monthly Sales',
   '日均销量 × 平均售价 × 营业天数': 'Daily items × average price × operating days',
   '预计月商品毛利': 'Estimated Monthly Gross Profit',
@@ -300,7 +367,6 @@ const translations = {
   '城市待补充': 'City not provided',
   '待评估': 'Not assessed',
   '待测算': 'Estimate needed',
-  '待确认': 'To be confirmed',
   '刚刚': 'Just now',
   '未命名点位项目': 'Untitled Location Project',
   '例如: Sunrise Apartments': 'e.g. Sunrise Apartments',
@@ -359,7 +425,7 @@ const translations = {
   '提案信息已保存到当前项目。': 'Proposal details saved to current project.',
   '请填写项目名称。': 'Please enter a project name.',
   '项目已创建，开始填写点位信息。': 'Project created. Start entering location details.',
-  '点位评估参数已重置。': 'Assessment scores reset to default (3).',
+  '点位评估参数已重置。': 'Assessment ratings and readiness checks reset.',
   'ROI 参数已恢复为示例值。': 'Assumptions restored to example values.',
   '建议先填写物业 / 点位名称，再导出提案。': 'Please enter the property or location name before exporting.',
   '已导出独立提案网页 HTML。': 'Standalone proposal HTML exported.',
@@ -407,7 +473,31 @@ export function translate(value) {
   if (!key) return value;
   if (translations[key]) return translations[key];
 
-  let match = key.match(/^年预计 (.+) · (\d+) 个月累计 (.+)$/);
+  let match = key.match(/^(\d+) 分$/);
+  if (match) return `${match[1]} points`;
+
+  match = key.match(/^已评 (\d+) \/ (\d+) 项 · (\d+) 项待确认$/);
+  if (match) return `${match[1]} of ${match[2]} rated · ${match[3]} to verify`;
+
+  match = key.match(/^已评 (\d+) \/ (\d+) 项$/);
+  if (match) return `${match[1]} of ${match[2]} rated`;
+
+  match = key.match(/^重点核查：(.+)$/);
+  if (match) return `Check: ${translate(match[1])}`;
+
+  match = key.match(/^有 (\d+) 项条件标记为不具备或不允许，请确认是否可以协调解决。$/);
+  if (match) {
+    const n = Number(match[1]);
+    return `${n} condition${n > 1 ? 's' : ''} marked unavailable. Confirm whether the issue can be resolved.`;
+  }
+
+  match = key.match(/^还有 (\d+) 项条件需要在正式安装前进一步核实。$/);
+  if (match) {
+    const n = Number(match[1]);
+    return `${n} item${n > 1 ? 's' : ''} still need to be checked before installation.`;
+  }
+
+  match = key.match(/^年预计 (.+) · (\d+) 个月累计 (.+)$/);
   if (match) return `Annual est. ${match[1]} · ${match[2]}-mo total ${match[3]}`;
 
   match = key.match(/^已打开项目：(.+)$/);
@@ -457,12 +547,6 @@ export function translate(value) {
 
   match = key.match(/^点位评分：(.+) \/ 100$/);
   if (match) return `Score: ${translate(match[1])} / 100`;
-
-  match = key.match(/^优先核实：(.+)。补充现场信息后再决定是否投入提案资源。$/);
-  if (match) {
-    const parts = match[1].split('、').map(item => translate(item)).join(', ');
-    return `Verify first: ${parts}. Gather site details before committing proposal resources.`;
-  }
 
   match = key.match(/^查看 \/ 下载 (.+) ↗$/);
   if (match) return `View / Download ${translate(match[1])} ↗`;

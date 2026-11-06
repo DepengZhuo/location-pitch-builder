@@ -1,18 +1,111 @@
 /* =========================================================
-   数据定义：默认评分维度、合规文件类型、格式化工具
-   如需修改评分权重或文件分类，优先从本文件开始。
+   数据定义：5项点位条件评估、4项部署准备度、合规文件与格式化工具
    ========================================================= */
-export const SCORE_FACTORS = [
-  { id: 'traffic', name: '人流量与可见度', help: '人流是否稳定，机器是否容易被看到', weight: 25 },
-  { id: 'venueFit', name: '场地类型匹配度', help: '场地是否适合无人零售柜长期运营', weight: 20 },
-  { id: 'audience', name: '目标人群匹配度', help: '住户、员工、访客是否有即时消费需求', weight: 15 },
-  { id: 'convenience', name: '消费便利性', help: '营业时间、进出便利性和摆放位置', weight: 15 },
-  { id: 'competition', name: '周边竞争情况', help: '附近是否有便利店、自动售货机等替代选择', weight: 10 },
-  { id: 'term', name: '合作期限与稳定性', help: '租期、物业稳定性及续约可能性', weight: 10 },
-  { id: 'decision', name: '决策人可触达性', help: '是否找到物业经理或实际决策人', weight: 5 }
+export const SCORE_CRITERIA = [
+  {
+    id: 'traffic',
+    num: '01',
+    name: '人流量与稳定性',
+    short: '人流量',
+    kicker: '这里平时人流稳定吗？',
+    question: '观察日常全天的繁忙程度，而不仅是最高峰的那一小时。',
+    weight: 25,
+    hints: [
+      '强：全天人流活动稳定',
+      '一般：仅在特定时段繁忙',
+      '弱：日常人流活动有限'
+    ],
+    action: '建议在高峰和平峰时段分别实地观察，核实全天真实人流的稳定性。'
+  },
+  {
+    id: 'customers',
+    num: '02',
+    name: '目标客群匹配度',
+    short: '客群匹配',
+    kicker: '来往的是目标客群吗？',
+    question: '考虑人群在此停留的时间，以及使用便捷零食或饮料柜的可能性。',
+    weight: 25,
+    hints: [
+      '强：住户、员工、学生或住客',
+      '一般：有一定潜在购买人群',
+      '弱：以匆忙路过的访客为主'
+    ],
+    action: '明确哪些人群最可能高频使用设备，以及他们产生即时消费需求的时间段。'
+  },
+  {
+    id: 'need',
+    num: '03',
+    name: '消费需求与便利性',
+    short: '消费需求',
+    kicker: '周边买东西方便吗？',
+    question: '观察附近的便利店、咖啡馆和餐饮选择，是否存在未被满足的即时便利需求？',
+    weight: 20,
+    hints: [
+      '强：周边几乎没有便利替代选项',
+      '一般：有替代选项但营业或距离受限',
+      '弱：现有消费需求已被充分满足'
+    ],
+    action: '核查周边便利店和餐饮的营业时间与距离，找出场地内难以即时买到的高频商品。'
+  },
+  {
+    id: 'placement',
+    num: '04',
+    name: '摆放位置可见度与动线',
+    short: '位置可见度',
+    kicker: '大家容易看到和走到吗？',
+    question: '考虑在人群进出该场地的日常必经动线上，是否有显眼、方便停留的位置。',
+    weight: 15,
+    hints: [
+      '强：显眼的公共区域或主通道',
+      '一般：位置可用，但偏离主动线',
+      '弱：位置隐蔽或难以到达'
+    ],
+    action: '沿用户日常进出动线走一遍，确认一个显眼、驻足方便且不影响通行的具体点位。'
+  },
+  {
+    id: 'operations',
+    num: '05',
+    name: '运营与补货可行性',
+    short: '运营可行性',
+    kicker: '日常运营省心吗？',
+    question: '综合考虑摆放空间、电源插座、网络信号，以及日常补货和设备维护的便利程度。',
+    weight: 15,
+    hints: [
+      '强：空间、电源与补货都很顺畅',
+      '一般：有少数条件需进一步核实',
+      '弱：存在明显的进场或安装障碍'
+    ],
+    action: '现场确认安装空间尺寸、独立电源插座、4G/网络信号强度以及补货推车进出路线。'
+  }
 ];
 
-export const DEFAULT_SCORE = Object.fromEntries(SCORE_FACTORS.map(f => [f.id, 3]));
+export const SCORE_FACTORS = SCORE_CRITERIA;
+
+export const READINESS_ITEMS = [
+  {
+    id: 'approval',
+    label: '物业审批许可',
+    help: '物业方是否已批准投放智能零售柜？'
+  },
+  {
+    id: 'spacePower',
+    label: '空间与电源条件',
+    help: '现场是否有足够摆放空间和合适的电源插座？'
+  },
+  {
+    id: 'restockAccess',
+    label: '补货与维保通行',
+    help: '运营人员是否方便进出场地进行补货与维护？'
+  },
+  {
+    id: 'contactTerms',
+    label: '物业对接人与合作条款',
+    help: '是否已明确关键决策人及基本合作条件？'
+  }
+];
+
+export const DEFAULT_SCORE = Object.fromEntries(SCORE_CRITERIA.map(c => [c.id, '']));
+export const DEFAULT_READINESS = Object.fromEntries(READINESS_ITEMS.map(r => [r.id, 'pending']));
 
 export const DEFAULT_DOCS = [
   { id: 'nama', title: 'NAMA 认证资料', short: 'NAMA Certification', category: '行业认证', desc: '仓库当前提供的 NAMA 认证文件。分享前请确认文件适用范围及接收对象。', filename: 'NAMA.pdf', url: '', downloadPath: './assets/certificates/NAMA.pdf', note: '仅用于 NAMA 认证资料' },

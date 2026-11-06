@@ -102,7 +102,7 @@
               <div>
                 <div class="eyebrow">01 / LOCATION SCORER</div>
                 <h1>点位评估</h1>
-                <p>先判断这个点位是否值得投入时间开发。评分规则可调整，当前权重为原型默认值。</p>
+                <p>先判断这个点位是否值得投入时间开发。回答 5 个快速问题即可评估潜力，无需精确人流统计。</p>
               </div>
               <div class="heading-actions">
                 <button class="button button-outline" id="resetScore" type="button">重置评分</button>
@@ -110,56 +110,162 @@
               </div>
             </div>
           </div>
+
           <div class="two-column-layout scorer-layout">
-            <div class="panel form-panel">
-              <div class="panel-head"><div><h3>点位基本信息</h3><p>根据已知情况填写，未知项可以暂时留空</p></div><span class="step-tag">STEP 01</span></div>
-              <div class="form-grid">
-                <label class="field full"><span>点位名称 <em>*</em></span><input id="locName" placeholder="例如: Sunrise Apartments" /></label>
-                <label class="field"><span>城市 / 州</span><input id="locCity" placeholder="例如: Tampa, FL" /></label>
-                <label class="field"><span>场地类型</span>
-                  <select id="locType">
-                    <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
-                    <option value="办公楼">办公楼</option>
-                    <option value="健身房">健身房</option>
-                    <option value="酒店">酒店</option>
-                    <option value="学校 / 教育机构">学校 / 教育机构</option>
-                    <option value="医院 / 医疗机构">医院 / 医疗机构</option>
-                    <option value="公共建筑">公共建筑</option>
-                    <option value="其他">其他</option>
-                  </select>
-                </label>
-                <label class="field"><span>预估日均人流量</span><input id="locTraffic" type="number" min="0" placeholder="例如: 300" /></label>
-                <label class="field"><span>主要服务人群</span><input id="locAudience" placeholder="例如: 住户、员工、访客" /></label>
-                <label class="field"><span>租赁 / 合作期限（月）</span><input id="locTerm" type="number" min="0" placeholder="例如: 24" /></label>
-                <label class="field"><span>决策人 / 联系人</span><input id="locDecision" placeholder="例如: Property Manager" /></label>
-                <label class="field"><span>点位来源</span>
-                  <select id="locSource">
-                    <option value="自主开发">自主开发</option>
-                    <option value="Locator Service">Locator Service</option>
-                    <option value="网站留言">网站留言</option>
-                    <option value="客户 / 朋友推荐">客户 / 朋友推荐</option>
-                    <option value="其他">其他</option>
-                  </select>
-                </label>
-                <label class="field full"><span>现场观察与备注</span><textarea id="locNotes" rows="3" placeholder="例如: 大堂有休息区，住户刷卡进入，附近没有便利店......"></textarea></label>
+            <div class="scorer-main-col">
+              <!-- 1. 点位基本信息 -->
+              <div class="panel form-panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>1. 点位基本信息</h3>
+                    <p>根据已知情况填写，未知项可以暂时留空；基本信息不影响分数计算。</p>
+                  </div>
+                  <span class="step-tag">STEP 01</span>
+                </div>
+                <div class="form-grid">
+                  <label class="field full"><span>点位名称 <em>*</em></span><input id="locName" placeholder="例如: Sunrise Apartments" /></label>
+                  <label class="field"><span>城市 / 州</span><input id="locCity" placeholder="例如: Tampa, FL" /></label>
+                  <label class="field"><span>场地类型</span>
+                    <select id="locType">
+                      <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
+                      <option value="办公楼">办公楼</option>
+                      <option value="健身房">健身房</option>
+                      <option value="酒店">酒店</option>
+                      <option value="学校 / 教育机构">学校 / 教育机构</option>
+                      <option value="医院 / 医疗机构">医院 / 医疗机构</option>
+                      <option value="公共建筑">公共建筑</option>
+                      <option value="其他">其他</option>
+                    </select>
+                  </label>
+                  <label class="field"><span>预估日均人流量</span><input id="locTraffic" type="number" min="0" placeholder="例如: 300" /></label>
+                  <label class="field"><span>主要服务人群</span><input id="locAudience" placeholder="例如: 住户、员工、访客" /></label>
+                  <label class="field"><span>租赁 / 合作期限（月）</span><input id="locTerm" type="number" min="0" placeholder="例如: 24" /></label>
+                  <label class="field"><span>决策人 / 联系人</span><input id="locDecision" placeholder="例如: Property Manager" /></label>
+                  <label class="field"><span>点位来源</span>
+                    <select id="locSource">
+                      <option value="自主开发">自主开发</option>
+                      <option value="Locator Service">Locator Service</option>
+                      <option value="网站留言">网站留言</option>
+                      <option value="客户 / 朋友推荐">客户 / 朋友推荐</option>
+                      <option value="其他">其他</option>
+                    </select>
+                  </label>
+                  <label class="field full"><span>现场观察与备注</span><textarea id="locNotes" rows="3" placeholder="例如: 大堂有休息区，住户刷卡进入，附近没有便利店......"></textarea></label>
+                </div>
+                <div class="decision-guide" id="decisionGuide" style="margin-bottom:0;">
+                  <div class="guide-icon">↗</div>
+                  <div class="guide-content">
+                    <strong>建议联系对象</strong>
+                    <p id="decisionGuideText">选择场地类型后，这里会显示通常需要联系的关键决策人。</p>
+                  </div>
+                </div>
               </div>
-              <div class="decision-guide" id="decisionGuide"><div class="guide-icon">↗</div><div class="guide-content"><strong>建议联系对象</strong><p id="decisionGuideText">选择场地类型后，这里会显示通常需要联系的关键决策人。</p></div></div>
-              <div class="subsection-title"><div><h3>点位质量评分</h3><p>每项选择 1-5 分：1 分较弱，5 分优秀</p></div><span class="muted-mini">可按实际业务调整</span></div>
-              <div id="scoreFactors" class="score-factors"></div>
-              <div class="method-note">评分模型为本工具的初始建议：人流量 25%、场地匹配度 20%、目标人群 15%、消费便利性 15%、竞争情况 10%、合作期限 10%、决策人可触达性 5%。请结合实际运营数据持续校准。</div>
-              <div class="scorer-bottom-actions">
+
+              <!-- 2. 点位条件评估 (Rate the Location) -->
+              <div class="panel form-panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>2. 点位条件评估</h3>
+                    <p>每项选择一个最符合现场情况的答案；如果暂时不确定，可以选择“待确认”。</p>
+                  </div>
+                  <span class="step-tag">5 项 · 2–3 分钟</span>
+                </div>
+                <div id="scoreFactors" class="criteria-list"></div>
+              </div>
+
+              <!-- 3. 部署准备度核查 (Deployment Readiness) -->
+              <div class="panel form-panel">
+                <div class="panel-head">
+                  <div>
+                    <h3>3. 部署准备度核查</h3>
+                    <p>以下检查项不影响点位评分，用于梳理正式进场安装前必须落实的条件。</p>
+                  </div>
+                  <span class="step-tag">独立核查项</span>
+                </div>
+                <div id="readinessList" class="readiness-list"></div>
+                <div class="method-note">提示：选择“待核实”完全正常，仅代表该事项需要在正式推进安装前与物业进一步确认。</div>
+              </div>
+
+              <!-- 4. 评估总结分析 (Assessment Summary - 完成5项评分后展开) -->
+              <div class="panel form-panel below-result" id="detailedResult" aria-live="polite">
+                <div class="panel-head">
+                  <div>
+                    <h3>评估总结分析</h3>
+                    <p>快速梳理当前点位的核心优势与需要重点核实的事项。</p>
+                  </div>
+                  <span class="step-tag">行动建议</span>
+                </div>
+                <div class="insight-grid">
+                  <div class="insight-box">
+                    <h4>优势亮点</h4>
+                    <ul id="strengthList"></ul>
+                  </div>
+                  <div class="insight-box">
+                    <h4>待关注项</h4>
+                    <ul id="attentionList"></ul>
+                  </div>
+                </div>
+                <div class="next-step-callout">
+                  <div class="eyebrow">建议下一步行动</div>
+                  <h4 id="scoreNextTitle">实地考察点位</h4>
+                  <p id="scoreNextStep">确认高峰时段人流、最佳摆放位置以及基本运营条件。</p>
+                </div>
+                <p class="scorer-disclaimer">本评分为基于当前已知信息的初步场地评估，不构成销售额预测或经营结果承诺。实际表现取决于客流需求、商品选品、定价、摆放位置及日常运营质量。</p>
+              </div>
+
+              <!-- 底部下一步按钮 -->
+              <div class="panel scorer-bottom-bar">
                 <button class="button button-dark button-wide" id="scoreToRoi" type="button">下一步：点位方收益测算 →</button>
               </div>
             </div>
-            <aside class="panel score-result-panel">
-              <div class="result-top">
-                <span class="result-label">LOCATION SCORE</span>
-                <div class="score-ring" id="scoreRing"><div><strong id="scoreValue">--</strong><small>/ 100</small></div></div>
-                <div class="score-status" id="scoreStatus">等待填写</div>
-                <p id="scoreSummary">填写左侧信息后，系统将生成点位评估结果。</p>
+
+            <!-- 右侧 LOCATION SCORE & 计分规则说明 -->
+            <aside class="scorer-side-col" aria-label="实时评估结果">
+              <div class="panel score-result-panel">
+                <div class="score-main">
+                  <span class="result-label">LOCATION SCORE</span>
+                  <div class="score-line">
+                    <strong class="score-placeholder" id="scoreValue">—</strong>
+                    <small class="score-outof">/ 100</small>
+                  </div>
+                  <span class="status-chip" id="scoreStatus">未开始</span>
+                  <div class="score-progress-wrap">
+                    <div class="score-progress-track"><div class="score-progress-fill" id="scoreProgressFill"></div></div>
+                    <div class="score-progress-meta">
+                      <span id="scoreProgressText">已评 0 / 5 项</span>
+                      <span id="scoreProgressPercent">0%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="result-breakdown">
+                  <div class="mini-title">评分拆解</div>
+                  <div id="scoreBreakdown" class="breakdown-list"></div>
+                </div>
+
+                <div class="deployment-status-wrap">
+                  <div class="mini-title">部署准备状态</div>
+                  <div class="readiness-summary" id="readinessSummary">
+                    <span class="readiness-dot" id="readinessDot"></span>
+                    <div>
+                      <strong id="readinessHeadline">核查项待确认</strong>
+                      <p id="readinessCopy">进场安装前请核实左侧 4 项基础部署条件。</p>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <div class="result-breakdown"><h3>评分拆解</h3><div id="scoreBreakdown"></div></div>
-              <div class="next-step-box" style="margin-bottom:0;"><strong>建议下一步</strong><p id="scoreNextStep">先补充人流量、场地类型和决策人信息。</p></div>
+
+              <div class="panel scoring-guide-panel">
+                <h3 class="scoring-guide-title">计分规则说明</h3>
+                <p class="scoring-guide-sub">化繁为简：为每项选择最符合现场实际情况的描述。</p>
+                <div class="scoring-rules-list">
+                  <div class="scoring-rule-row"><span class="status-chip good">强</span><strong>获得 100% 权重分</strong></div>
+                  <div class="scoring-rule-row"><span class="status-chip warn">一般</span><strong>获得 50% 权重分</strong></div>
+                  <div class="scoring-rule-row"><span class="status-chip bad">弱</span><strong>0 分</strong></div>
+                  <div class="scoring-rule-row"><span class="status-chip">待确认</span><strong>暂不计分</strong></div>
+                </div>
+                <p class="scorer-disclaimer" style="margin-top:12px;">“待确认”不会扣分。完成全部 5 项有效评估后即可生成最终总分。</p>
+              </div>
             </aside>
           </div>
         </section>

@@ -2,9 +2,9 @@
    应用入口：导航、项目状态、页面之间的数据联动
    新增页面时：在 index.html 增加 section，再在这里增加路由映射。
    =================================================== */
-import { DEFAULT_SCORE, DEFAULT_DOCS, dateLabel, money, escapeHTML } from './data.js';
+import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, money, escapeHTML } from './data.js';
 import { loadStore, saveStore, createProject, cleanLegacyNotes } from './storage.js';
-import { renderScoreFactors, calculateScore, paintScoreResult } from './scorer.js';
+import { renderScoreFactors, renderReadinessChecks, calculateScore, paintScoreResult, normalizeRatings, normalizeReadiness } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
 import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage } from './proposal.js';
 import { renderCompliance, normalizeDocs, setComplianceChangeHandler, bindComplianceAddButton } from './compliance.js';
@@ -14,6 +14,7 @@ const store = loadStore();
 store.docs = normalizeDocs(store.docs?.length ? store.docs : DEFAULT_DOCS);
 let currentPage = 'dashboard';
 let scoreValues = { ...DEFAULT_SCORE };
+let readinessValues = { ...DEFAULT_READINESS };
 let applyingScoreForm = false;
 let toastTimer;
 let pendingDeleteProjectId = null;
@@ -70,7 +71,8 @@ function readScoreForm() {
     decision: $('locDecision')?.value.trim() || '',
     source: $('locSource')?.value || '自主开发',
     notes: $('locNotes')?.value.trim() || '',
-    ratings: { ...scoreValues }
+    ratings: { ...scoreValues },
+    readiness: { ...readinessValues }
   };
 }
 
@@ -98,17 +100,35 @@ function applyScoreForm(data = {}) {
       elem.value = '';
     }
   });
-  scoreValues = { ...DEFAULT_SCORE, ...(data.ratings || {}) };
+  scoreValues = normalizeRatings(data.ratings || {});
+  readinessValues = normalizeReadiness(data.readiness || {});
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
+  renderReadinessChecks($('readinessList'), readinessValues, updateReadiness);
   updateDecisionGuide();
-  paintScoreResult(calculateScore(scoreValues));
+  paintScoreResult(calculateScore(scoreValues, readinessValues));
   applyingScoreForm = false;
 }
 
 function updateScoring(factorId, value) {
   if (factorId) scoreValues[factorId] = value;
-  renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
-  const result = calculateScore(scoreValues);
+  const result = calculateScore(scoreValues, readinessValues);
+  paintScoreResult(result);
+  const project = currentProject();
+  if (project && !applyingScoreForm) {
+    const draft = { ...readScoreForm(), result };
+    if (project.score || result.isComplete) project.score = draft;
+    else project.scoreDraft = draft;
+    updateProjectTimestamp(project);
+    persist();
+    updateDashboard();
+  }
+  refreshProposalPreview();
+  return result;
+}
+
+function updateReadiness(readinessId, value) {
+  if (readinessId) readinessValues[readinessId] = value;
+  const result = calculateScore(scoreValues, readinessValues);
   paintScoreResult(result);
   const project = currentProject();
   if (project && !applyingScoreForm) {
@@ -118,7 +138,6 @@ function updateScoring(factorId, value) {
     updateProjectTimestamp(project);
     persist();
   }
-  refreshProposalPreview();
   return result;
 }
 
@@ -144,7 +163,7 @@ function readProposalState() {
 
 function refreshProposalPreview() {
   const roi = calculateROI(readROIForm());
-  const score = calculateScore(scoreValues);
+  const score = calculateScore(scoreValues, readinessValues);
   renderProposalPreview(roi, score, store.docs);
 }
 
@@ -169,7 +188,7 @@ function saveScore() {
   const project = ensureProject(data.name);
   project.name = data.name;
   project.city = data.city;
-  project.score = { ...data, result: calculateScore(scoreValues) };
+  project.score = { ...data, result: calculateScore(scoreValues, readinessValues) };
   delete project.scoreDraft;
   updateProjectTimestamp(project);
   setCurrentProject(project);
@@ -261,7 +280,9 @@ $('mobileMenu')?.addEventListener('click', () => $('sidebar')?.classList.toggle(
 /* 工作台数据卡片 */
 function updateDashboard() {
   const projects = store.projects;
-  const scores = projects.filter(p => p.score?.result?.score !== undefined).map(p => p.score.result.score);
+  const scores = projects
+    .map(p => (p.score || p.scoreDraft)?.result?.score)
+    .filter(s => typeof s === 'number' && !Number.isNaN(s));
   const avg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : '-';
   const stats = [
     [t('项目总数'), projects.length, t('当前浏览器已保存')],
@@ -333,22 +354,26 @@ function renderProjects() {
   const gridEl = $('projectsGrid');
   if (!gridEl) return;
   gridEl.innerHTML = filtered.length
-    ? filtered.map(project => `
-      <article class="project-card">
-        <div class="project-card-top">
-          <span class="project-type">${project.score ? t('已评估') : t('进行中')}</span>
-          ${project.id === store.currentProjectId ? `<span class="project-badge">${t('当前项目')}</span>` : ''}
-        </div>
-        <h3>${escapeHTML(project.name)}</h3>
-        <p>${escapeHTML(project.city || t('城市待补充'))} · ${t(`更新于 ${dateLabel(project.updatedAt)}`)}</p>
-        <div class="project-card-bottom">
-          <small>${t(`点位评分：${project.score?.result?.score ?? t('待评估')} / 100`)}</small>
-          <span>
-            <button type="button" data-open-project="${project.id}">${t('打开')}</button>
-            <button type="button" data-delete-project="${project.id}">${t('删除')}</button>
-          </span>
-        </div>
-      </article>`).join('')
+    ? filtered.map(project => {
+        const scoreVal = (project.score || project.scoreDraft)?.result?.score;
+        const hasScore = typeof scoreVal === 'number' && !Number.isNaN(scoreVal);
+        return `
+          <article class="project-card">
+            <div class="project-card-top">
+              <span class="project-type">${hasScore ? t('已评估') : t('进行中')}</span>
+              ${project.id === store.currentProjectId ? `<span class="project-badge">${t('当前项目')}</span>` : ''}
+            </div>
+            <h3>${escapeHTML(project.name)}</h3>
+            <p>${escapeHTML(project.city || t('城市待补充'))} · ${t(`更新于 ${dateLabel(project.updatedAt)}`)}</p>
+            <div class="project-card-bottom">
+              <small>${t(`点位评分：${hasScore ? scoreVal : t('待评估')} / 100`)}</small>
+              <span>
+                <button type="button" data-open-project="${project.id}">${t('打开')}</button>
+                <button type="button" data-delete-project="${project.id}">${t('删除')}</button>
+              </span>
+            </div>
+          </article>`;
+      }).join('')
     : `<div class="recent-empty">${t('暂无相关项目')}</div>`;
 
   gridEl.querySelectorAll('[data-open-project]').forEach(button => {
@@ -408,11 +433,14 @@ $('confirmNewProject')?.addEventListener('click', () => {
 
 /* 点位评估 */
 renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
+renderReadinessChecks($('readinessList'), readinessValues, updateReadiness);
 updateDecisionGuide();
 $('saveScore')?.addEventListener('click', saveScore);
 $('resetScore')?.addEventListener('click', () => {
   scoreValues = { ...DEFAULT_SCORE };
+  readinessValues = { ...DEFAULT_READINESS };
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
+  renderReadinessChecks($('readinessList'), readinessValues, updateReadiness);
   updateScoring();
   toast('点位评估参数已重置。');
 });
@@ -423,7 +451,7 @@ function advanceScoreToRoi() {
   if (location.city && $('propCity')) $('propCity').value = location.city;
   if (location.type && $('propVenue')) $('propVenue').value = location.type;
   if (currentProject()) {
-    currentProject().score = { ...location, result: calculateScore(scoreValues) };
+    currentProject().score = { ...location, result: calculateScore(scoreValues, readinessValues) };
     persist();
   }
   if (location.name && $('roiLocation')) $('roiLocation').value = location.name;
@@ -440,7 +468,7 @@ $('scoreToRoi')?.addEventListener('click', advanceScoreToRoi);
     if (project) {
       if ($('locName')?.value.trim()) project.name = $('locName').value.trim();
       if ($('locCity')?.value.trim()) project.city = $('locCity').value.trim();
-      project.scoreDraft = readScoreForm();
+      project.scoreDraft = { ...readScoreForm(), result: calculateScore(scoreValues, readinessValues) };
       persist();
       updateDashboard();
     }
@@ -487,7 +515,7 @@ $('exportProposal')?.addEventListener('click', () => {
     $('propProperty')?.focus();
     return;
   }
-  exportProposalHTML(calculateROI(readROIForm()), calculateScore(scoreValues), store.docs);
+  exportProposalHTML(calculateROI(readROIForm()), calculateScore(scoreValues, readinessValues), store.docs);
   saveProposal();
   toast('已导出独立提案网页 HTML。');
 });
@@ -537,7 +565,7 @@ setComplianceChangeHandler(docs => {
 bindComplianceAddButton(store.docs);
 renderCompliance(store.docs);
 
-/* 语言切换时同步重绘所有动态内容（含提案输入框双语模板切换） */
+/* 语言切换时同步重绘所有动态内容（含点位评估新模块与提案输入框双语模板切换） */
 onLanguageChange(() => {
   const names = {
     dashboard: '工作台',
@@ -555,7 +583,8 @@ onLanguageChange(() => {
   syncProposalFormLanguage();
   updateDecisionGuide();
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
-  paintScoreResult(calculateScore(scoreValues));
+  renderReadinessChecks($('readinessList'), readinessValues, updateReadiness);
+  paintScoreResult(calculateScore(scoreValues, readinessValues));
   renderROI();
   refreshProposalPreview();
   renderCompliance(store.docs);
@@ -563,7 +592,7 @@ onLanguageChange(() => {
   renderProjects();
 });
 
-/* 页面初始化：恢复当前项目及首页统计，自动清理旧缓存中的“收益测算参考”文本 */
+/* 页面初始化：恢复当前项目及首页统计 */
 function initialize() {
   const project = currentProject();
   if (project) {
@@ -580,6 +609,7 @@ function initialize() {
     }
   } else {
     renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
+    renderReadinessChecks($('readinessList'), readinessValues, updateReadiness);
     applyROIForm();
     applyProposalForm();
   }
