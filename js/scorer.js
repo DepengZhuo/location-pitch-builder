@@ -16,7 +16,6 @@ export function normalizeRatings(raw = {}) {
   const out = { ...DEFAULT_SCORE };
   if (!raw || typeof raw !== 'object') return out;
 
-  // 兼容旧版 7 项 1-5 数字评分存档
   const legacyMap = {
     traffic: raw.traffic,
     customers: raw.customers ?? raw.audience ?? raw.venueFit,

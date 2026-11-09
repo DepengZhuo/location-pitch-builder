@@ -146,6 +146,7 @@ function updateDecisionGuide() {
   const guidance = {
     '办公楼': '小办公室：Office Manager；大型办公室：Facilities / Workplace Manager；多租户办公楼：Property Manager 或前台。先确认是否存在企业级统一供应商协议。',
     '公寓 / 多户住宅': '优先联系 Property Manager（物业经理），必要时进一步确认区域 / Corporate Property Manager 是否拥有最终审批权。',
+    '工厂 / 仓储': '优先联系 Plant Manager（厂长）、HR 负责人或 Facilities / EHS 部门，重点沟通夜班/倒班员工的即时餐饮福利与免人工管理优势。',
     '健身房': '独立健身房：Owner 或 General Manager；连锁 / 加盟店：General Manager，并先核实是否已有全国性合作协议。',
     '酒店': '优先联系 General Manager、Director of Operations 或 Facilities Manager；大型连锁酒店需确认品牌或集团采购要求。',
     '学校 / 教育机构': '优先联系 Facilities Manager、学校行政或采购负责人；公立机构通常还需确认招标和供应商准入流程。',
@@ -206,7 +207,7 @@ function saveROI() {
   setCurrentProject(project);
   persist();
   updateDashboard();
-  toast('ROI 测算已保存到当前项目。');
+  toast('点位方收益测算已保存到当前项目。');
 }
 
 function saveProposal() {
@@ -227,7 +228,7 @@ function loadProject(project) {
   if (project.score || project.scoreDraft) applyScoreForm(project.score || project.scoreDraft);
   else applyScoreForm({ name: project.name, city: project.city });
   if (project.roi) applyROIForm(project.roi);
-  else applyROIForm({ location: project.name });
+  else applyROIForm({ location: project.name, venue: (project.score || project.scoreDraft)?.type || '公寓 / 多户住宅' });
   if (project.proposal) {
     project.proposal.notes = cleanLegacyNotes(project.proposal.notes);
     applyProposalForm(project.proposal);
@@ -260,6 +261,7 @@ function setPage(page) {
   if (page === 'dashboard') updateDashboard();
   if (page === 'projects') renderProjects();
   if (page === 'compliance') renderCompliance(store.docs);
+  if (page === 'roi') renderROI();
   if (page === 'proposal') refreshProposalPreview();
   window.scrollTo({ top: 0, behavior: 'smooth' });
   document.documentElement.scrollTop = 0;
@@ -450,11 +452,13 @@ function advanceScoreToRoi() {
   if (location.name && $('propProperty')) $('propProperty').value = location.name;
   if (location.city && $('propCity')) $('propCity').value = location.city;
   if (location.type && $('propVenue')) $('propVenue').value = location.type;
+  if (location.name && $('roiLocation')) $('roiLocation').value = location.name;
+  if (location.type && $('roiVenue')) $('roiVenue').value = location.type;
+  if (location.term > 0 && $('roiPeriod')) $('roiPeriod').value = location.term;
   if (currentProject()) {
     currentProject().score = { ...location, result: calculateScore(scoreValues, readinessValues) };
     persist();
   }
-  if (location.name && $('roiLocation')) $('roiLocation').value = location.name;
   renderROI();
   setPage('roi');
 }
@@ -483,6 +487,9 @@ bindROIInputs(result => {
   const project = currentProject();
   if (project) {
     project.roi = { ...readROIForm(), result };
+    if (result.location && (!project.name || project.name === '未命名点位项目')) {
+      project.name = result.location;
+    }
     updateProjectTimestamp(project);
     persist();
   }
@@ -493,14 +500,12 @@ $('resetRoi')?.addEventListener('click', () => {
   applyROIForm();
   renderROI();
   refreshProposalPreview();
-  toast('ROI 参数已恢复为示例值。');
+  toast('收益测算参数已恢复为示例值。');
 });
 $('roiToProposal')?.addEventListener('click', () => {
   const roi = readROIForm();
-  if (roi.location && $('propProperty')) $('propProperty').value = roi.location;
   const scoreData = readScoreForm();
   if (scoreData.city && $('propCity')) $('propCity').value = scoreData.city;
-  if (scoreData.type && $('propVenue')) $('propVenue').value = scoreData.type;
   applyROIToProposal(roi);
   refreshProposalPreview();
   setPage('proposal');
@@ -548,7 +553,6 @@ $('loadProposalExample')?.addEventListener('click', () => {
 });
 $('syncFromRoi')?.addEventListener('click', () => {
   const roi = calculateROI(readROIForm());
-  if (roi.location && $('propProperty')) $('propProperty').value = roi.location;
   applyROIToProposal(roi);
   updateProposalAutoSave();
   toast('已同步点位方收益测算数据到提案。');
@@ -565,7 +569,7 @@ setComplianceChangeHandler(docs => {
 bindComplianceAddButton(store.docs);
 renderCompliance(store.docs);
 
-/* 语言切换时同步重绘所有动态内容（含点位评估新模块与提案输入框双语模板切换） */
+/* 语言切换时同步重绘所有动态内容 */
 onLanguageChange(() => {
   const names = {
     dashboard: '工作台',
@@ -599,7 +603,7 @@ function initialize() {
     if (project.score || project.scoreDraft) applyScoreForm(project.score || project.scoreDraft);
     else applyScoreForm({ name: project.name, city: project.city });
     if (project.roi) applyROIForm(project.roi);
-    else applyROIForm({ location: project.name });
+    else applyROIForm({ location: project.name, venue: (project.score || project.scoreDraft)?.type || '公寓 / 多户住宅' });
     if (project.proposal) {
       project.proposal.notes = cleanLegacyNotes(project.proposal.notes);
       applyProposalForm(project.proposal);

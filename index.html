@@ -84,7 +84,7 @@
             <div class="panel quick-panel">
               <div class="panel-head"><div><h3>快速开始</h3><p>选择下一步要完成的工作</p></div></div>
               <button class="quick-link" type="button" data-goto="scorer"><span class="quick-number">01</span><span><strong>评估一个新点位</strong><small>分析场地条件和经营潜力</small></span><b>↗</b></button>
-              <button class="quick-link" type="button" data-goto="roi"><span class="quick-number">02</span><span><strong>测算合作收益</strong><small>计算物业分成和运营商收益</small></span><b>↗</b></button>
+              <button class="quick-link" type="button" data-goto="roi"><span class="quick-number">02</span><span><strong>测算合作收益</strong><small>计算物业分成和合作周期总收益</small></span><b>↗</b></button>
               <button class="quick-link" type="button" data-goto="proposal"><span class="quick-number">03</span><span><strong>生成商业提案</strong><small>为物业整理一份合作方案</small></span><b>↗</b></button>
               <button class="quick-link" type="button" data-goto="compliance"><span class="quick-number">04</span><span><strong>准备合规文件</strong><small>管理证书、保险和税务材料</small></span><b>↗</b></button>
             </div>
@@ -129,8 +129,9 @@
                     <select id="locType">
                       <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
                       <option value="办公楼">办公楼</option>
-                      <option value="健身房">健身房</option>
+                      <option value="工厂 / 仓储">工厂 / 仓储</option>
                       <option value="酒店">酒店</option>
+                      <option value="健身房">健身房</option>
                       <option value="学校 / 教育机构">学校 / 教育机构</option>
                       <option value="医院 / 医疗机构">医院 / 医疗机构</option>
                       <option value="公共建筑">公共建筑</option>
@@ -139,7 +140,7 @@
                   </label>
                   <label class="field"><span>预估日均人流量</span><input id="locTraffic" type="number" min="0" placeholder="例如: 300" /></label>
                   <label class="field"><span>主要服务人群</span><input id="locAudience" placeholder="例如: 住户、员工、访客" /></label>
-                  <label class="field"><span>租赁 / 合作期限（月）</span><input id="locTerm" type="number" min="0" placeholder="例如: 24" /></label>
+                  <label class="field"><span>租赁 / 合作期限（月）</span><input id="locTerm" type="number" min="0" placeholder="例如: 30" /></label>
                   <label class="field"><span>决策人 / 联系人</span><input id="locDecision" placeholder="例如: Property Manager" /></label>
                   <label class="field"><span>点位来源</span>
                     <select id="locSource">
@@ -270,63 +271,177 @@
           </div>
         </section>
 
-        <!-- 页面三：点位方收益测算 -->
+        <!-- 页面三：点位方收益测算（参考 partner-benefits-earnings-v4 重构） -->
         <section class="page" id="page-roi">
           <div class="page-heading">
             <div>
-              <div class="eyebrow">02 / PROPERTY EARNINGS ESTIMATE</div>
+              <div class="eyebrow">02 / PROPERTY PARTNERSHIP VALUE</div>
               <h1>点位方收益测算</h1>
-              <p>先选择固定月租或按销售额分成，再查看点位方收益与运营商回本周期估算。</p>
+              <p>估算物业方在合作期内的潜在收益，并明确分成比例、固定月租或纯便民配套的合作方案。</p>
             </div>
             <div class="heading-actions">
               <button class="button button-outline" id="resetRoi" type="button">恢复示例参数</button>
               <button class="button button-dark" id="saveRoi" type="button">保存测算</button>
             </div>
           </div>
+
           <div class="roi-layout">
             <div class="roi-left-col">
+              <!-- 01 点位与销售预估 (Location & Sales Assumptions) -->
               <div class="panel form-panel">
-                <div class="panel-head"><div><h3>经营参数</h3><p>根据点位和运营方案输入预估数据；初始数字仅为示例</p></div><span class="step-tag">INPUT</span></div>
-                <div class="form-grid">
-                  <label class="field"><span>点位名称</span><input id="roiLocation" placeholder="例如: Sunrise Apartments" /></label>
-                  <label class="field"><span>机器 / 项目初始投入 ($)</span><input id="roiInvestment" type="number" min="0" value="5500" /></label>
-                  <label class="field"><span>日均销售商品件数 (件)</span><input id="roiOrders" type="number" min="0" value="50" /></label>
-                  <label class="field"><span>平均商品售价 ($ / 件)</span><input id="roiTicket" type="number" min="0" step="0.01" value="5.50" /></label>
-                  <label class="field"><span>每月营业天数</span><input id="roiDays" type="number" min="0" max="31" value="30" /></label>
-                  <label class="field"><span>商品成本率 (%)</span><input id="roiCogs" type="number" min="0" max="100" value="45" /></label>
-                  <label class="field"><span>合作方式</span>
-                    <select id="roiDealType">
-                      <option value="revenueShare">按销售额分成</option>
-                      <option value="fixedRent">固定月租</option>
+                <div class="panel-head">
+                  <div class="roi-section-title">
+                    <span class="criterion-num">01</span>
+                    <div>
+                      <h3>点位与销售预估</h3>
+                      <p>使用合理预估即可，现阶段无需精确历史销售数据。</p>
+                    </div>
+                  </div>
+                  <span class="step-tag">物业收益测算</span>
+                </div>
+                <div class="roi-fields-grid">
+                  <label class="field">
+                    <span>点位名称</span>
+                    <input id="roiLocation" value="Sunrise Apartments" placeholder="例如: Sunrise Apartments" />
+                  </label>
+                  <label class="field">
+                    <span>场地类型</span>
+                    <select id="roiVenue">
+                      <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
+                      <option value="办公楼">办公楼</option>
+                      <option value="工厂 / 仓储">工厂 / 仓储</option>
+                      <option value="酒店">酒店</option>
+                      <option value="健身房">健身房</option>
+                      <option value="学校 / 教育机构">学校 / 教育机构</option>
+                      <option value="医院 / 医疗机构">医院 / 医疗机构</option>
+                      <option value="公共建筑">公共建筑</option>
+                      <option value="其他">其他</option>
                     </select>
                   </label>
-                  <label class="field" id="roiShareField"><span>点位方销售额分成 (%)</span><input id="roiShare" type="number" min="0" max="100" value="10" /></label>
-                  <label class="field" id="roiRentField" hidden><span>固定场地租金 (月 / $)</span><input id="roiRent" type="number" min="0" value="0" /></label>
-                  <label class="field"><span>每月运营人工成本 ($)</span><input id="roiLabor" type="number" min="0" value="0" /></label>
-                  <label class="field"><span>每月补货 / 交通成本 ($)</span><input id="roiRestock" type="number" min="0" value="150" /></label>
-                  <label class="field"><span>每月支付 / 网络成本 ($)</span><input id="roiServiceCost" type="number" min="0" value="50" /></label>
-                  <label class="field"><span>其他月运营成本 ($)</span><input id="roiOpex" type="number" min="0" value="50" /></label>
-                  <label class="field full"><span>预计合作测算期 (月)</span><div class="range-line"><input id="roiPeriod" type="range" min="12" max="60" step="6" value="36"/><strong id="roiPeriodLabel">36 个月</strong></div></label>
+                  <label class="field">
+                    <span>预估日均销售件数 (件)</span>
+                    <input id="roiOrders" type="number" min="0" step="1" value="55" />
+                  </label>
+                  <label class="field">
+                    <span>平均商品售价 ($ / 件)</span>
+                    <div class="input-prefix">
+                      <i>$</i>
+                      <input id="roiTicket" type="number" min="0" step="0.01" value="5.00" />
+                    </div>
+                  </label>
+                  <label class="field">
+                    <span>每月营业天数</span>
+                    <input id="roiDays" type="number" min="0" max="31" step="1" value="30" />
+                  </label>
+                  <label class="field">
+                    <span>合作期限 (月)</span>
+                    <input id="roiPeriod" type="number" min="1" max="120" step="1" value="30" placeholder="直接输入月份数，如 30" />
+                  </label>
                 </div>
-                <div class="method-note">月销售额 = 日均销量 × 平均售价 × 营业天数。运营商月净收益 = 商品毛利 - 点位分成或固定租金 - 人工 - 补货交通 - 支付网络 - 其他运营成本；每项成本都会计入计算。未计入税费、折旧、融资成本及库存损耗。</div>
+                <div class="method-note">预计月销售额 = 日均销售件数 × 平均商品售价 × 每月营业天数。该估算仅用于计算点位方的潜在合作收益。</div>
               </div>
-              <div class="panel narrative-panel">
-                <div class="panel-head"><div><h3>测算说明</h3><p>帮助物业理解收益来源</p></div></div>
-                <div id="roiNarrative" class="narrative-box"></div>
+
+              <!-- 02 合作模式设置 (Partnership Setup) -->
+              <div class="panel form-panel">
+                <div class="panel-head">
+                  <div class="roi-section-title">
+                    <span class="criterion-num">02</span>
+                    <div>
+                      <h3>合作模式设置</h3>
+                      <p>选择物业方从本次智能零售柜投放中获得收益或价值的方式。</p>
+                    </div>
+                  </div>
+                  <span class="step-tag">三选一</span>
+                </div>
+
+                <input type="hidden" id="roiDealType" value="revenueShare" />
+                <div class="roi-mode-grid" id="roiModeGrid" role="radiogroup" aria-label="合作模式设置">
+                  <div class="roi-mode-card active" data-mode="revenueShare" tabindex="0" role="radio" aria-checked="true">
+                    <span class="roi-mode-mark">✓</span>
+                    <div class="roi-mode-symbol">％</div>
+                    <strong>按销售额分成</strong>
+                    <small>物业按约定的月销售额比例获得分成。</small>
+                  </div>
+                  <div class="roi-mode-card" data-mode="fixedRent" tabindex="0" role="radio" aria-checked="false">
+                    <span class="roi-mode-mark">✓</span>
+                    <div class="roi-mode-symbol">＄</div>
+                    <strong>固定月租</strong>
+                    <small>运营商按月向物业支付固定的场地租金。</small>
+                  </div>
+                  <div class="roi-mode-card" data-mode="amenity" tabindex="0" role="radio" aria-checked="false">
+                    <span class="roi-mode-mark">✓</span>
+                    <div class="roi-mode-symbol">✦</div>
+                    <strong>纯便民配套</strong>
+                    <small>无直接租金；设备作为场地便民福利配套提供。</small>
+                  </div>
+                </div>
+
+                <div class="roi-dynamic-box">
+                  <div class="field" id="roiShareField">
+                    <span>点位方销售额分成比例 (%)</span>
+                    <input id="roiShare" type="number" min="0" max="100" step="0.5" value="10" />
+                    <small class="field-hint">示例：按双方约定销售额基数的 10% 计算分成。</small>
+                  </div>
+                  <div class="field" id="roiRentField" hidden>
+                    <span>固定场地月租金 ($ / 月)</span>
+                    <div class="input-prefix">
+                      <i>$</i>
+                      <input id="roiRent" type="number" min="0" step="10" value="200" />
+                    </div>
+                    <small class="field-hint">输入与物业方约定的每月固定场地费用。</small>
+                  </div>
+                  <div class="roi-amenity-note" id="roiAmenityField" hidden>
+                    智能零售柜作为场地便民福利设施免费投放，直接月度分成或租金为 $0；核心价值在于为住户、员工或访客提供 24/7 即时便利服务，无需物业投入人力物力。
+                  </div>
+                </div>
+
+                <div class="method-note">请在书面合作协议中明确销售额核算基数（例如总销售额，或扣除退款、折扣及适用税费后的净销售额）。本测算工具不决定具体合同条款定义。</div>
               </div>
             </div>
-            <div class="roi-results">
-              <div class="landlord-card"><div><span class="result-label">PROPERTY · ESTIMATED EARNINGS</span><h3>物业预计每月可获得</h3><strong id="landlordMonthly">$0</strong><small id="landlordAnnual">年预计 $0</small></div><div class="landlord-symbol">$</div></div>
-              <div class="panel metrics-panel">
-                <div class="panel-head"><div><h3>经营测算结果</h3><p>根据当前输入实时更新</p></div><span class="live-tag">实时计算</span></div>
-                <div class="metric-grid" id="roiMetricGrid"></div>
-                <div class="chart-wrap">
-                  <div class="chart-title"><strong>测算周期内点位方累计收入</strong><small>估算累计值 · 美元</small></div>
-                  <div id="roiChart" class="simple-chart"></div>
+
+            <!-- 右侧：Estimated Monthly Partner Earnings 汇总面板 -->
+            <aside class="roi-results">
+              <div class="panel roi-summary-card">
+                <span class="result-label">ESTIMATED MONTHLY PARTNER EARNINGS</span>
+                <div class="roi-summary-sub">物业预计每月可获得</div>
+                <strong class="roi-big-value" id="landlordMonthly">$825</strong>
+                <div class="roi-earnings-basis" id="roiEarningsType">基于 10% 销售额分成</div>
+
+                <div class="roi-summary-grid">
+                  <div class="roi-summary-metric">
+                    <span>预计年收益</span>
+                    <strong id="landlordAnnual">$9,900</strong>
+                  </div>
+                  <div class="roi-summary-metric">
+                    <span>合作期累计收益</span>
+                    <strong id="landlordTermTotal">$24,750</strong>
+                  </div>
                 </div>
-                <div class="button-row" style="margin-top:auto;padding-top:18px;"><button class="button button-dark button-wide" id="roiToProposal" type="button">下一步：创建商业提案 →</button></div>
+
+                <div class="roi-divider"></div>
+
+                <div class="roi-lineitems">
+                  <div class="roi-lineitem">
+                    <span>预计月销售额</span>
+                    <strong id="roiMonthlySales">$8,250</strong>
+                  </div>
+                  <div class="roi-lineitem">
+                    <span>合作模式</span>
+                    <strong id="roiModelLabel">10% 销售额分成</strong>
+                  </div>
+                  <div class="roi-lineitem">
+                    <span>合作期限</span>
+                    <strong id="roiTermLabel">30 个月</strong>
+                  </div>
+                </div>
+
+                <p class="scorer-disclaimer" style="margin-top:14px;">以上为基于输入参数的测算示例，不构成销售额或收益保证。实际结果取决于现场销量、营业天数及书面合作条款。</p>
+
+                <div class="button-row" style="margin-top:18px;">
+                  <button class="button button-dark button-wide" id="roiToProposal" type="button">下一步：创建商业提案 →</button>
+                </div>
               </div>
-            </div>
+            </aside>
           </div>
         </section>
 
@@ -357,6 +472,7 @@
                   <select id="propVenue">
                     <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
                     <option value="办公楼">办公楼</option>
+                    <option value="工厂 / 仓储">工厂 / 仓储</option>
                     <option value="酒店">酒店</option>
                     <option value="健身房">健身房</option>
                     <option value="学校 / 教育机构">学校 / 教育机构</option>
@@ -382,10 +498,11 @@
                   <select id="propDeal">
                     <option value="revenueShare">按销售额分成</option>
                     <option value="fixedRent">固定月租</option>
+                    <option value="amenity">纯便民配套</option>
                   </select>
                 </label>
                 <label class="field" id="propShareField"><span>点位方销售额分成 (%)</span><input id="propShare" type="number" min="0" max="100" value="10" /></label>
-                <label class="field" id="propRentField" hidden><span>固定月租 ($)</span><input id="propRent" type="number" min="0" value="0" /></label>
+                <label class="field" id="propRentField" hidden><span>固定月租 ($)</span><input id="propRent" type="number" min="0" value="200" /></label>
                 <label class="field"><span>预计上线时间</span><input id="propLaunch" placeholder="例如: 双方确认后 2-4 周" /></label>
                 <label class="field full"><span>商品组合 / Planogram</span><textarea id="propPlanogram" rows="3">饮料、瓶装水、健康零食、方便食品及日常必需品。具体 SKU 根据物业人群和销售反馈调整。</textarea></label>
                 <label class="field full"><span>补货与维护安排（04 · 日常运营与服务）</span><textarea id="propService" rows="5">运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。

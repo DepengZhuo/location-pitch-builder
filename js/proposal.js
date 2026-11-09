@@ -80,7 +80,7 @@ export function applyProposalForm(data = {}) {
     quantity: 1,
     deal: 'revenueShare',
     share: 10,
-    rent: 0,
+    rent: 200,
     launch: d.launch,
     planogram: d.planogram,
     service: d.service,
@@ -89,7 +89,12 @@ export function applyProposalForm(data = {}) {
   };
   const legacyContact = data.contact || '';
   const [legacyName, ...emailParts] = legacyContact.split(/\s*[/|]\s*/);
-  const dealValue = data.deal === 'fixedRent' || String(data.deal || '').includes('固定') ? 'fixedRent' : 'revenueShare';
+  let dealValue = 'revenueShare';
+  if (data.deal === 'amenity' || String(data.deal || '').includes('便民')) {
+    dealValue = 'amenity';
+  } else if (data.deal === 'fixedRent' || String(data.deal || '').includes('固定')) {
+    dealValue = 'fixedRent';
+  }
   const cleanedNotes = data.notes !== undefined ? cleanLegacyNotes(data.notes) : defaults.notes;
   const merged = {
     ...defaults,
@@ -130,16 +135,18 @@ export function applyProposalForm(data = {}) {
 }
 
 function updateDealFields() {
-  const fixed = el('propDeal')?.value === 'fixedRent';
-  if (el('propShareField')) el('propShareField').hidden = fixed;
-  if (el('propRentField')) el('propRentField').hidden = !fixed;
+  const mode = el('propDeal')?.value || 'revenueShare';
+  if (el('propShareField')) el('propShareField').hidden = mode !== 'revenueShare';
+  if (el('propRentField')) el('propRentField').hidden = mode !== 'fixedRent';
 }
 
 export function applyROIToProposal(roi) {
   if (!roi) return;
-  if (el('propDeal')) el('propDeal').value = roi.dealType || (roi.rent > 0 ? 'fixedRent' : 'revenueShare');
+  if (roi.location && el('propProperty')) el('propProperty').value = roi.location;
+  if (roi.venue && el('propVenue')) el('propVenue').value = roi.venue;
+  if (el('propDeal')) el('propDeal').value = roi.dealType || 'revenueShare';
   if (el('propShare')) el('propShare').value = roi.shareRate ?? 10;
-  if (el('propRent')) el('propRent').value = roi.rent ?? 0;
+  if (el('propRent')) el('propRent').value = roi.rent ?? 200;
   if (el('propNotes')) el('propNotes').value = cleanLegacyNotes(el('propNotes').value);
   updateDealFields();
 }
@@ -176,7 +183,14 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   const isEn = getLanguage() === 'en';
   const safe = key => escapeHTML(p[key] ? translateMultiline(p[key]) : t('待补充'));
   const sales = roiData ? money(roiData.monthlyRevenue) : t('待测算');
-  const landlord = roiData ? money(roiData.landlordIncome) : t('待测算');
+  let landlord = t('待测算');
+  if (p.deal === 'amenity') {
+    landlord = '$0';
+  } else if (p.deal === 'fixedRent') {
+    landlord = money(p.rent);
+  } else if (roiData) {
+    landlord = money((roiData.monthlyRevenue || 0) * (p.share / 100));
+  }
   const selectedDocs = (complianceDocs || []).filter(doc => (p.selectedDocs || []).includes(doc.id));
 
   const docsSection = selectedDocs.length
@@ -202,8 +216,19 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   const area = dimensions ? `${dimensions.squareFeet.toFixed(2)} sq ft` : t('待确认');
   const localImg = dimensions ? `./assets/images/${encodeURIComponent(p.machine)}_front%20view.webp` : '';
   const fallbackImg = dimensions ? `https://raw.githubusercontent.com/DepengZhuo/location-pitch-builder/main/assets/images/${encodeURIComponent(p.machine)}_front%20view.webp` : '';
-  const deal = p.deal === 'fixedRent' ? t(`固定月租 ${money(p.rent)}`) : t(`按销售额分成 ${p.share}%`);
-  const landlordDeal = p.deal === 'fixedRent' ? t(`固定月租 ${money(p.rent)}`) : t(`销售额分成 ${p.share}%`);
+
+  let deal = '';
+  let landlordDeal = '';
+  if (p.deal === 'fixedRent') {
+    deal = t(`固定月租 ${money(p.rent)}`);
+    landlordDeal = t(`固定月租 ${money(p.rent)}`);
+  } else if (p.deal === 'amenity') {
+    deal = t('纯便民配套（$0 月租）');
+    landlordDeal = t('纯便民配套投放');
+  } else {
+    deal = t(`按销售额分成 ${p.share}%`);
+    landlordDeal = t(`销售额分成 ${p.share}%`);
+  }
 
   const introParagraph = isEn
     ? `We propose deploying ${p.quantity || 1} ${escapeHTML(p.machine || 'smart vending')} unit(s) in a convenient common area at your property to provide 24/7 grab-and-go beverages, snacks, and daily essentials for residents, employees, and visitors. Exact placement, product mix, and unit count will be confirmed following a site walk-through.`

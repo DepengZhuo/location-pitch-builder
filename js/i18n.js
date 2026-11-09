@@ -1,6 +1,6 @@
 /* =========================================================
    中英文切换模块（i18n）
-   确保英文模式下全站（含点位评估新模块、表单默认/示例文案与右侧提案）100%纯英文，
+   确保英文模式下全站（含点位评估新模块、点位方收益测算新模块与商业提案）100%纯英文，
    中文模式下 100%纯中文。
    ========================================================= */
 export const PROPOSAL_DEFAULTS = {
@@ -71,6 +71,7 @@ const translations = {
   '评估一个新点位': 'Assess a Location',
   '分析场地条件和经营潜力': 'Review site conditions and business potential',
   '测算合作收益': 'Estimate Partner Earnings',
+  '计算物业分成和合作周期总收益': 'Calculate site partner share and term earnings',
   '计算物业分成和运营商收益': 'Estimate site partner and operator earnings',
   '生成商业提案': 'Create a Business Proposal',
   '为物业整理一份合作方案': 'Prepare a proposal for a property',
@@ -199,37 +200,48 @@ const translations = {
   '下一步：点位收益测算': 'Next: Site Partner Earnings',
   '下一步：点位方收益测算 →': 'Next: Site Partner Earnings →',
   '下一步：点位方收益测算': 'Next: Site Partner Earnings',
-  '恢复示例参数': 'Restore Example Inputs',
+  '恢复示例参数': 'Reset example',
   '保存测算': 'Save Estimate',
-  '先选择固定月租或按销售额分成，再查看点位方收益与运营商回本周期估算。': 'Choose fixed monthly rent or a percentage of sales, then review site partner earnings and operator payback estimates.',
-  '经营参数': 'Operating Assumptions',
-  '根据点位和运营方案输入预估数据；初始数字仅为示例': 'Enter estimates for this location. Starting values are examples.',
-  '机器 / 项目初始投入 ($)': 'Machine / Project Initial Investment ($)',
-  '日均销售商品件数 (件)': 'Items Sold per Day',
-  '平均商品售价 ($ / 件)': 'Average Price per Item ($)',
-  '每月营业天数': 'Operating Days per Month',
-  '商品成本率 (%)': 'Product Cost Rate (%)',
+  '估算物业方在合作期内的潜在收益，并明确分成比例、固定月租或纯便民配套的合作方案。': 'Estimate what the property could earn and choose the right partnership setup for the location.',
+  '点位与销售预估': 'Location & Sales Assumptions',
+  '使用合理预估即可，现阶段无需精确历史销售数据。': 'Use a reasonable estimate. Exact sales data is not required at this stage.',
+  '物业收益测算': 'Property earnings estimate',
+  '预估日均销售件数 (件)': 'Estimated Items Sold / Day',
+  '平均商品售价 ($ / 件)': 'Average Selling Price / Item',
+  '每月营业天数': 'Operating Days / Month',
+  '合作期限 (月)': 'Partnership Term (Months)',
+  '直接输入月份数，如 30': 'Enter months directly, e.g. 30',
+  '预计月销售额 = 日均销售件数 × 平均商品售价 × 每月营业天数。该估算仅用于计算点位方的潜在合作收益。': 'Estimated monthly sales = daily items sold × average selling price × operating days. The estimate is used only to calculate the property’s potential earnings.',
+  '合作模式设置': 'Partnership Setup',
+  '选择物业方从本次智能零售柜投放中获得收益或价值的方式。': 'Choose how the property will benefit financially from the placement.',
+  '三选一': 'Choose one',
   '合作方式': 'Partnership Model',
-  '按销售额分成': 'Percentage of Sales',
+  '按销售额分成': 'Revenue Share',
+  '物业按约定的月销售额比例获得分成。': 'Property receives an agreed percentage of sales.',
   '固定月租': 'Fixed Monthly Rent',
+  '运营商按月向物业支付固定的场地租金。': 'Operator pays an agreed monthly placement fee.',
+  '纯便民配套': 'Amenity-Only',
+  '无直接租金；设备作为场地便民福利配套提供。': 'No direct payment; the cooler is provided as a site amenity.',
+  '点位方销售额分成比例 (%)': 'Property Revenue Share (%)',
   '点位方销售额分成 (%)': 'Site Partner Share of Sales (%)',
-  '固定场地租金 (月 / $)': 'Fixed Monthly Site Rent ($)',
-  '每月运营人工成本 ($)': 'Monthly Labor Cost ($)',
-  '每月补货 / 交通成本 ($)': 'Monthly Restocking / Travel Cost ($)',
-  '每月支付 / 网络成本 ($)': 'Monthly Payment / Network Cost ($)',
-  '其他月运营成本 ($)': 'Other Monthly Operating Costs ($)',
-  '预计合作测算期 (月)': 'Estimated Partnership Period (Months)',
-  '月销售额 = 日均销量 × 平均售价 × 营业天数。运营商月净收益 = 商品毛利 - 点位分成或固定租金 - 人工 - 补货交通 - 支付网络 - 其他运营成本；每项成本都会计入计算。未计入税费、折旧、融资成本及库存损耗。': 'Monthly sales = items sold per day × average price × operating days. Operator net earnings = gross profit - site partner share or rent - labor - restocking and travel - payment and network costs - other operating costs. Taxes, depreciation, financing, and inventory loss are excluded.',
-  '物业预计每月可获得': 'Estimated Monthly Site Partner Earnings',
-  '经营测算结果': 'Estimate Summary',
-  '根据当前输入实时更新': 'Updates as you change the inputs',
-  '实时计算': 'Live',
-  '测算周期内点位方累计收入': 'Cumulative Site Partner Earnings',
-  '估算累计值 · 美元': 'Estimated total · USD',
+  '示例：按双方约定销售额基数的 10% 计算分成。': 'Example: 10% of the agreed sales base.',
+  '固定场地月租金 ($ / 月)': 'Fixed Monthly Rent ($)',
+  '输入与物业方约定的每月固定场地费用。': 'Enter the monthly placement fee agreed with the property.',
+  '智能零售柜作为场地便民福利设施免费投放，直接月度分成或租金为 $0；核心价值在于为住户、员工或访客提供 24/7 即时便利服务，无需物业投入人力物力。': 'The Smart Cooler is provided as a site amenity. Direct monthly payment is $0; the value is convenience and service rather than revenue share or rent.',
+  '请在书面合作协议中明确销售额核算基数（例如总销售额，或扣除退款、折扣及适用税费后的净销售额）。本测算工具不决定具体合同条款定义。': 'Define the sales basis in the written agreement (for example, gross sales or sales after refunds, discounts and applicable taxes). This calculator does not determine the contract definition.',
+  '物业预计每月可获得': 'Estimated Monthly Partner Earnings',
+  '预计年收益': 'Estimated Annual Earnings',
+  '合作期累计收益': 'Partnership-Term Earnings',
+  '预计月销售额': 'Estimated Monthly Sales',
+  '合作模式': 'Partnership Model',
+  '合作期限': 'Partnership Term',
+  '基于约定的固定月租金': 'Based on agreed fixed monthly rent',
+  '纯便民配套投放（无直接货币分成）': 'No direct monetary payment',
+  '纯便民配套投放': 'Amenity-Only Placement',
+  '纯便民配套（$0 月租）': 'Amenity-Only ($0 Monthly Fee)',
+  '以上为基于输入参数的测算示例，不构成销售额或收益保证。实际结果取决于现场销量、营业天数及书面合作条款。': 'Illustrative estimate, not a sales or earnings guarantee. Actual results depend on sales, operating days and the written partnership terms.',
   '下一步：创建商业提案 →': 'Next: Create a Business Proposal →',
   '下一步：创建商业提案': 'Next: Create a Business Proposal',
-  '测算说明': 'Estimate Details',
-  '帮助物业理解收益来源': 'See how the earnings estimate is calculated',
   '填写合作信息，生成可预览、可导出为独立网页的物业合作提案。': 'Enter partnership details to preview and export a standalone proposal webpage.',
   '载入示例': 'Load Example',
   '导出提案网页 ↗': 'Export Proposal ↗',
@@ -290,18 +302,11 @@ const translations = {
   '已填写提案内容': 'Proposals with saved details',
   '暂无项目数据': 'No projects yet',
   '暂无相关项目': 'No matching projects',
-  '预计月销售额': 'Estimated Monthly Sales',
-  '日均销量 × 平均售价 × 营业天数': 'Daily items × average price × operating days',
-  '预计月商品毛利': 'Estimated Monthly Gross Profit',
   '点位方预计月收入': 'Estimated Monthly Site Partner Earnings',
   '点位方预计月收益': 'Estimated Monthly Site Partner Earnings',
-  '运营商预计月净收益': 'Estimated Monthly Operator Net Earnings',
-  '运营商预计回本周期': 'Estimated Operator Payback Period',
-  '当前假设下无法回本': 'No payback under current assumptions',
-  '初始投入 ÷ 运营商月净收益': 'Initial investment ÷ monthly operator net earnings',
-  '运营月净收益 × 测算期 - 初始投入': 'Monthly operator net earnings × period - initial investment',
   '公寓 / 多户住宅': 'Apartments / Multifamily',
   '办公楼': 'Office Building',
+  '工厂 / 仓储': 'Factory / Warehouse',
   '健身房': 'Gym / Fitness Center',
   '酒店': 'Hotel / Hospitality',
   '学校 / 教育机构': 'School / Education',
@@ -313,6 +318,7 @@ const translations = {
   '客户 / 朋友推荐': 'Customer / Friend Referral',
   '小办公室：Office Manager；大型办公室：Facilities / Workplace Manager；多租户办公楼：Property Manager 或前台。先确认是否存在企业级统一供应商协议。': 'Small office: Office Manager; Large office: Facilities / Workplace Manager; Multi-tenant building: Property Manager or front desk. Confirm whether an enterprise vendor agreement exists.',
   '优先联系 Property Manager（物业经理），必要时进一步确认区域 / Corporate Property Manager 是否拥有最终审批权。': 'Contact the Property Manager first, and confirm whether a Regional or Corporate Property Manager holds final approval authority.',
+  '优先联系 Plant Manager（厂长）、HR 负责人或 Facilities / EHS 部门，重点沟通夜班/倒班员工的即时餐饮福利与免人工管理优势。': 'Contact the Plant Manager, HR lead, or Facilities / EHS manager; highlight 24/7 refreshment access across shifts with zero staffing burden.',
   '独立健身房：Owner 或 General Manager；连锁 / 加盟店：General Manager，并先核实是否已有全国性合作协议。': 'Independent gym: Owner or General Manager; Chain / franchise: General Manager, and verify whether a national vendor contract is already in place.',
   '优先联系 General Manager、Director of Operations 或 Facilities Manager；大型连锁酒店需确认品牌或集团采购要求。': 'Contact the General Manager, Director of Operations, or Facilities Manager; for hotel chains, verify brand or corporate procurement standards.',
   '优先联系 Facilities Manager、学校行政或采购负责人；公立机构通常还需确认招标和供应商准入流程。': 'Contact the Facilities Manager, administration, or purchasing lead; public institutions usually require RFP and vendor onboarding steps.',
@@ -373,6 +379,7 @@ const translations = {
   '例如: Tampa, FL': 'e.g. Tampa, FL',
   '例如: 300': 'e.g. 300',
   '例如: 住户、员工、访客': 'e.g. Residents, employees, visitors',
+  '例如: 30': 'e.g. 30',
   '例如: 24': 'e.g. 24',
   '例如: Property Manager': 'e.g. Property Manager',
   '例如: 大堂有休息区，住户刷卡进入，附近没有便利店......': 'e.g. Lobby lounge area, keycard access for residents, no convenience store nearby...',
@@ -421,11 +428,13 @@ const translations = {
   '主导航': 'Main Navigation',
   '请先填写点位名称。': 'Please enter a location name first.',
   '点位评估已保存到本地项目。': 'Location assessment saved to local project.',
+  '点位方收益测算已保存到当前项目。': 'Site partner earnings estimate saved to current project.',
   'ROI 测算已保存到当前项目。': 'Earnings estimate saved to current project.',
   '提案信息已保存到当前项目。': 'Proposal details saved to current project.',
   '请填写项目名称。': 'Please enter a project name.',
   '项目已创建，开始填写点位信息。': 'Project created. Start entering location details.',
   '点位评估参数已重置。': 'Assessment ratings and readiness checks reset.',
+  '收益测算参数已恢复为示例值。': 'Partner earnings assumptions restored to example values.',
   'ROI 参数已恢复为示例值。': 'Assumptions restored to example values.',
   '建议先填写物业 / 点位名称，再导出提案。': 'Please enter the property or location name before exporting.',
   '已导出独立提案网页 HTML。': 'Standalone proposal HTML exported.',
@@ -497,8 +506,11 @@ export function translate(value) {
     return `${n} item${n > 1 ? 's' : ''} still need to be checked before installation.`;
   }
 
-  match = key.match(/^年预计 (.+) · (\d+) 个月累计 (.+)$/);
-  if (match) return `Annual est. ${match[1]} · ${match[2]}-mo total ${match[3]}`;
+  match = key.match(/^基于 (\d+(?:\.\d+)?)% 销售额分成$/);
+  if (match) return `Based on ${match[1]}% revenue share`;
+
+  match = key.match(/^(\d+(?:\.\d+)?)% 销售额分成$/);
+  if (match) return `${match[1]}% Revenue Share`;
 
   match = key.match(/^已打开项目：(.+)$/);
   if (match) return `Opened project: ${match[1]}`;
@@ -509,20 +521,8 @@ export function translate(value) {
   match = key.match(/^(\d+) 个项目$/);
   if (match) return `${match[1]} projects`;
 
-  match = key.match(/^(\d+)\s*个月$/);
-  if (match) return `${match[1]} mos`;
-
-  match = key.match(/^(\d+(?:\.\d+)?) 个月$/);
-  if (match) return `${match[1]} mos`;
-
-  match = key.match(/^(\d+) 个月运营商净收益$/);
-  if (match) return `${match[1]}-Mo Operator Net Earnings`;
-
-  match = key.match(/^商品成本率 (\d+(?:\.\d+)?)%$/);
-  if (match) return `Product cost rate ${match[1]}%`;
-
-  match = key.match(/^商品毛利 - 点位方收入 - 运营成本 (.+)$/);
-  if (match) return `Gross profit - partner share - opex ${match[1]}`;
+  match = key.match(/^(\d+(?:\.\d+)?)\s*个月$/);
+  if (match) return `${match[1]} months`;
 
   match = key.match(/^固定月租 (.+)$/);
   if (match) return `Fixed monthly rent ${match[1]}`;
@@ -531,7 +531,7 @@ export function translate(value) {
   if (match) return `${match[1]}% of monthly sales`;
 
   match = key.match(/^销售额分成 (\d+(?:\.\d+)?)%$/);
-  if (match) return `${match[1]}% revenue share`;
+  if (match) return `${match[1]}% Revenue Share`;
 
   match = key.match(/^(\d+) 人$/);
   if (match) return `${match[1]} people`;

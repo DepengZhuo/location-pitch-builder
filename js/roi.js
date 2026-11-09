@@ -1,202 +1,166 @@
 /* =========================================================
-   点位方收益测算模型：固定月租或销售额分成（二选一）
+   点位方收益测算模型（参考 partner-benefits-earnings-v4 重构）：
+   - 01 Location & Sales Assumptions（点位名称、场地类型、日均件数、均价、营业天数、数字月份合作期限）
+   - 02 Partnership Setup（按销售额分成 / 固定月租 / 纯便民配套 三选一）
+   - Estimated Monthly Partner Earnings（右侧实时汇总卡片）
    ========================================================= */
 import { money } from './data.js';
-import { getLanguage, t } from './i18n.js';
+import { t } from './i18n.js';
 
 const ids = [
-  'roiLocation', 'roiInvestment', 'roiOrders', 'roiTicket', 'roiDays',
-  'roiCogs', 'roiDealType', 'roiShare', 'roiRent', 'roiLabor',
-  'roiRestock', 'roiServiceCost', 'roiOpex', 'roiPeriod'
+  'roiLocation', 'roiVenue', 'roiOrders', 'roiTicket',
+  'roiDays', 'roiPeriod', 'roiDealType', 'roiShare', 'roiRent'
 ];
 const read = id => document.getElementById(id);
 const val = id => Number(read(id)?.value || 0);
 
 export function readROIForm() {
-  const labor = val('roiLabor');
-  const restock = val('roiRestock');
-  const serviceCost = val('roiServiceCost');
-  const other = val('roiOpex');
+  const dealType = read('roiDealType')?.value || 'revenueShare';
+  const periodRaw = val('roiPeriod');
   return {
     location: read('roiLocation')?.value.trim() || '',
-    investment: val('roiInvestment'),
-    orders: val('roiOrders'),
-    ticket: val('roiTicket'),
-    days: val('roiDays'),
-    cogsRate: val('roiCogs'),
-    dealType: read('roiDealType')?.value || 'revenueShare',
-    shareRate: val('roiShare'),
-    rent: val('roiRent'),
-    labor,
-    restock,
-    serviceCost,
-    other,
-    opex: labor + restock + serviceCost + other,
-    period: val('roiPeriod') || 36
+    venue: read('roiVenue')?.value || '公寓 / 多户住宅',
+    orders: Math.max(0, val('roiOrders')),
+    ticket: Math.max(0, val('roiTicket')),
+    days: Math.min(31, Math.max(0, val('roiDays'))),
+    period: periodRaw > 0 ? periodRaw : 30,
+    dealType,
+    shareRate: Math.min(100, Math.max(0, val('roiShare'))),
+    rent: Math.max(0, val('roiRent'))
   };
 }
 
 export function applyROIForm(data = {}) {
-  const legacy = data.opex !== undefined && data.labor === undefined && data.restock === undefined && data.serviceCost === undefined && data.other === undefined;
   const defaults = {
-    location: '',
-    investment: 5500,
-    orders: 50,
-    ticket: 5.5,
+    location: 'Sunrise Apartments',
+    venue: '公寓 / 多户住宅',
+    orders: 55,
+    ticket: 5.00,
     days: 30,
-    cogsRate: 45,
+    period: 30,
     dealType: 'revenueShare',
     shareRate: 10,
-    rent: 0,
-    labor: 0,
-    restock: 150,
-    serviceCost: 50,
-    other: 50,
-    period: 36
+    rent: 200
   };
-  const inferredDeal = data.dealType || (Number(data.rent) > 0 ? 'fixedRent' : 'revenueShare');
-  const merged = { ...defaults, ...data, dealType: inferredDeal };
-  if (legacy) {
-    merged.labor = 0;
-    merged.restock = 0;
-    merged.serviceCost = 0;
-    merged.other = Number(data.opex) || 0;
+  let inferredDeal = data.dealType;
+  if (!['revenueShare', 'fixedRent', 'amenity'].includes(inferredDeal)) {
+    inferredDeal = Number(data.rent) > 0 ? 'fixedRent' : 'revenueShare';
   }
+  const merged = { ...defaults, ...data, dealType: inferredDeal };
   const map = {
     location: 'roiLocation',
-    investment: 'roiInvestment',
+    venue: 'roiVenue',
     orders: 'roiOrders',
     ticket: 'roiTicket',
     days: 'roiDays',
-    cogsRate: 'roiCogs',
+    period: 'roiPeriod',
     dealType: 'roiDealType',
     shareRate: 'roiShare',
-    rent: 'roiRent',
-    labor: 'roiLabor',
-    restock: 'roiRestock',
-    serviceCost: 'roiServiceCost',
-    other: 'roiOpex',
-    period: 'roiPeriod'
+    rent: 'roiRent'
   };
   Object.entries(map).forEach(([key, id]) => {
-    if (read(id)) read(id).value = merged[key] ?? defaults[key];
+    const el = read(id);
+    if (!el) return;
+    if (key === 'ticket') {
+      el.value = Number(merged.ticket ?? defaults.ticket).toFixed(2);
+    } else {
+      el.value = merged[key] ?? defaults[key];
+    }
   });
-  const periodLabel = document.getElementById('roiPeriodLabel');
-  if (periodLabel) periodLabel.textContent = t(`${merged.period} 个月`);
-  updateDealFields();
+  syncModeUI(merged.dealType);
 }
 
-function updateDealFields() {
-  const fixed = read('roiDealType')?.value === 'fixedRent';
-  if (read('roiShareField')) read('roiShareField').hidden = fixed;
-  if (read('roiRentField')) read('roiRentField').hidden = !fixed;
+function syncModeUI(mode) {
+  const dealInput = read('roiDealType');
+  if (dealInput) dealInput.value = mode;
+
+  document.querySelectorAll('#roiModeGrid .roi-mode-card').forEach(card => {
+    const active = card.dataset.mode === mode;
+    card.classList.toggle('active', active);
+    card.setAttribute('aria-checked', String(active));
+  });
+
+  if (read('roiShareField')) read('roiShareField').hidden = mode !== 'revenueShare';
+  if (read('roiRentField')) read('roiRentField').hidden = mode !== 'fixedRent';
+  if (read('roiAmenityField')) read('roiAmenityField').hidden = mode !== 'amenity';
 }
 
 export function calculateROI(input = readROIForm()) {
   const monthlyRevenue = input.orders * input.ticket * input.days;
-  const cogs = monthlyRevenue * input.cogsRate / 100;
-  const grossProfit = monthlyRevenue - cogs;
-  const propertyCommission = input.dealType === 'revenueShare' ? monthlyRevenue * input.shareRate / 100 : 0;
-  const landlordIncome = input.dealType === 'fixedRent' ? input.rent : propertyCommission;
-  const operatorProfit = grossProfit - landlordIncome - input.opex;
-  const paybackMonths = operatorProfit > 0 ? input.investment / operatorProfit : null;
-  const operatorPeriodNet = operatorProfit * input.period - input.investment;
+  let landlordIncome = 0;
+  if (input.dealType === 'revenueShare') {
+    landlordIncome = monthlyRevenue * (input.shareRate / 100);
+  } else if (input.dealType === 'fixedRent') {
+    landlordIncome = input.rent;
+  } else {
+    landlordIncome = 0;
+  }
+  const landlordAnnualIncome = landlordIncome * 12;
   const landlordPeriodIncome = landlordIncome * input.period;
   return {
     ...input,
     monthlyRevenue,
-    cogs,
-    grossProfit,
-    propertyCommission,
     landlordIncome,
-    operatorProfit,
-    paybackMonths,
-    operatorPeriodNet,
+    landlordAnnualIncome,
     landlordPeriodIncome
   };
 }
 
 export function renderROI() {
   const input = readROIForm();
+  syncModeUI(input.dealType);
   const result = calculateROI(input);
-  const isEn = getLanguage() === 'en';
-  const periodLabel = document.getElementById('roiPeriodLabel');
-  if (periodLabel) periodLabel.textContent = t(`${input.period} 个月`);
-  updateDealFields();
 
-  const monthlyEl = document.getElementById('landlordMonthly');
+  const monthlyEl = read('landlordMonthly');
   if (monthlyEl) monthlyEl.textContent = money(result.landlordIncome);
-  const annualEl = document.getElementById('landlordAnnual');
-  if (annualEl) {
-    annualEl.textContent = t(`年预计 ${money(result.landlordIncome * 12)} · ${input.period} 个月累计 ${money(result.landlordPeriodIncome)}`);
+
+  const annualEl = read('landlordAnnual');
+  if (annualEl) annualEl.textContent = money(result.landlordAnnualIncome);
+
+  const termTotalEl = read('landlordTermTotal');
+  if (termTotalEl) termTotalEl.textContent = money(result.landlordPeriodIncome);
+
+  const salesEl = read('roiMonthlySales');
+  if (salesEl) salesEl.textContent = money(result.monthlyRevenue);
+
+  const typeBasisEl = read('roiEarningsType');
+  const modelLabelEl = read('roiModelLabel');
+  if (input.dealType === 'revenueShare') {
+    if (typeBasisEl) typeBasisEl.textContent = t(`基于 ${input.shareRate}% 销售额分成`);
+    if (modelLabelEl) modelLabelEl.textContent = t(`${input.shareRate}% 销售额分成`);
+  } else if (input.dealType === 'fixedRent') {
+    if (typeBasisEl) typeBasisEl.textContent = t('基于约定的固定月租金');
+    if (modelLabelEl) modelLabelEl.textContent = t(`固定月租 ${money(input.rent)}`);
+  } else {
+    if (typeBasisEl) typeBasisEl.textContent = t('纯便民配套投放（无直接货币分成）');
+    if (modelLabelEl) modelLabelEl.textContent = t('纯便民配套投放');
   }
 
-  const dealText = input.dealType === 'fixedRent'
-    ? t(`固定月租 ${money(input.rent)}`)
-    : t(`销售额分成 ${input.shareRate}%`);
+  const termLabelEl = read('roiTermLabel');
+  if (termLabelEl) termLabelEl.textContent = t(`${input.period} 个月`);
 
-  const metrics = [
-    [t('预计月销售额'), money(result.monthlyRevenue), t('日均销量 × 平均售价 × 营业天数')],
-    [t('预计月商品毛利'), money(result.grossProfit), t(`商品成本率 ${input.cogsRate}%`)],
-    [t('点位方预计月收入'), money(result.landlordIncome), dealText],
-    [t('运营商预计月净收益'), money(result.operatorProfit), t(`商品毛利 - 点位方收入 - 运营成本 ${money(input.opex)}`)],
-    [t('运营商预计回本周期'), result.paybackMonths ? t(`${result.paybackMonths.toFixed(1)} 个月`) : t('当前假设下无法回本'), t('初始投入 ÷ 运营商月净收益')],
-    [t(`${input.period} 个月运营商净收益`), money(result.operatorPeriodNet), t('运营月净收益 × 测算期 - 初始投入')]
-  ];
-
-  const gridEl = document.getElementById('roiMetricGrid');
-  if (gridEl) {
-    gridEl.innerHTML = metrics.map(m => `<div class="metric-card"><span>${m[0]}</span><strong>${m[1]}</strong><small>${m[2]}</small></div>`).join('');
-  }
-
-  renderChart(result);
-
-  const narrativeEl = document.getElementById('roiNarrative');
-  if (narrativeEl) {
-    if (isEn) {
-      const expenseLines = [`Labor ${money(input.labor)}`, `Restocking/Travel ${money(input.restock)}`, `Payment/Network ${money(input.serviceCost)}`, `Other ${money(input.other)}`].join(' + ');
-      const formula = input.dealType === 'fixedRent' ? `Fixed rent ${money(input.rent)}` : `${money(result.monthlyRevenue)} monthly sales × ${input.shareRate}%`;
-      const paybackStr = result.paybackMonths ? `${result.paybackMonths.toFixed(1)} months` : 'no payback under current assumptions';
-      narrativeEl.innerHTML = `
-        <p class="narrative-item"><strong>1. Site Partner Earnings:</strong> Under <strong>${dealText}</strong>, the site partner receives an estimated <strong>${money(result.landlordIncome)}/mo</strong> (Formula: ${formula}).</p>
-        <p class="narrative-item"><strong>2. Operator Monthly Net:</strong> Gross profit <strong>${money(result.grossProfit)}</strong> minus partner share <strong>${money(result.landlordIncome)}</strong> and operating costs <strong>${money(input.opex)}</strong> (${expenseLines}) = <strong>${money(result.operatorProfit)}/mo</strong>.</p>
-        <p class="narrative-item"><strong>3. ${input.period}-Month Cumulative Summary:</strong> Cumulative site partner revenue is est. <strong>${money(result.landlordPeriodIncome)}</strong>; cumulative operator net profit after initial investment is est. <strong>${money(result.operatorPeriodNet)}</strong> (Est. payback: <strong>${paybackStr}</strong>).</p>
-        <p class="narrative-item"><strong>4. Modeling Note:</strong> Static projection based on input assumptions; excludes taxes, depreciation, financing costs, and inventory shrinkage.</p>
-      `;
-    } else {
-      const expenseLines = [`人工 ${money(input.labor)}`, `补货 / 交通 ${money(input.restock)}`, `支付 / 网络 ${money(input.serviceCost)}`, `其他 ${money(input.other)}`].join(' + ');
-      const formula = input.dealType === 'fixedRent' ? `固定月租 ${money(input.rent)}` : `${money(result.monthlyRevenue)} 月销售额 × ${input.shareRate}%`;
-      const paybackStr = result.paybackMonths ? `${result.paybackMonths.toFixed(1)} 个月` : '当前假设下无法回本';
-      narrativeEl.innerHTML = `
-        <p class="narrative-item"><strong>1. 点位方月度收益：</strong>当前采用<strong>${dealText}</strong>模式，点位方预计每月可获得 <strong>${money(result.landlordIncome)}</strong>（测算公式：${formula}）。</p>
-        <p class="narrative-item"><strong>2. 运营商月净收益：</strong>月商品毛利 <strong>${money(result.grossProfit)}</strong> － 点位方收入 <strong>${money(result.landlordIncome)}</strong> － 月运营成本 <strong>${money(input.opex)}</strong>（${expenseLines}）＝ <strong>${money(result.operatorProfit)}</strong>。</p>
-        <p class="narrative-item"><strong>3. ${input.period} 个月周期累计：</strong>合作期内点位方累计收入约 <strong>${money(result.landlordPeriodIncome)}</strong>；运营商扣除初始设备投入后的累计净收益约 <strong>${money(result.operatorPeriodNet)}</strong>（预计回本周期：<strong>${paybackStr}</strong>）。</p>
-        <p class="narrative-item"><strong>4. 测算口径说明：</strong>以上为基于输入假设的静态测算，未计入税费、折旧、融资成本及库存损耗。</p>
-      `;
-    }
-  }
   return result;
 }
 
-function renderChart(result) {
-  const chartEl = document.getElementById('roiChart');
-  if (!chartEl) return;
-  const buckets = 6;
-  const values = Array.from({ length: buckets }, (_, i) => result.landlordIncome * result.period * ((i + 1) / buckets));
-  const max = Math.max(1, ...values);
-  chartEl.innerHTML = values.map((value, i) => {
-    const isLast = i === buckets - 1;
-    const months = Math.round(result.period * (i + 1) / buckets);
-    return `
-      <div class="chart-bar-wrap ${isLast ? 'highlight' : ''}">
-        <span class="chart-bar-value">${money(value)}</span>
-        <div class="chart-bar ${isLast ? 'highlight' : ''}" style="height:${Math.max(6, value / max * 100)}%" title="${money(value)}"></div>
-        <small>${t(`${months}个月`)}</small>
-      </div>`;
-  }).join('');
-}
-
 export function bindROIInputs(onUpdate = () => {}) {
-  ids.forEach(id => read(id)?.addEventListener('input', () => { onUpdate(renderROI()); }));
-  read('roiDealType')?.addEventListener('change', () => { updateDealFields(); onUpdate(renderROI()); });
+  ids.forEach(id => {
+    const el = read(id);
+    if (!el) return;
+    el.addEventListener('input', () => onUpdate(renderROI()));
+    el.addEventListener('change', () => onUpdate(renderROI()));
+  });
+
+  document.querySelectorAll('#roiModeGrid .roi-mode-card').forEach(card => {
+    const activate = () => {
+      syncModeUI(card.dataset.mode);
+      onUpdate(renderROI());
+    };
+    card.addEventListener('click', activate);
+    card.addEventListener('keydown', event => {
+      if (event.key === 'Enter' || event.key === ' ') {
+        event.preventDefault();
+        activate();
+      }
+    });
+  });
 }
