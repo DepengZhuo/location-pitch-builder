@@ -7,36 +7,106 @@ export const PROPOSAL_DEFAULTS = {
   zh: {
     title: '智能零售柜点位合作提案',
     launch: '双方确认后 2-4 周',
-    planogram: '饮料、瓶装水、健康零食、方便食品及日常必需品。具体 SKU 根据物业人群和销售反馈调整。',
-    planogramExample: '瓶装水、运动饮料、碳酸饮料、健康零食、方便食品及日常必需品。根据住户画像和销售数据持续优化 SKU。',
-    service: `运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。
-- 商品补货与库存管理：由运营商负责，具体频率根据销售情况确定。
-- 设备维护与故障响应：双方确认服务时间、报修渠道及响应标准。
-- 现场运营协调：明确设备投放区域、营业时间、用电及网络安排。`,
-    confirmItems: `- 现场安装位置、尺寸、电源和网络条件。
-- 合作期限、分成基数、对账依据和付款日期。
-- 电费承担、保险与赔偿责任、访问权限和营业时间。
-- 合同终止、续租、独家经营及设备移除安排。`,
-    notes: '零场地改造成本：设备即插即用（仅需标准 110V 电源插座，内置 4G/LTE 无线通信模块，无需拉网线）；运营商承担 100% 设备投放、安装、日常补货、维保及 $2M 商业责任险费用；支持首期 90 天试运营评估与灵活退换机制。'
+    planogram: `• 饮料：瓶装水、气泡水、牛奶/植物奶、果汁、碳酸饮料、茶饮。
+• 食品：早餐面包、酸奶、方便食品、薯片、坚果、雪糕/冷冻食品（如使用冷冻机型）。
+• 日用品：纸巾、湿巾、洗衣凝珠、垃圾袋、牙刷牙膏、卫生用品、电池等应急生活用品。
+推荐重点：高频饮品 + 夜间零食 + 家庭应急日用品。`,
+    planogramExample: `• 饮料：瓶装水、气泡水、牛奶/植物奶、果汁、碳酸饮料、茶饮。
+• 食品：早餐面包、酸奶、方便食品、薯片、坚果、雪糕/冷冻食品（如使用冷冻机型）。
+• 日用品：纸巾、湿巾、洗衣凝珠、垃圾袋、牙刷牙膏、卫生用品、电池等应急生活用品。
+推荐重点：高频饮品 + 夜间零食 + 家庭应急日用品。`,
+    service: `运营商负责商品采购、定期补货、设备清洁及日常维护，并持续关注商品库存和设备运行状态。运营商与点位方协调现场进出及日常运营安排。
+点位方负责提供合适的设备安装区域、电源及合理的现场进出权限，以便运营商开展补货、清洁和维护工作。双方共同协调场地特殊要求，确保日常运营顺利进行。`,
+    warranty: `运营商负责关注设备异常提醒、协调故障排查及维修服务，并根据适用的设备质保条款，通过设备制造商协调质保申请及技术支持。运营商应维持适用的商业责任保险，并根据要求提供保险证明。
+点位方负责及时告知运营商现场发现的设备故障、损坏或异常情况，不得擅自移动、开启或拆卸设备。运营商负责协调后续处理，并及时向点位方同步相关服务安排。`,
+    confirmItems: `设备安装前，双方需进一步确认以下事项：
+- 最终设备摆放位置及安装区域。
+- 现场电源及网络条件。
+- 允许销售的商品类别及场地特殊限制。
+- 电费及其他相关场地费用的承担方式。
+- 销售分成比例或固定场地租金。
+- 设备安装时间、现场进出权限及运营时间。`,
+    notes: '双方商定的任何其他要求、场地特殊安排或特别条款均可在此处记录。最终合作安排以点位方与运营商双方达成的共同协议为准。'
   },
   en: {
     title: 'Smart Retail Amenity Partnership Proposal',
     launch: '2-4 weeks after approval',
-    planogram: 'Beverages, bottled water, healthy snacks, convenience foods, and daily essentials. Exact SKU mix is tailored to resident/visitor preferences and sales data.',
-    planogramExample: 'Bottled water, sports drinks, soft drinks, healthy snacks, grab-and-go meals, and daily essentials. Continuously optimized based on resident demographics and sales velocity.',
-    service: `The operator handles product sourcing, scheduled restocking, machine cleaning, and daily operations, with maintenance response tailored to site needs.
-- Restocking & inventory management: Handled by the operator with frequency adjusted to actual sales.
-- Equipment maintenance & support: Service hours, reporting channels, and response SLAs confirmed by both parties.
-- On-site coordination: Confirm placement area, operating hours, power outlet, and network connectivity.`,
-    confirmItems: `- Installation location, dimensions, power outlet, and network conditions.
-- Partnership term, revenue share basis, reconciliation statements, and payout schedule.
-- Utility responsibility, insurance and indemnification, building access, and operating hours.
-- Termination, renewal, exclusivity, and equipment removal provisions.`,
-    notes: 'Zero cost to property: Plug-and-play setup requiring only a standard 110V outlet with built-in 4G/LTE connectivity (no property Wi-Fi needed). Operator covers 100% of equipment, installation, restocking, maintenance, and $2M liability insurance, with a flexible 90-day pilot evaluation option.'
+    planogram: `• Beverages: Bottled water, sparkling water, milk/plant milk, juice, soft drinks, and tea.
+• Food: Breakfast pastries, yogurt, convenience meals, chips, nuts, and ice cream/frozen food (with freezer models).
+• Daily Essentials: Tissues, wet wipes, laundry pods, trash bags, toothbrushes/toothpaste, personal care, and batteries.
+Key Focus: High-frequency drinks + Late-night snacks + Household emergency essentials.`,
+    planogramExample: `• Beverages: Bottled water, sparkling water, milk/plant milk, juice, soft drinks, and tea.
+• Food: Breakfast pastries, yogurt, convenience meals, chips, nuts, and ice cream/frozen food (with freezer models).
+• Daily Essentials: Tissues, wet wipes, laundry pods, trash bags, toothbrushes/toothpaste, personal care, and batteries.
+Key Focus: High-frequency drinks + Late-night snacks + Household emergency essentials.`,
+    service: `The Operator is responsible for product sourcing, regular restocking, machine cleaning, and routine maintenance. The Operator will monitor inventory and machine status, and coordinate with the Property Owner regarding site access and operational arrangements.
+The Property Owner agrees to provide a suitable installation area, access to electricity, and reasonable site access for restocking, cleaning, and maintenance. Both parties will coordinate any site-specific requirements to ensure smooth daily operations.`,
+    warranty: `The Operator is responsible for monitoring machine alerts, coordinating troubleshooting and repair services, and handling warranty claims through the equipment manufacturer, subject to applicable warranty terms. The Operator will maintain applicable business liability insurance and provide proof of coverage upon request.
+The Property Owner agrees to notify the Operator of any equipment issues, damage, or unusual conditions observed on-site, and to avoid unauthorized relocation, opening, or tampering with the machine. The Operator will coordinate necessary follow-up actions and keep the Property Owner informed of relevant service arrangements.`,
+    confirmItems: `The following details will be confirmed by both parties before installation:
+- Final machine placement and installation area.
+- Power supply and network availability.
+- Approved product categories and any site-specific restrictions.
+- Responsibility for electricity and other applicable site costs.
+- Revenue-sharing percentage or rental arrangement.
+- Installation date, site access, and operating hours.`,
+    notes: 'Any additional requirements, site-specific arrangements, or special terms agreed upon by both parties may be documented here. Final arrangements will be subject to mutual agreement between the Property Owner and the Operator.'
   }
 };
 
 const translations = {
+  '左侧按模块填写或勾选内容，右侧实时生成提案预览；支持一键导出独立网页或打印保存 PDF。': 'Edit or toggle proposal modules on the left to update the live preview on the right; export as a webpage or print/save as PDF.',
+  '提案模块设置': 'Proposal Modules',
+  '01、02 为必选核心模块；03–08 可按需打勾启用或取消隐藏': 'Modules 01 & 02 are required core sections; check or uncheck 03–08 as needed.',
+  '合作方案概述': 'Partnership Overview',
+  '必选模块': 'REQUIRED',
+  '联系电话': 'Contact Phone',
+  '推荐设备与部署方案': 'Recommended Equipment & Site Rendering',
+  '+ 增加设备': '+ Add Equipment',
+  '统一供电要求': 'Unified Power Requirement',
+  '场地合作价值': 'Venue Value Proposition',
+  '恢复默认文案': 'Reset Default Copy',
+  '根据场地类型自动匹配 4 条核心价值（每行自动按圆点列表对齐，包含冒号“：”会自动加粗前缀）': 'Auto-populated 4 core value points by venue (each line formats as a bullet item; text before a colon ":" is automatically bolded)',
+  '商品组合与陈列建议': 'Product Mix & Merchandising',
+  '恢复默认组合': 'Reset Product Mix',
+  '根据场地类型自动带入推荐商品组合（每行自动按圆点列表对齐，包含冒号“：”会自动加粗类别名）': 'Auto-populated product mix by venue (each line formats as a bullet item; category names before ":" are automatically bolded)',
+  '物业合作与收益方式': 'Partnership Model & Property Earnings',
+  '日常运营与质保售后': 'Daily Operations & Warranty Support',
+  '省心托管': 'TURNKEY OPS',
+  '1. 日常运营说明': '1. Daily Operations',
+  '2. 质保与售后说明': '2. Warranty & After-Sales Support',
+  '合规资料': 'Compliance Documents',
+  '管理合规文件库 →': 'Manage Compliance Docs →',
+  '勾选本次提案需要附带的合规资料（在「合规文件中心」新增的文件会自动同步到此处）': 'Check compliance files to attach (new files added in Compliance Center sync here automatically)',
+  '后续确认事项与补充说明': 'Final Arrangements & Additional Notes',
+  '安装前确认': 'PRE-INSTALL',
+  '1. 后续确认事项': '1. Items to Be Confirmed',
+  '2. 补充说明': '2. Additional Notes',
+  '+ 添加自定义模块（09、10... 按需补充其他条款）': '+ Add Custom Section (09, 10... for additional terms)',
+  '提案预览会随勾选和输入自动实时更新': 'Live preview updates automatically as you toggle or edit modules',
+  '健身房与运动中心': 'Gym & Fitness Center',
+  '工厂与工业园区': 'Factory & Industrial Plant',
+  '机场与交通枢纽': 'Airport & Transit Hub',
+  '公寓与住宅社区': 'Apartment & Residential',
+  '建筑工地与施工现场': 'Construction Site',
+  '医院与医疗中心': 'Hospital & Medical Center',
+  '酒店与文旅住宿': 'Hotel & Hospitality',
+  '写字楼与企业园区': 'Office & Corporate Campus',
+  '学校与大学校园': 'School & University Campus',
+  '运营商负责商品采购、定期补货、设备清洁及日常维护，并持续关注商品库存和设备运行状态。运营商与点位方协调现场进出及日常运营安排。': 'The Operator is responsible for product sourcing, regular restocking, machine cleaning, and routine maintenance. The Operator will monitor inventory and machine status, and coordinate with the Property Owner regarding site access and operational arrangements.',
+  '点位方负责提供合适的设备安装区域、电源及合理的现场进出权限，以便运营商开展补货、清洁和维护工作。双方共同协调场地特殊要求，确保日常运营顺利进行。': 'The Property Owner agrees to provide a suitable installation area, access to electricity, and reasonable site access for restocking, cleaning, and maintenance. Both parties will coordinate any site-specific requirements to ensure smooth daily operations.',
+  '运营商负责关注设备异常提醒、协调故障排查及维修服务，并根据适用的设备质保条款，通过设备制造商协调质保申请及技术支持。运营商应维持适用的商业责任保险，并根据要求提供保险证明。': 'The Operator is responsible for monitoring machine alerts, coordinating troubleshooting and repair services, and handling warranty claims through the equipment manufacturer, subject to applicable warranty terms. The Operator will maintain applicable business liability insurance and provide proof of coverage upon request.',
+  '点位方负责及时告知运营商现场发现的设备故障、损坏或异常情况，不得擅自移动、开启或拆卸设备。运营商负责协调后续处理，并及时向点位方同步相关服务安排。': 'The Property Owner agrees to notify the Operator of any equipment issues, damage, or unusual conditions observed on-site, and to avoid unauthorized relocation, opening, or tampering with the machine. The Operator will coordinate necessary follow-up actions and keep the Property Owner informed of relevant service arrangements.',
+  '设备安装前，双方需进一步确认以下事项：': 'The following details will be confirmed by both parties before installation:',
+  '最终设备摆放位置及安装区域。': 'Final machine placement and installation area.',
+  '现场电源及网络条件。': 'Power supply and network availability.',
+  '允许销售的商品类别及场地特殊限制。': 'Approved product categories and any site-specific restrictions.',
+  '电费及其他相关场地费用的承担方式。': 'Responsibility for electricity and other applicable site costs.',
+  '销售分成比例或固定场地租金。': 'Revenue-sharing percentage or rental arrangement.',
+  '设备安装时间、现场进出权限及运营时间。': 'Installation date, site access, and operating hours.',
+  '双方商定的任何其他要求、场地特殊安排或特别条款均可在此处记录。最终合作安排以点位方与运营商双方达成的共同协议为准。': 'Any additional requirements, site-specific arrangements, or special terms agreed upon by both parties may be documented here. Final arrangements will be subject to mutual agreement between the Property Owner and the Operator.',
+  '优先联系机场/车站商业管理部（Concessions / Commercial Management）或 Facilities 部门，提前核实安检准入、合规资质与供电条件。': 'Contact Airport/Transit Concessions, Commercial Management, or Facilities to confirm security clearance, compliance credentials, and power access.',
+  '优先联系项目经理（Project Manager）、Site Superintendent 或安全/后勤负责人，重点沟通高温补水、工间补给及临时电源稳定保障。': 'Contact the Project Manager, Site Superintendent, or EHS lead; highlight heat-safety hydration, on-site crew refueling, and stable 110–120V power.',
   '工作空间': 'Workspace',
   '工作台': 'Dashboard',
   '点位评估': 'Location Assessment',

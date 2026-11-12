@@ -5,7 +5,7 @@
 import { DEFAULT_DOCS } from './data.js';
 
 const STORAGE_KEY = 'haha_location_pitch_builder_v1';
-const DEFAULT_SAFE_NOTES_ZH = '零场地改造成本：设备即插即用（仅需标准 110V 电源插座，内置 4G/LTE 无线通信模块，无需拉网线）；运营商承担 100% 设备投放、安装、日常补货、维保及 $2M 商业责任险费用；支持首期 90 天试运营评估与灵活退换机制。';
+const DEFAULT_SAFE_NOTES_ZH = '双方商定的任何其他要求、场地特殊安排或特别条款均可在此处记录。最终合作安排以点位方与运营商双方达成的共同协议为准。';
 
 const cloneDocs = () => JSON.parse(JSON.stringify(DEFAULT_DOCS));
 
@@ -15,7 +15,9 @@ export function cleanLegacyNotes(notes) {
   if (
     trimmed.includes('收益测算参考') ||
     trimmed.includes('非收益承诺') ||
-    trimmed.includes('需进一步确认设备摆放区域、电源及网络条件')
+    trimmed.includes('需进一步确认设备摆放区域、电源及网络条件') ||
+    trimmed.includes('零场地改造成本：设备即插即用') ||
+    trimmed.includes('Zero cost to property: Plug-and-play setup')
   ) {
     return DEFAULT_SAFE_NOTES_ZH;
   }

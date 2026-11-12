@@ -127,15 +127,15 @@
                   <label class="field"><span>城市 / 州</span><input id="locCity" placeholder="例如: Tampa, FL" /></label>
                   <label class="field"><span>场地类型</span>
                     <select id="locType">
-                      <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
-                      <option value="办公楼">办公楼</option>
-                      <option value="工厂 / 仓储">工厂 / 仓储</option>
-                      <option value="酒店">酒店</option>
-                      <option value="健身房">健身房</option>
-                      <option value="学校 / 教育机构">学校 / 教育机构</option>
-                      <option value="医院 / 医疗机构">医院 / 医疗机构</option>
-                      <option value="公共建筑">公共建筑</option>
-                      <option value="其他">其他</option>
+                      <option value="Gym & Fitness Center">健身房与运动中心</option>
+                      <option value="Factory & Industrial Plant">工厂与工业园区</option>
+                      <option value="Airport & Transit Hub">机场与交通枢纽</option>
+                      <option value="Apartment & Residential" selected>公寓与住宅社区</option>
+                      <option value="Construction Site">建筑工地与施工现场</option>
+                      <option value="Hospital & Medical Center">医院与医疗中心</option>
+                      <option value="Hotel & Hospitality">酒店与文旅住宿</option>
+                      <option value="Office & Corporate Campus">写字楼与企业园区</option>
+                      <option value="School & University Campus">学校与大学校园</option>
                     </select>
                   </label>
                   <label class="field"><span>预估日均人流量</span><input id="locTraffic" type="number" min="0" placeholder="例如: 300" /></label>
@@ -307,15 +307,15 @@
                   <label class="field">
                     <span>场地类型</span>
                     <select id="roiVenue">
-                      <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
-                      <option value="办公楼">办公楼</option>
-                      <option value="工厂 / 仓储">工厂 / 仓储</option>
-                      <option value="酒店">酒店</option>
-                      <option value="健身房">健身房</option>
-                      <option value="学校 / 教育机构">学校 / 教育机构</option>
-                      <option value="医院 / 医疗机构">医院 / 医疗机构</option>
-                      <option value="公共建筑">公共建筑</option>
-                      <option value="其他">其他</option>
+                      <option value="Gym & Fitness Center">健身房与运动中心</option>
+                      <option value="Factory & Industrial Plant">工厂与工业园区</option>
+                      <option value="Airport & Transit Hub">机场与交通枢纽</option>
+                      <option value="Apartment & Residential" selected>公寓与住宅社区</option>
+                      <option value="Construction Site">建筑工地与施工现场</option>
+                      <option value="Hospital & Medical Center">医院与医疗中心</option>
+                      <option value="Hotel & Hospitality">酒店与文旅住宿</option>
+                      <option value="Office & Corporate Campus">写字楼与企业园区</option>
+                      <option value="School & University Campus">学校与大学校园</option>
                     </select>
                   </label>
                   <label class="field">
@@ -445,13 +445,13 @@
           </div>
         </section>
 
-        <!-- 页面四：商业提案生成 -->
+                <!-- 页面四：商业提案生成 -->
         <section class="page" id="page-proposal">
           <div class="page-heading">
             <div>
               <div class="eyebrow">03 / AUTOMATED PROPOSAL GENERATOR</div>
               <h1>商业提案生成</h1>
-              <p>填写合作信息，生成可预览、可导出为独立网页的物业合作提案。</p>
+              <p>左侧按模块填写或勾选内容，右侧实时生成提案预览；支持一键导出独立网页或打印保存 PDF。</p>
             </div>
             <div class="heading-actions">
               <button class="button button-outline" id="loadProposalExample" type="button">载入示例</button>
@@ -460,78 +460,215 @@
           </div>
           <div class="proposal-layout">
             <div class="panel form-panel proposal-form">
-              <div class="panel-head"><div><h3>提案内容设置</h3><p>以下内容将自动同步到右侧提案预览</p></div><span class="step-tag">EDIT</span></div>
-              <div class="form-grid">
-                <label class="field full"><span>提案标题</span><input id="propTitle" value="智能零售柜点位合作提案" /></label>
-                <label class="field"><span>物业 / 点位名称</span><input id="propProperty" placeholder="物业名称" /></label>
-                <label class="field"><span>所在城市</span><input id="propCity" placeholder="City, State" /></label>
-                <label class="field"><span>运营商名称</span><input id="propOperator" placeholder="运营公司名称" /></label>
-                <label class="field"><span>联系人</span><input id="propContactName" placeholder="姓名" /></label>
-                <label class="field"><span>联系人邮箱</span><input id="propContactEmail" type="email" placeholder="name@example.com" /></label>
-                <label class="field"><span>场地类型</span>
-                  <select id="propVenue">
-                    <option value="公寓 / 多户住宅">公寓 / 多户住宅</option>
-                    <option value="办公楼">办公楼</option>
-                    <option value="工厂 / 仓储">工厂 / 仓储</option>
-                    <option value="酒店">酒店</option>
-                    <option value="健身房">健身房</option>
-                    <option value="学校 / 教育机构">学校 / 教育机构</option>
-                    <option value="医院 / 医疗机构">医院 / 医疗机构</option>
-                    <option value="公共建筑">公共建筑</option>
-                    <option value="其他">其他</option>
-                  </select>
-                </label>
-                <label class="field"><span>建议机器型号</span>
-                  <select id="propMachine">
-                    <option value="" disabled>请选择型号</option>
-                    <option value="Mini 360">Mini 360</option>
-                    <option value="Plus 440">Plus 440</option>
-                    <option value="Pro 542">Pro 542</option>
-                    <option value="Freezer 550">Freezer 550</option>
-                    <option value="Max 620S">Max 620S</option>
-                    <option value="Max 660">Max 660</option>
-                    <option value="Ultra 1200">Ultra 1200</option>
-                  </select>
-                </label>
-                <label class="field"><span>计划部署数量</span><input id="propQuantity" type="number" min="1" value="1" /></label>
-                <label class="field"><span>合作方式</span>
-                  <select id="propDeal">
-                    <option value="revenueShare">按销售额分成</option>
-                    <option value="fixedRent">固定月租</option>
-                    <option value="amenity">纯便民配套</option>
-                  </select>
-                </label>
-                <label class="field" id="propShareField"><span>点位方销售额分成 (%)</span><input id="propShare" type="number" min="0" max="100" value="10" /></label>
-                <label class="field" id="propRentField" hidden><span>固定月租 ($)</span><input id="propRent" type="number" min="0" value="200" /></label>
-                <label class="field"><span>预计上线时间</span><input id="propLaunch" placeholder="例如: 双方确认后 2-4 周" /></label>
-                <label class="field full"><span>商品组合 / Planogram</span><textarea id="propPlanogram" rows="3">饮料、瓶装水、健康零食、方便食品及日常必需品。具体 SKU 根据物业人群和销售反馈调整。</textarea></label>
-                <label class="field full"><span>补货与维护安排（04 · 日常运营与服务）</span><textarea id="propService" rows="5">运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。
-- 商品补货与库存管理：由运营商负责，具体频率根据销售情况确定。
-- 设备维护与故障响应：双方确认服务时间、报修渠道及响应标准。
-- 现场运营协调：明确设备投放区域、营业时间、用电及网络安排。</textarea></label>
-                <label class="field full"><span>后续确认事项（06 · 后续确认事项）</span><textarea id="propConfirmItems" rows="4">- 现场安装位置、尺寸、电源和网络条件。
-- 合作期限、分成基数、对账依据和付款日期。
-- 电费承担、保险与赔偿责任、访问权限和营业时间。
-- 合同终止、续租、独家经营及设备移除安排。</textarea></label>
-                <label class="field full"><span>其他合作说明（场地免责与试运营保障）</span><textarea id="propNotes" rows="3" placeholder="可填写零成本接入、保险保障、试运营机制等补充说明">零场地改造成本：设备即插即用（仅需标准 110V 电源插座，内置 4G/LTE 无线通信模块，无需拉网线）；运营商承担 100% 设备投放、安装、日常补货、维保及 $2M 商业责任险费用；支持首期 90 天试运营评估与灵活退换机制。</textarea></label>
-                <div class="field full">
-                  <span>提案附带的合规资料（仅勾选本次需要分享的文件）</span>
-                  <div class="doc-select-grid">
-                    <label><input type="checkbox" name="propDoc" value="nama"> NAMA 认证资料</label>
-                    <label><input type="checkbox" name="propDoc" value="ul-etl"> UL / ETL 电气安全资料</label>
-                    <label><input type="checkbox" name="propDoc" value="nsf"> NSF 食品卫生资料</label>
-                    <label><input type="checkbox" name="propDoc" value="fcc"> FCC 无线电合规资料</label>
-                    <label><input type="checkbox" name="propDoc" value="ada"> ADA 无障碍说明</label>
-                    <label><input type="checkbox" name="propDoc" value="coi"> COI 责任保险证明</label>
-                    <label><input type="checkbox" name="propDoc" value="w9"> W-9 税务表格</label>
+              <div class="panel-head">
+                <div>
+                  <h3>提案模块设置</h3>
+                  <p>01、02 为必选核心模块；03–08 可按需打勾启用或取消隐藏</p>
+                </div>
+                <span class="step-tag">MODULAR EDIT</span>
+              </div>
+
+              <!-- 模块 01：合作方案概述（必选） -->
+              <div class="prop-module-card" data-module-card="basic">
+                <div class="prop-module-head">
+                  <div class="prop-module-check is-locked">
+                    <span class="criterion-num">01</span>
+                    <strong>合作方案概述</strong>
                   </div>
-                  <small class="muted-mini">导出网页版提案时将附带已配置的文件下载链接；打印或保存 PDF 时将自动转换为正式的纸质资质核验清单。</small>
+                  <span class="step-tag">必选模块</span>
+                </div>
+                <div class="prop-module-body">
+                  <div class="form-grid">
+                    <label class="field full"><span>提案标题</span><input id="propTitle" value="智能零售柜点位合作提案" /></label>
+                    <label class="field"><span>物业 / 点位名称</span><input id="propProperty" placeholder="物业名称" /></label>
+                    <label class="field"><span>所在城市</span><input id="propCity" placeholder="City, State" /></label>
+                    <label class="field"><span>场地类型</span>
+                      <select id="propVenue">
+                        <option value="Gym & Fitness Center">健身房与运动中心</option>
+                        <option value="Factory & Industrial Plant">工厂与工业园区</option>
+                        <option value="Airport & Transit Hub">机场与交通枢纽</option>
+                        <option value="Apartment & Residential" selected>公寓与住宅社区</option>
+                        <option value="Construction Site">建筑工地与施工现场</option>
+                        <option value="Hospital & Medical Center">医院与医疗中心</option>
+                        <option value="Hotel & Hospitality">酒店与文旅住宿</option>
+                        <option value="Office & Corporate Campus">写字楼与企业园区</option>
+                        <option value="School & University Campus">学校与大学校园</option>
+                      </select>
+                    </label>
+                    <label class="field"><span>预计上线时间</span><input id="propLaunch" placeholder="例如: 双方确认后 2-4 周" /></label>
+                    <label class="field"><span>运营商名称</span><input id="propOperator" placeholder="运营公司名称" /></label>
+                    <label class="field"><span>联系人</span><input id="propContactName" placeholder="姓名" /></label>
+                    <label class="field"><span>联系人邮箱</span><input id="propContactEmail" type="email" placeholder="name@example.com" /></label>
+                    <label class="field"><span>联系电话</span><input id="propContactPhone" type="tel" placeholder="(555) 019-2834" /></label>
+                  </div>
                 </div>
               </div>
+
+              <!-- 模块 02：推荐设备与部署方案（必选） -->
+              <div class="prop-module-card" data-module-card="equipment">
+                <div class="prop-module-head">
+                  <div class="prop-module-check is-locked">
+                    <span class="criterion-num">02</span>
+                    <strong>推荐设备与部署方案</strong>
+                  </div>
+                  <button class="button button-outline button-small" id="addMachineRowBtn" type="button">+ 增加设备</button>
+                </div>
+                <div class="prop-module-body">
+                  <div class="power-unified-bar">
+                    <span>统一供电要求</span>
+                    <strong>110–120V / 60Hz</strong>
+                  </div>
+                  <div id="propMachinesList" class="prop-machines-list"></div>
+                  <div id="propLeftVisualPair" class="prop-visual-pair"></div>
+                </div>
+              </div>
+
+              <!-- 模块 03：场地合作价值（可选） -->
+              <div class="prop-module-card" data-module-card="venueValue">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_venueValue" data-mod-key="venueValue" checked />
+                    <span class="criterion-num">03</span>
+                    <strong>场地合作价值</strong>
+                  </label>
+                  <button class="text-button" id="resetVenueValueBtn" type="button">恢复默认文案</button>
+                </div>
+                <div class="prop-module-body">
+                  <label class="field full">
+                    <span>根据场地类型自动匹配 4 条核心价值（每行自动按圆点列表对齐，包含冒号“：”会自动加粗前缀）</span>
+                    <textarea id="propVenueValue" rows="5"></textarea>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 模块 04：商品组合与陈列建议（可选） -->
+              <div class="prop-module-card" data-module-card="planogram">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_planogram" data-mod-key="planogram" checked />
+                    <span class="criterion-num">04</span>
+                    <strong>商品组合与陈列建议</strong>
+                  </label>
+                  <button class="text-button" id="resetPlanogramBtn" type="button">恢复默认组合</button>
+                </div>
+                <div class="prop-module-body">
+                  <label class="field full">
+                    <span>根据场地类型自动匹配推荐商品组合（每行自动按圆点列表对齐，包含冒号“：”会自动加粗类别名）</span>
+                    <textarea id="propPlanogram" rows="5"></textarea>
+                  </label>
+                </div>
+              </div>
+
+              <!-- 模块 05：物业合作与收益方式（可选） -->
+              <div class="prop-module-card" data-module-card="deal">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_deal" data-mod-key="deal" checked />
+                    <span class="criterion-num">05</span>
+                    <strong>物业合作与收益方式</strong>
+                  </label>
+                  <button class="text-button" id="syncFromRoi" type="button">同步收益测算数据</button>
+                </div>
+                <div class="prop-module-body">
+                  <div class="form-grid">
+                    <label class="field"><span>合作方式</span>
+                      <select id="propDeal">
+                        <option value="revenueShare">按销售额分成</option>
+                        <option value="fixedRent">固定月租</option>
+                        <option value="amenity">纯便民配套</option>
+                      </select>
+                    </label>
+                    <label class="field" id="propShareField"><span>点位方销售额分成 (%)</span><input id="propShare" type="number" min="0" max="100" value="10" /></label>
+                    <label class="field" id="propRentField" hidden><span>固定月租 ($)</span><input id="propRent" type="number" min="0" value="200" /></label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 06：日常运营与质保售后（可选） -->
+              <div class="prop-module-card" data-module-card="operations">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_operations" data-mod-key="operations" checked />
+                    <span class="criterion-num">06</span>
+                    <strong>日常运营与质保售后</strong>
+                  </label>
+                  <span class="step-tag">省心托管</span>
+                </div>
+                <div class="prop-module-body">
+                  <div class="form-grid">
+                    <label class="field full">
+                      <span>1. 日常运营说明</span>
+                      <textarea id="propService" rows="4">运营商负责商品采购、定期补货、设备清洁及日常维护，并持续关注商品库存和设备运行状态。运营商与点位方协调现场进出及日常运营安排。
+点位方负责提供合适的设备安装区域、电源及合理的现场进出权限，以便运营商开展补货、清洁和维护工作。双方共同协调场地特殊要求，确保日常运营顺利进行。</textarea>
+                    </label>
+                    <label class="field full">
+                      <span>2. 质保与售后说明</span>
+                      <textarea id="propWarranty" rows="4">运营商负责关注设备异常提醒、协调故障排查及维修服务，并根据适用的设备质保条款，通过设备制造商协调质保申请及技术支持。运营商应维持适用的商业责任保险，并根据要求提供保险证明。
+点位方负责及时告知运营商现场发现的设备故障、损坏或异常情况，不得擅自移动、开启或拆卸设备。运营商负责协调后续处理，并及时向点位方同步相关服务安排。</textarea>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 07：合规资料（可选） -->
+              <div class="prop-module-card" data-module-card="compliance">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_compliance" data-mod-key="compliance" checked />
+                    <span class="criterion-num">07</span>
+                    <strong>合规资料</strong>
+                  </label>
+                  <button class="text-button" type="button" data-goto="compliance">管理合规文件库 →</button>
+                </div>
+                <div class="prop-module-body">
+                  <div class="field full">
+                    <span>勾选本次提案需要附带的合规资料（在「合规文件中心」新增的文件会自动同步到此处）</span>
+                    <div class="doc-select-grid" id="propDocSelectGrid"></div>
+                    <small class="muted-mini">导出网页版提案时将附带已配置的文件下载链接；打印或保存 PDF 时将自动转换为正式的纸质资质核验清单。</small>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 模块 08：后续确认事项与补充说明（可选） -->
+              <div class="prop-module-card" data-module-card="finalNotes">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_finalNotes" data-mod-key="finalNotes" checked />
+                    <span class="criterion-num">08</span>
+                    <strong>后续确认事项与补充说明</strong>
+                  </label>
+                  <span class="step-tag">安装前确认</span>
+                </div>
+                <div class="prop-module-body">
+                  <div class="form-grid">
+                    <label class="field full">
+                      <span>1. 后续确认事项</span>
+                      <textarea id="propConfirmItems" rows="6">设备安装前，双方需进一步确认以下事项：
+- 最终设备摆放位置及安装区域。
+- 现场电源及网络条件。
+- 允许销售的商品类别及场地特殊限制。
+- 电费及其他相关场地费用的承担方式。
+- 销售分成比例或固定场地租金。
+- 设备安装时间、现场进出权限及运营时间。</textarea>
+                    </label>
+                    <label class="field full">
+                      <span>2. 补充说明</span>
+                      <textarea id="propNotes" rows="3">双方商定的任何其他要求、场地特殊安排或特别条款均可在此处记录。最终合作安排以点位方与运营商双方达成的共同协议为准。</textarea>
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 自定义模块容器 (09, 10...) -->
+              <div id="propCustomModulesList" class="prop-custom-modules-list"></div>
+
+              <button class="button button-outline button-wide" id="addCustomModuleBtn" type="button" style="border-style:dashed;margin-top:6px;">
+                + 添加自定义模块（09、10... 按需补充其他条款）
+              </button>
+
               <div class="form-actions">
-                <button class="button button-outline" id="syncFromRoi" type="button">同步收益测算数据</button>
                 <button class="button button-dark" id="saveProposal" type="button">保存到当前项目</button>
-                <span class="muted-mini">提案预览会随输入自动更新</span>
+                <span class="muted-mini">提案预览会随勾选和输入自动实时更新</span>
               </div>
             </div>
             <div class="proposal-preview-wrap">

@@ -412,3 +412,53 @@ body[data-language="en"]{font-family:Arial,"Segoe UI",Roboto,"Microsoft YaHei",s
   .readiness-item{grid-template-columns:1fr;gap:8px}
   .status-select{width:100%}
 }
+
+
+/* =========================================================
+   商业提案模块化卡片与双层参数卡片扩展样式 (v6.1)
+   ========================================================= */
+.prop-module-card{border:1px solid var(--line);border-radius:12px;background:#fff;margin-bottom:14px;overflow:hidden;transition:border-color .15s,opacity .15s}
+.prop-module-card:hover{border-color:#bbb}
+.prop-module-card.is-unchecked{opacity:.56;background:#fafafa}
+.prop-module-head{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:12px 16px;background:var(--soft);border-bottom:1px solid var(--line)}
+.prop-module-check{display:flex;align-items:center;gap:10px;cursor:pointer;font-size:14px;color:#111;user-select:none}
+.prop-module-check.is-locked{cursor:default}
+.prop-module-check input[type=checkbox]{width:17px;height:17px;margin:0;accent-color:#111;cursor:pointer}
+.prop-module-check strong{font-size:14px;font-weight:800;color:#111}
+.prop-module-body{padding:15px 16px}
+.power-unified-bar{display:flex;justify-content:space-between;align-items:center;padding:9px 13px;background:#111;color:#fff;border-radius:8px;font-size:12px;margin-bottom:12px}
+.power-unified-bar span{color:#ccc;font-weight:600}
+.power-unified-bar strong{font-size:13px;letter-spacing:.3px}
+.prop-machines-list{display:grid;gap:12px;margin-bottom:12px}
+.prop-machine-item{border:1px solid #e2e2df;border-radius:10px;padding:12px;background:#fafaf8}
+.prop-machine-item-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+.prop-machine-item-top strong{font-size:12.5px;color:#111}
+.prop-spec-dual-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.prop-spec-box{background:#fff;border:1px solid #e5e5e2;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;justify-content:center}
+.prop-spec-box .spec-kicker{display:block;font-size:11px;color:#666;font-weight:700;margin-bottom:4px}
+.prop-spec-box .spec-primary{display:block;font-size:16px;color:#111;font-weight:900;line-height:1.2;letter-spacing:-.2px}
+.prop-spec-box .spec-secondary{display:block;font-size:11.5px;color:#555;font-weight:600;margin-top:4px;line-height:1.35}
+.prop-visual-pair{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.prop-visual-box{border:1px solid #e2e2df;border-radius:10px;background:#fff;padding:10px;text-align:center;overflow:hidden}
+.prop-visual-box span{display:block;font-size:11px;font-weight:700;color:#555;margin-bottom:6px}
+.prop-visual-box img{width:100%;height:190px;object-fit:contain;object-position:center;border-radius:6px;display:block;background:#f8f8f7}
+.prop-visual-box img.site-photo{object-fit:cover}
+.prop-visual-box img[data-model="Ultra 1200"]{object-fit:cover;object-position:18% 50%}
+.proposal-dual-gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}
+.proposal-gallery-card{border:1px solid #e2e2df;border-radius:10px;background:#fff;padding:12px;text-align:center;overflow:hidden;display:flex;flex-direction:column;justify-content:space-between}
+.proposal-gallery-card img{width:100%;height:245px;object-fit:contain;object-position:center;border-radius:6px;display:block;background:#f9f9f8}
+.proposal-gallery-card img.site-photo{object-fit:cover}
+.proposal-gallery-card img[data-model="Ultra 1200"]{object-fit:cover;object-position:18% 50%}
+.proposal-gallery-card strong{display:inline-block;margin-top:8px;font-size:12px;color:#111;background:#f0f0ee;padding:4px 12px;border-radius:999px;align-self:center}
+.proposal-machines-table{display:grid;gap:10px;margin:12px 0}
+.proposal-machine-row{border:1px solid #e5e5e2;border-radius:10px;padding:12px 14px;background:#fafaf8;display:grid;grid-template-columns:minmax(115px,.9fr) repeat(2,minmax(160px,1.25fr));gap:10px;align-items:stretch}
+.proposal-machine-model-col{display:flex;flex-direction:column;justify-content:center}
+.proposal-machine-model-col strong{font-size:14.5px;color:#111;font-weight:900;display:block}
+.proposal-machine-model-col span{display:inline-block;margin-top:5px;font-size:11.5px;font-weight:700;color:#111;background:#e8e8e5;padding:3px 9px;border-radius:999px;align-self:flex-start}
+.proposal-subblock{margin:10px 0 14px}
+.proposal-subblock:last-child{margin-bottom:0}
+.proposal-subhead{font-size:13.5px;font-weight:800;color:#111;margin:0 0 6px}
+.proposal-focus-bar{margin-top:8px;padding:9px 12px;background:#f5f5f3;border-left:3px solid #111;border-radius:0 6px 6px 0;font-size:12.5px;color:#222}
+@media(max-width:650px){
+  .prop-spec-dual-grid,.prop-visual-pair,.proposal-dual-gallery,.proposal-machine-row{grid-template-columns:1fr}
+}

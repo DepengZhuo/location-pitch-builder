@@ -2,11 +2,11 @@
    应用入口：导航、项目状态、页面之间的数据联动
    新增页面时：在 index.html 增加 section，再在这里增加路由映射。
    =================================================== */
-import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, money, escapeHTML } from './data.js';
+import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, money, escapeHTML, normalizeVenue } from './data.js';
 import { loadStore, saveStore, createProject, cleanLegacyNotes } from './storage.js';
 import { renderScoreFactors, renderReadinessChecks, calculateScore, paintScoreResult, normalizeRatings, normalizeReadiness } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
-import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage } from './proposal.js';
+import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage, renderDocCheckboxes } from './proposal.js';
 import { renderCompliance, normalizeDocs, setComplianceChangeHandler, bindComplianceAddButton } from './compliance.js';
 import { initializeLanguageToggle, onLanguageChange, t, PROPOSAL_DEFAULTS, getLanguage } from './i18n.js';
 
@@ -64,7 +64,7 @@ function readScoreForm() {
   return {
     name: $('locName')?.value.trim() || '',
     city: $('locCity')?.value.trim() || '',
-    type: $('locType')?.value || '公寓 / 多户住宅',
+    type: normalizeVenue($('locType')?.value),
     traffic: Number($('locTraffic')?.value || 0),
     audience: $('locAudience')?.value.trim() || '',
     term: Number($('locTerm')?.value || 0),
@@ -93,7 +93,7 @@ function applyScoreForm(data = {}) {
     const elem = $(id);
     if (!elem) return;
     if (data[key] !== undefined && data[key] !== null) {
-      elem.value = data[key];
+      elem.value = key === 'type' ? normalizeVenue(data[key]) : data[key];
     } else if (elem.tagName === 'SELECT') {
       elem.selectedIndex = 0;
     } else {
@@ -142,20 +142,20 @@ function updateReadiness(readinessId, value) {
 }
 
 function updateDecisionGuide() {
-  const type = $('locType')?.value || '其他';
+  const type = normalizeVenue($('locType')?.value);
   const guidance = {
-    '办公楼': '小办公室：Office Manager；大型办公室：Facilities / Workplace Manager；多租户办公楼：Property Manager 或前台。先确认是否存在企业级统一供应商协议。',
-    '公寓 / 多户住宅': '优先联系 Property Manager（物业经理），必要时进一步确认区域 / Corporate Property Manager 是否拥有最终审批权。',
-    '工厂 / 仓储': '优先联系 Plant Manager（厂长）、HR 负责人或 Facilities / EHS 部门，重点沟通夜班/倒班员工的即时餐饮福利与免人工管理优势。',
-    '健身房': '独立健身房：Owner 或 General Manager；连锁 / 加盟店：General Manager，并先核实是否已有全国性合作协议。',
-    '酒店': '优先联系 General Manager、Director of Operations 或 Facilities Manager；大型连锁酒店需确认品牌或集团采购要求。',
-    '学校 / 教育机构': '优先联系 Facilities Manager、学校行政或采购负责人；公立机构通常还需确认招标和供应商准入流程。',
-    '医院 / 医疗机构': '优先联系 Facilities / Supply Chain / Purchasing 部门，并提前了解院内供应商准入、保险及卫生审查要求。',
-    '公共建筑': '关注政府网站的采购公告（RFP / RFQ），按供应商注册、投标和采购流程联系 Purchasing / Procurement 部门。',
-    '其他': '通常从 Site Manager、General Manager 或 Facilities Manager 入手，再确认实际合同签署人和预算审批人。'
+    'Office & Corporate Campus': '小办公室：Office Manager；大型办公室：Facilities / Workplace Manager；多租户办公楼：Property Manager 或前台。先确认是否存在企业级统一供应商协议。',
+    'Apartment & Residential': '优先联系 Property Manager（物业经理），必要时进一步确认区域 / Corporate Property Manager 是否拥有最终审批权。',
+    'Factory & Industrial Plant': '优先联系 Plant Manager（厂长）、HR 负责人或 Facilities / EHS 部门，重点沟通夜班/倒班员工的即时餐饮福利与免人工管理优势。',
+    'Gym & Fitness Center': '独立健身房：Owner 或 General Manager；连锁 / 加盟店：General Manager，并先核实是否已有全国性合作协议。',
+    'Hotel & Hospitality': '优先联系 General Manager、Director of Operations 或 Facilities Manager；大型连锁酒店需确认品牌或集团采购要求。',
+    'School & University Campus': '优先联系 Facilities Manager、学校行政或采购负责人；公立机构通常还需确认招标和供应商准入流程。',
+    'Hospital & Medical Center': '优先联系 Facilities / Supply Chain / Purchasing 部门，并提前了解院内供应商准入、保险及卫生审查要求。',
+    'Airport & Transit Hub': '优先联系机场/车站商业管理部（Concessions / Commercial Management）或 Facilities 部门，提前核实安检准入、合规资质与供电条件。',
+    'Construction Site': '优先联系项目经理（Project Manager）、Site Superintendent 或安全/后勤负责人，重点沟通高温补水、工间补给及临时电源稳定保障。'
   };
   const guideEl = $('decisionGuideText');
-  if (guideEl) guideEl.textContent = t(guidance[type] || guidance['其他']);
+  if (guideEl) guideEl.textContent = t(guidance[type] || guidance['Office & Corporate Campus']);
 }
 
 function readProposalState() {
@@ -467,7 +467,7 @@ $('scoreToRoi')?.addEventListener('click', advanceScoreToRoi);
 
 ['locName', 'locCity', 'locType', 'locTraffic', 'locAudience', 'locTerm', 'locDecision', 'locSource', 'locNotes'].forEach(id => {
   $(id)?.addEventListener('input', () => {
-    if (id === 'locType') updateDecisionGuide();
+    if (id === 'locType') { updateDecisionGuide(); const nv = normalizeVenue($('locType')?.value); if ($('roiVenue')) $('roiVenue').value = nv; if ($('propVenue')) $('propVenue').value = nv; }
     const project = currentProject();
     if (project) {
       if ($('locName')?.value.trim()) project.name = $('locName').value.trim();
@@ -478,7 +478,7 @@ $('scoreToRoi')?.addEventListener('click', advanceScoreToRoi);
     }
   });
   $(id)?.addEventListener('change', () => {
-    if (id === 'locType') updateDecisionGuide();
+    if (id === 'locType') { updateDecisionGuide(); const nv = normalizeVenue($('locType')?.value); if ($('roiVenue')) $('roiVenue').value = nv; if ($('propVenue')) $('propVenue').value = nv; }
   });
 });
 
@@ -534,16 +534,15 @@ $('loadProposalExample')?.addEventListener('click', () => {
     title: d.title,
     property: 'Sunrise Apartments',
     city: 'Tampa, FL',
-    operator: 'Independent Vending Operator',
-    contactName: 'Property Management Team',
-    contactEmail: 'leasing@sunrise-apts.example.com',
-    venue: '公寓 / 多户住宅',
-    machine: 'Mini 360',
-    quantity: 1,
+    operator: 'HAHA Vending Operator LLC',
+    contactName: 'Alex Carter',
+    contactEmail: 'alex@hahavending-operator.com',
+    contactPhone: '(813) 555-0192',
+    venue: 'Apartment & Residential',
+    machines: [{ id: 'm_1', model: 'Pro 542', quantity: 1 }],
     deal: 'revenueShare',
     share: 10,
     launch: d.launch,
-    planogram: d.planogramExample,
     service: d.service,
     confirmItems: d.confirmItems,
     notes: d.notes
@@ -563,11 +562,13 @@ setComplianceChangeHandler(docs => {
   store.docs = docs;
   persist();
   renderCompliance(store.docs);
+  renderDocCheckboxes(store.docs);
   refreshProposalPreview();
   toast('文件链接信息已保存到本地。');
 }, toast);
 bindComplianceAddButton(store.docs);
 renderCompliance(store.docs);
+renderDocCheckboxes(store.docs);
 
 /* 语言切换时同步重绘所有动态内容 */
 onLanguageChange(() => {

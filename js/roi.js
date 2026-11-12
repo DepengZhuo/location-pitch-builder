@@ -4,7 +4,7 @@
    - 02 Partnership Setup（按销售额分成 / 固定月租 / 纯便民配套 三选一）
    - Estimated Monthly Partner Earnings（右侧实时汇总卡片）
    ========================================================= */
-import { money } from './data.js';
+import { money, normalizeVenue } from './data.js';
 import { t } from './i18n.js';
 
 const ids = [
@@ -19,7 +19,7 @@ export function readROIForm() {
   const periodRaw = val('roiPeriod');
   return {
     location: read('roiLocation')?.value.trim() || '',
-    venue: read('roiVenue')?.value || '公寓 / 多户住宅',
+    venue: normalizeVenue(read('roiVenue')?.value),
     orders: Math.max(0, val('roiOrders')),
     ticket: Math.max(0, val('roiTicket')),
     days: Math.min(31, Math.max(0, val('roiDays'))),
@@ -33,7 +33,7 @@ export function readROIForm() {
 export function applyROIForm(data = {}) {
   const defaults = {
     location: 'Sunrise Apartments',
-    venue: '公寓 / 多户住宅',
+    venue: 'Apartment & Residential',
     orders: 55,
     ticket: 5.00,
     days: 30,
@@ -46,7 +46,7 @@ export function applyROIForm(data = {}) {
   if (!['revenueShare', 'fixedRent', 'amenity'].includes(inferredDeal)) {
     inferredDeal = Number(data.rent) > 0 ? 'fixedRent' : 'revenueShare';
   }
-  const merged = { ...defaults, ...data, dealType: inferredDeal };
+  const merged = { ...defaults, ...data, venue: normalizeVenue(data.venue || defaults.venue), dealType: inferredDeal };
   const map = {
     location: 'roiLocation',
     venue: 'roiVenue',
