@@ -1,9 +1,8 @@
 /* ==================================================
-   点位评估模块（参考 location-assessment-prototype 逻辑）：
-   - 2. Rate the Location（5项四档评估：强/一般/弱/待确认）
-   - 3. Deployment Readiness（4项部署准备度核查）
-   - Assessment Summary（完成5项后自动展开优势/待关注/下一步建议）
-   - LOCATION SCORE 实时侧边栏联动
+   Location Assessment Module:
+   - 2. Rate the Location (5 criteria: Strong / Average / Weak / Not sure)
+   - 3. Deployment Readiness (4 checks)
+   - Assessment Summary & Live LOCATION SCORE Sidebar
    ================================================== */
 import { SCORE_CRITERIA, READINESS_ITEMS, DEFAULT_SCORE, DEFAULT_READINESS } from './data.js';
 import { t } from './i18n.js';
@@ -51,10 +50,10 @@ export function renderScoreFactors(container, values = DEFAULT_SCORE, onChange =
   if (!container) return;
   const normalized = normalizeRatings(values);
   const choicesMeta = [
-    { value: 'strong', label: '强' },
-    { value: 'average', label: '一般' },
-    { value: 'weak', label: '弱' },
-    { value: 'unknown', label: '待确认' }
+    { value: 'strong', label: 'Strong' },
+    { value: 'average', label: 'Average' },
+    { value: 'weak', label: 'Weak' },
+    { value: 'unknown', label: 'Not sure' }
   ];
 
   container.innerHTML = SCORE_CRITERIA.map(c => {
@@ -69,7 +68,7 @@ export function renderScoreFactors(container, values = DEFAULT_SCORE, onChange =
               <div class="criterion-kicker">${t(c.kicker)}</div>
             </div>
           </div>
-          <span class="criterion-weight">${t(`${c.weight} 分`)}</span>
+          <span class="criterion-weight">${t(`${c.weight} points`)}</span>
         </div>
         <p class="criterion-question">${t(c.question)}</p>
         <div class="choices" role="radiogroup" aria-label="${t(c.name)}">
@@ -101,9 +100,9 @@ export function renderReadinessChecks(container, readiness = DEFAULT_READINESS, 
   if (!container) return;
   const normalized = normalizeReadiness(readiness);
   const options = [
-    { value: 'pending', label: '待核实' },
-    { value: 'yes', label: '已确认' },
-    { value: 'no', label: '不具备 / 不允许' }
+    { value: 'pending', label: 'Need to check' },
+    { value: 'yes', label: 'Confirmed' },
+    { value: 'no', label: 'Not available / Not permitted' }
   ];
 
   container.innerHTML = READINESS_ITEMS.map(item => {
@@ -151,29 +150,29 @@ export function calculateScore(values = DEFAULT_SCORE, readiness = DEFAULT_READI
   const isComplete = answeredCount === SCORE_CRITERIA.length;
   const score = isComplete ? Math.round(total) : null;
 
-  let rating = answeredCount === 0 && unknownCount === 0 ? '未开始' : '评估进行中';
+  let rating = answeredCount === 0 && unknownCount === 0 ? 'Not completed' : 'In progress';
   let statusClass = '';
-  let nextTitle = '实地考察点位';
-  let nextStep = '确认高峰时段人流、最佳摆放位置以及基本运营条件。';
+  let nextTitle = 'Visit the location';
+  let nextStep = 'Confirm the busiest hours, best placement area and basic operating conditions.';
 
   if (isComplete) {
     if (score >= 80) {
-      rating = '潜力优秀';
+      rating = 'Strong Potential';
       statusClass = 'good';
     } else if (score >= 60) {
-      rating = '值得跟进';
+      rating = 'Worth Exploring';
       statusClass = 'warn';
     } else {
-      rating = '优先级较低';
+      rating = 'Lower Priority';
       statusClass = 'bad';
     }
 
     const weakest = [...factors].sort((a, b) => (a.points ?? 0) / a.weight - (b.points ?? 0) / b.weight)[0];
     if (weakest && weakest.value === 'strong') {
-      nextTitle = '现场确认部署条件';
-      nextStep = '五项核心条件表现良好。建议实地拜访点位，核实安装条件并与物业负责人深入沟通。';
+      nextTitle = 'Confirm the site in person';
+      nextStep = 'The five core factors look positive. Visit the site, confirm deployment conditions and speak with the property contact.';
     } else if (weakest) {
-      nextTitle = `重点核查：${weakest.short}`;
+      nextTitle = `Check: ${weakest.short}`;
       nextStep = weakest.action;
     }
   }
@@ -209,8 +208,8 @@ export function paintScoreResult(result) {
   if (progressFill) progressFill.style.width = `${pct}%`;
   if (progressText) {
     const baseText = result.unknownCount
-      ? `已评 ${result.answeredCount} / ${totalCriteria} 项 · ${result.unknownCount} 项待确认`
-      : `已评 ${result.answeredCount} / ${totalCriteria} 项`;
+      ? `${result.answeredCount} of ${totalCriteria} rated · ${result.unknownCount} to verify`
+      : `${result.answeredCount} of ${totalCriteria} rated`;
     progressText.textContent = t(baseText);
   }
   if (progressPercent) progressPercent.textContent = `${pct}%`;
@@ -249,12 +248,12 @@ export function paintScoreResult(result) {
     if (strengthList) {
       strengthList.innerHTML = strengths.length
         ? strengths.map(x => `<li>${t(x.name)}</li>`).join('')
-        : `<li>${t('暂无突出优势项，建议结合现场情况复核评分与细节。')}</li>`;
+        : `<li>${t('No standout strengths yet. Review the ratings and site details.')}</li>`;
     }
     if (attentionList) {
       attentionList.innerHTML = gaps.length
-        ? gaps.map(x => `<li>${t(x.name)}：${t(x.value === 'weak' ? '主要顾虑' : '有提升空间')}</li>`).join('')
-        : `<li>${t('五项核心评分中未发现明显短板。')}</li>`;
+        ? gaps.map(x => `<li>${t(x.name)}: ${t(x.value === 'weak' ? 'main concern' : 'could be improved')}</li>`).join('')
+        : `<li>${t('No major gaps were identified in the five ratings.')}</li>`;
     }
 
     const nextTitleEl = document.getElementById('scoreNextTitle');
@@ -287,15 +286,15 @@ export function paintReadinessSummary(readiness = DEFAULT_READINESS) {
 
   if (blocked > 0) {
     summary.className = 'readiness-summary blocked';
-    headline.textContent = t('安装前需解决阻碍');
-    copy.textContent = t(`有 ${blocked} 项条件标记为不具备或不允许，请确认是否可以协调解决。`);
+    headline.textContent = t('Resolve before installation');
+    copy.textContent = t(`${blocked} condition${blocked > 1 ? 's' : ''} marked unavailable. Confirm whether the issue can be resolved.`);
   } else if (pending > 0) {
     summary.className = 'readiness-summary';
-    headline.textContent = t('有待进一步确认');
-    copy.textContent = t(`还有 ${pending} 项条件需要在正式安装前进一步核实。`);
+    headline.textContent = t('Confirmation needed');
+    copy.textContent = t(`${pending} item${pending > 1 ? 's' : ''} still need to be checked before installation.`);
   } else {
     summary.className = 'readiness-summary ready';
-    headline.textContent = t('已具备推进条件');
-    copy.textContent = t('四项部署准备条件均已确认为具备。');
+    headline.textContent = t('Ready for the next step');
+    copy.textContent = t('All four deployment conditions are marked as confirmed.');
   }
 }

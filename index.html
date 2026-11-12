@@ -1,61 +1,61 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#111111" />
-  <meta name="description" content="HAHA Vending 点位开发与商务提案工具" />
+  <meta name="description" content="HAHA Vending Location Pitch & Partnership Proposal Studio" />
   <title>Location Pitch Builder | HAHA Vending</title>
   <link rel="stylesheet" href="./styles/main.css" />
 </head>
 <body>
   <div class="app-shell">
     <aside class="sidebar" id="sidebar">
-      <a class="brand" href="#page-dashboard" data-goto="dashboard" aria-label="HAHA Vending 首页">
+      <a class="brand" href="#page-dashboard" data-goto="dashboard" aria-label="HAHA Vending Home">
         <span class="brand-text"><strong>HAHA VENDING</strong><small>LOCATION PITCH BUILDER</small></span>
       </a>
-      <div class="sidebar-label">工作空间</div>
-      <nav class="main-nav" aria-label="主导航">
-        <button class="nav-item active" type="button" data-page="dashboard"><span class="nav-icon">▤</span> 工作台</button>
-        <button class="nav-item" type="button" data-page="scorer"><span class="nav-icon">◉</span> 点位评估</button>
-        <button class="nav-item" type="button" data-page="roi"><span class="nav-icon">$</span> 点位方收益测算</button>
-        <button class="nav-item" type="button" data-page="proposal"><span class="nav-icon">≡</span> 商业提案</button>
-        <button class="nav-item" type="button" data-page="compliance"><span class="nav-icon">⬡</span> 合规文件中心</button>
-        <button class="nav-item" type="button" data-page="projects"><span class="nav-icon">▨</span> 我的项目</button>
+      <div class="sidebar-label">Workspace</div>
+      <nav class="main-nav" aria-label="Main Navigation">
+        <button class="nav-item active" type="button" data-page="dashboard"><span class="nav-icon">▤</span> Dashboard</button>
+        <button class="nav-item" type="button" data-page="scorer"><span class="nav-icon">◉</span> Location Assessment</button>
+        <button class="nav-item" type="button" data-page="roi"><span class="nav-icon">$</span> Site Partner Earnings</button>
+        <button class="nav-item" type="button" data-page="proposal"><span class="nav-icon">≡</span> Business Proposal</button>
+        <button class="nav-item" type="button" data-page="compliance"><span class="nav-icon">⬡</span> Compliance Documents</button>
+        <button class="nav-item" type="button" data-page="projects"><span class="nav-icon">▨</span> My Projects</button>
       </nav>
       <div class="sidebar-bottom">
-        <div class="sidebar-note"><span class="status-dot"></span><div><strong>本地工作模式</strong><small>数据保存在当前浏览器</small></div></div>
-        <div class="sidebar-footer">HAHA VENDING · INTERNAL TOOL CONCEPT<br/>© 2026 HAHA Vending</div>
+        <div class="sidebar-note"><span class="status-dot"></span><div><strong>Local Workspace</strong><small>Data is saved in this browser</small></div></div>
+        <div class="sidebar-footer">HAHA VENDING<br/>© 2026 HAHA Vending</div>
       </div>
     </aside>
 
     <main class="main-area">
       <header class="topbar">
-        <button class="mobile-menu" id="mobileMenu" type="button" aria-label="打开菜单">☰</button>
-        <div class="breadcrumb"><span>HAHA VENDING</span><b>/</b><strong id="breadcrumbCurrent">工作台</strong></div>
+        <button class="mobile-menu" id="mobileMenu" type="button" aria-label="Open menu">☰</button>
+        <div class="breadcrumb"><span>HAHA VENDING</span><b>/</b><strong id="breadcrumbCurrent">Dashboard</strong></div>
         <div class="topbar-actions">
-          <span class="local-indicator"><i></i> 本地自动保存</span>
-          <button class="button button-dark button-small" id="newProjectTop" type="button">+ 新建点位项目</button>
-          <button class="button button-outline button-small" id="languageToggle" type="button" aria-label="Switch to English">EN</button>
+          <span class="local-indicator"><i></i> Saved locally</span>
+          <button class="button button-dark button-small" id="newProjectTop" type="button">+ New Location Project</button>
+          <button class="button button-outline button-small" id="languageToggle" type="button" aria-label="切换到中文">中文</button>
         </div>
       </header>
 
       <div class="page-content">
-        <!-- 页面一：工作台总览 -->
+        <!-- Page 1: Dashboard -->
         <section class="page active" id="page-dashboard">
           <div class="page-heading dashboard-heading">
             <div>
               <div class="eyebrow">LOCATION DEVELOPMENT WORKSPACE</div>
-              <h1>把每一个点位，变成新的商业机会。</h1>
-              <p>从点位评估、收益测算到商务提案与合规资料，一站式完成点位开发准备。</p>
+              <h1>Turn every location into a new business opportunity.</h1>
+              <p>Prepare for location development with assessment, earnings estimates, proposals, and compliance files in one place.</p>
             </div>
-            <button class="button button-yellow" id="startNewProject" type="button">开始一个新项目 <span>↗</span></button>
+            <button class="button button-yellow" id="startNewProject" type="button">Start a New Project <span>↗</span></button>
           </div>
           <div class="hero-strip">
             <div>
               <span class="hero-kicker">LOCATION PITCH BUILDER</span>
               <h2>Find. Evaluate. Pitch. Win.</h2>
-              <p>用清晰的数据和专业的材料，让物业更容易理解合作价值。</p>
+              <p>Present a clear business case with useful data and professional materials.</p>
             </div>
             <div class="hero-visual">
               <div class="visual-frame">
@@ -69,159 +69,158 @@
             </div>
           </div>
           <div class="section-head">
-            <div><h2>项目概览</h2><p>当前浏览器中保存的点位开发项目</p></div>
-            <button class="text-button" type="button" data-goto="projects">查看全部项目 →</button>
+            <div><h2>Project Overview</h2><p>Location projects saved in this browser</p></div>
+            <button class="text-button" type="button" data-goto="projects">View All Projects →</button>
           </div>
           <div class="stats-grid" id="dashboardStats"></div>
           <div class="dashboard-grid">
             <div class="panel recent-panel">
               <div class="panel-head">
-                <div><h3>最近项目</h3><p>继续完善你正在开发的点位</p></div>
-                <button class="text-button" type="button" data-goto="projects">全部项目 →</button>
+                <div><h3>Recent Projects</h3><p>Continue working on locations in progress</p></div>
+                <button class="text-button" type="button" data-goto="projects">All Projects →</button>
               </div>
               <div id="recentProjects" class="recent-list"></div>
             </div>
             <div class="panel quick-panel">
-              <div class="panel-head"><div><h3>快速开始</h3><p>选择下一步要完成的工作</p></div></div>
-              <button class="quick-link" type="button" data-goto="scorer"><span class="quick-number">01</span><span><strong>评估一个新点位</strong><small>分析场地条件和经营潜力</small></span><b>↗</b></button>
-              <button class="quick-link" type="button" data-goto="roi"><span class="quick-number">02</span><span><strong>测算合作收益</strong><small>计算物业分成和合作周期总收益</small></span><b>↗</b></button>
-              <button class="quick-link" type="button" data-goto="proposal"><span class="quick-number">03</span><span><strong>生成商业提案</strong><small>为物业整理一份合作方案</small></span><b>↗</b></button>
-              <button class="quick-link" type="button" data-goto="compliance"><span class="quick-number">04</span><span><strong>准备合规文件</strong><small>管理证书、保险和税务材料</small></span><b>↗</b></button>
+              <div class="panel-head"><div><h3>Quick Start</h3><p>Choose what to work on next</p></div></div>
+              <button class="quick-link" type="button" data-goto="scorer"><span class="quick-number">01</span><span><strong>Assess a Location</strong><small>Review site conditions and business potential</small></span><b>↗</b></button>
+              <button class="quick-link" type="button" data-goto="roi"><span class="quick-number">02</span><span><strong>Estimate Partner Earnings</strong><small>Calculate site partner share and term earnings</small></span><b>↗</b></button>
+              <button class="quick-link" type="button" data-goto="proposal"><span class="quick-number">03</span><span><strong>Create a Business Proposal</strong><small>Prepare a proposal for a property</small></span><b>↗</b></button>
+              <button class="quick-link" type="button" data-goto="compliance"><span class="quick-number">04</span><span><strong>Prepare Compliance Documents</strong><small>Manage certificates, insurance, and tax documents</small></span><b>↗</b></button>
             </div>
           </div>
           <div class="notice-bar">
             <span>!</span>
-            <p><strong>使用提示：</strong>本工具为第一版本本地原型。当前数据只保存在本浏览器，不会自动同步到其他设备；收益数据为测算结果，不构成销售或经营承诺。</p>
+            <p><strong>Note:</strong> Project data is saved locally in this browser. Earnings figures are illustrative estimates and do not constitute a sales or operating guarantee.</p>
           </div>
         </section>
 
-        <!-- 页面二：点位评估 -->
+        <!-- Page 2: Location Assessment -->
         <section class="page" id="page-scorer">
           <div class="page-heading scorer-page-heading">
             <div class="scorer-heading-main">
               <div>
                 <div class="eyebrow">01 / LOCATION SCORER</div>
-                <h1>点位评估</h1>
-                <p>先判断这个点位是否值得投入时间开发。回答 5 个快速问题即可评估潜力，无需精确人流统计。</p>
+                <h1>Location Assessment</h1>
+                <p>Answer five quick questions to understand a location’s potential. You can use your best estimate — exact traffic data is not required.</p>
               </div>
               <div class="heading-actions">
-                <button class="button button-outline" id="resetScore" type="button">重置评分</button>
-                <button class="button button-dark" id="saveScore" type="button">保存评估</button>
+                <button class="button button-outline" id="resetScore" type="button">Reset Scores</button>
+                <button class="button button-dark" id="saveScore" type="button">Save Assessment</button>
               </div>
             </div>
           </div>
 
           <div class="two-column-layout scorer-layout">
             <div class="scorer-main-col">
-              <!-- 1. 点位基本信息 -->
+              <!-- 1. Location Details -->
               <div class="panel form-panel">
                 <div class="panel-head">
                   <div>
-                    <h3>1. 点位基本信息</h3>
-                    <p>根据已知情况填写，未知项可以暂时留空；基本信息不影响分数计算。</p>
+                    <h3>1. Location Details</h3>
+                    <p>A few basics to identify the site. These fields do not affect the score.</p>
                   </div>
                   <span class="step-tag">STEP 01</span>
                 </div>
                 <div class="form-grid">
-                  <label class="field full"><span>点位名称 <em>*</em></span><input id="locName" placeholder="例如: Sunrise Apartments" /></label>
-                  <label class="field"><span>城市 / 州</span><input id="locCity" placeholder="例如: Tampa, FL" /></label>
-                  <label class="field"><span>场地类型</span>
+                  <label class="field full"><span>Location Name <em>*</em></span><input id="locName" placeholder="e.g. Sunrise Apartments" /></label>
+                  <label class="field"><span>City / State</span><input id="locCity" placeholder="e.g. Tampa, FL" /></label>
+                  <label class="field"><span>Venue Type</span>
                     <select id="locType">
-                      <option value="Gym & Fitness Center">健身房与运动中心</option>
-                      <option value="Factory & Industrial Plant">工厂与工业园区</option>
-                      <option value="Airport & Transit Hub">机场与交通枢纽</option>
-                      <option value="Apartment & Residential" selected>公寓与住宅社区</option>
-                      <option value="Construction Site">建筑工地与施工现场</option>
-                      <option value="Hospital & Medical Center">医院与医疗中心</option>
-                      <option value="Hotel & Hospitality">酒店与文旅住宿</option>
-                      <option value="Office & Corporate Campus">写字楼与企业园区</option>
-                      <option value="School & University Campus">学校与大学校园</option>
+                      <option value="Gym & Fitness Center">Gym & Fitness Center</option>
+                      <option value="Factory & Industrial Plant">Factory & Industrial Plant</option>
+                      <option value="Airport & Transit Hub">Airport & Transit Hub</option>
+                      <option value="Apartment & Residential" selected>Apartment & Residential</option>
+                      <option value="Construction Site">Construction Site</option>
+                      <option value="Hospital & Medical Center">Hospital & Medical Center</option>
+                      <option value="Hotel & Hospitality">Hotel & Hospitality</option>
+                      <option value="Office & Corporate Campus">Office & Corporate Campus</option>
+                      <option value="School & University Campus">School & University Campus</option>
                     </select>
                   </label>
-                  <label class="field"><span>预估日均人流量</span><input id="locTraffic" type="number" min="0" placeholder="例如: 300" /></label>
-                  <label class="field"><span>主要服务人群</span><input id="locAudience" placeholder="例如: 住户、员工、访客" /></label>
-                  <label class="field"><span>租赁 / 合作期限（月）</span><input id="locTerm" type="number" min="0" placeholder="例如: 30" /></label>
-                  <label class="field"><span>决策人 / 联系人</span><input id="locDecision" placeholder="例如: Property Manager" /></label>
-                  <label class="field"><span>点位来源</span>
+                  <label class="field"><span>Estimated Daily Foot Traffic</span><input id="locTraffic" type="number" min="0" placeholder="e.g. 300" /></label>
+                  <label class="field"><span>Primary Audience</span><input id="locAudience" placeholder="e.g. Residents, employees, visitors" /></label>
+                  <label class="field"><span>Lease / Partnership Term (Months)</span><input id="locTerm" type="number" min="0" placeholder="e.g. 30" /></label>
+                  <label class="field"><span>Decision Maker / Contact</span><input id="locDecision" placeholder="e.g. Property Manager" /></label>
+                  <label class="field"><span>Lead Source</span>
                     <select id="locSource">
-                      <option value="自主开发">自主开发</option>
+                      <option value="Direct Outreach">Direct Outreach</option>
                       <option value="Locator Service">Locator Service</option>
-                      <option value="网站留言">网站留言</option>
-                      <option value="客户 / 朋友推荐">客户 / 朋友推荐</option>
-                      <option value="其他">其他</option>
+                      <option value="Website Inquiry">Website Inquiry</option>
+                      <option value="Customer / Friend Referral">Customer / Friend Referral</option>
+                      <option value="Other">Other</option>
                     </select>
                   </label>
-                  <label class="field full"><span>现场观察与备注</span><textarea id="locNotes" rows="3" placeholder="例如: 大堂有休息区，住户刷卡进入，附近没有便利店......"></textarea></label>
+                  <label class="field full"><span>Site Observations and Notes</span><textarea id="locNotes" rows="3" placeholder="e.g. Lobby lounge area, keycard access for residents, no convenience store nearby..."></textarea></label>
                 </div>
                 <div class="decision-guide" id="decisionGuide" style="margin-bottom:0;">
                   <div class="guide-icon">↗</div>
                   <div class="guide-content">
-                    <strong>建议联系对象</strong>
-                    <p id="decisionGuideText">选择场地类型后，这里会显示通常需要联系的关键决策人。</p>
+                    <strong>Recommended Contact</strong>
+                    <p id="decisionGuideText">Choose a venue type to see the usual decision maker.</p>
                   </div>
                 </div>
               </div>
 
-              <!-- 2. 点位条件评估 (Rate the Location) -->
+              <!-- 2. Rate the Location -->
               <div class="panel form-panel">
                 <div class="panel-head">
                   <div>
-                    <h3>2. 点位条件评估</h3>
-                    <p>每项选择一个最符合现场情况的答案；如果暂时不确定，可以选择“待确认”。</p>
+                    <h3>2. Rate the Location</h3>
+                    <p>Choose one answer for each item. Select "Not sure" when you need to check.</p>
                   </div>
-                  <span class="step-tag">5 项 · 2–3 分钟</span>
+                  <span class="step-tag">5 items · 2–3 min</span>
                 </div>
                 <div id="scoreFactors" class="criteria-list"></div>
               </div>
 
-              <!-- 3. 部署准备度核查 (Deployment Readiness) -->
+              <!-- 3. Deployment Readiness -->
               <div class="panel form-panel">
                 <div class="panel-head">
                   <div>
-                    <h3>3. 部署准备度核查</h3>
-                    <p>以下检查项不影响点位评分，用于梳理正式进场安装前必须落实的条件。</p>
+                    <h3>3. Deployment Readiness</h3>
+                    <p>These checks do not affect the location score. They help identify what must be confirmed before installation.</p>
                   </div>
-                  <span class="step-tag">独立核查项</span>
+                  <span class="step-tag">Separate check</span>
                 </div>
                 <div id="readinessList" class="readiness-list"></div>
-                <div class="method-note">提示：选择“待核实”完全正常，仅代表该事项需要在正式推进安装前与物业进一步确认。</div>
+                <div class="method-note">Tip: "Need to check" is a perfectly valid answer. It simply means this item should be confirmed before you move forward.</div>
               </div>
 
-              <!-- 4. 评估总结分析 (Assessment Summary - 完成5项评分后展开) -->
+              <!-- 4. Assessment Summary -->
               <div class="panel form-panel below-result" id="detailedResult" aria-live="polite">
                 <div class="panel-head">
                   <div>
-                    <h3>评估总结分析</h3>
-                    <p>快速梳理当前点位的核心优势与需要重点核实的事项。</p>
+                    <h3>Assessment Summary</h3>
+                    <p>A quick snapshot of what looks promising and what needs attention.</p>
                   </div>
-                  <span class="step-tag">行动建议</span>
+                  <span class="step-tag">Your next move</span>
                 </div>
                 <div class="insight-grid">
                   <div class="insight-box">
-                    <h4>优势亮点</h4>
+                    <h4>What looks promising</h4>
                     <ul id="strengthList"></ul>
                   </div>
                   <div class="insight-box">
-                    <h4>待关注项</h4>
+                    <h4>What needs attention</h4>
                     <ul id="attentionList"></ul>
                   </div>
                 </div>
                 <div class="next-step-callout">
-                  <div class="eyebrow">建议下一步行动</div>
-                  <h4 id="scoreNextTitle">实地考察点位</h4>
-                  <p id="scoreNextStep">确认高峰时段人流、最佳摆放位置以及基本运营条件。</p>
+                  <div class="eyebrow">Recommended next step</div>
+                  <h4 id="scoreNextTitle">Visit the location</h4>
+                  <p id="scoreNextStep">Confirm the busiest hours, best placement area and basic operating conditions.</p>
                 </div>
-                <p class="scorer-disclaimer">本评分为基于当前已知信息的初步场地评估，不构成销售额预测或经营结果承诺。实际表现取决于客流需求、商品选品、定价、摆放位置及日常运营质量。</p>
+                <p class="scorer-disclaimer">This score is an initial site assessment based on the information provided. It is not a sales forecast or a guarantee of performance. Actual results depend on customer demand, product selection, pricing, placement and day-to-day operations.</p>
               </div>
 
-              <!-- 底部下一步按钮 -->
               <div class="panel scorer-bottom-bar">
-                <button class="button button-dark button-wide" id="scoreToRoi" type="button">下一步：点位方收益测算 →</button>
+                <button class="button button-dark button-wide" id="scoreToRoi" type="button">Next: Site Partner Earnings →</button>
               </div>
             </div>
 
-            <!-- 右侧 LOCATION SCORE & 计分规则说明 -->
-            <aside class="scorer-side-col" aria-label="实时评估结果">
+            <!-- Right Sidebar: LOCATION SCORE -->
+            <aside class="scorer-side-col" aria-label="Live assessment results">
               <div class="panel score-result-panel">
                 <div class="score-main">
                   <span class="result-label">LOCATION SCORE</span>
@@ -229,191 +228,191 @@
                     <strong class="score-placeholder" id="scoreValue">—</strong>
                     <small class="score-outof">/ 100</small>
                   </div>
-                  <span class="status-chip" id="scoreStatus">未开始</span>
+                  <span class="status-chip" id="scoreStatus">Not completed</span>
                   <div class="score-progress-wrap">
                     <div class="score-progress-track"><div class="score-progress-fill" id="scoreProgressFill"></div></div>
                     <div class="score-progress-meta">
-                      <span id="scoreProgressText">已评 0 / 5 项</span>
+                      <span id="scoreProgressText">0 of 5 rated</span>
                       <span id="scoreProgressPercent">0%</span>
                     </div>
                   </div>
                 </div>
 
                 <div class="result-breakdown">
-                  <div class="mini-title">评分拆解</div>
+                  <div class="mini-title">SCORE BREAKDOWN</div>
                   <div id="scoreBreakdown" class="breakdown-list"></div>
                 </div>
 
                 <div class="deployment-status-wrap">
-                  <div class="mini-title">部署准备状态</div>
+                  <div class="mini-title">DEPLOYMENT STATUS</div>
                   <div class="readiness-summary" id="readinessSummary">
                     <span class="readiness-dot" id="readinessDot"></span>
                     <div>
-                      <strong id="readinessHeadline">核查项待确认</strong>
-                      <p id="readinessCopy">进场安装前请核实左侧 4 项基础部署条件。</p>
+                      <strong id="readinessHeadline">Checks not completed</strong>
+                      <p id="readinessCopy">Review the four conditions on the left before installation.</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div class="panel scoring-guide-panel">
-                <h3 class="scoring-guide-title">计分规则说明</h3>
-                <p class="scoring-guide-sub">化繁为简：为每项选择最符合现场实际情况的描述。</p>
+                <h3 class="scoring-guide-title">How scoring works</h3>
+                <p class="scoring-guide-sub">Keep it simple: choose the answer that best describes the site.</p>
                 <div class="scoring-rules-list">
-                  <div class="scoring-rule-row"><span class="status-chip good">强</span><strong>获得 100% 权重分</strong></div>
-                  <div class="scoring-rule-row"><span class="status-chip warn">一般</span><strong>获得 50% 权重分</strong></div>
-                  <div class="scoring-rule-row"><span class="status-chip bad">弱</span><strong>0 分</strong></div>
-                  <div class="scoring-rule-row"><span class="status-chip">待确认</span><strong>暂不计分</strong></div>
+                  <div class="scoring-rule-row"><span class="status-chip good">Strong</span><strong>100% of points</strong></div>
+                  <div class="scoring-rule-row"><span class="status-chip warn">Average</span><strong>50% of points</strong></div>
+                  <div class="scoring-rule-row"><span class="status-chip bad">Weak</span><strong>0 points</strong></div>
+                  <div class="scoring-rule-row"><span class="status-chip">Not sure</span><strong>Not scored</strong></div>
                 </div>
-                <p class="scorer-disclaimer" style="margin-top:12px;">“待确认”不会扣分。完成全部 5 项有效评估后即可生成最终总分。</p>
+                <p class="scorer-disclaimer" style="margin-top:12px;">"Not sure" is not a penalty. Complete all five ratings to receive a final score.</p>
               </div>
             </aside>
           </div>
         </section>
 
-        <!-- 页面三：点位方收益测算（参考 partner-benefits-earnings-v4 重构） -->
+        <!-- Page 3: Site Partner Earnings -->
         <section class="page" id="page-roi">
           <div class="page-heading">
             <div>
               <div class="eyebrow">02 / PROPERTY PARTNERSHIP VALUE</div>
-              <h1>点位方收益测算</h1>
-              <p>估算物业方在合作期内的潜在收益，并明确分成比例、固定月租或纯便民配套的合作方案。</p>
+              <h1>Site Partner Earnings</h1>
+              <p>Estimate what the property could earn and choose the right partnership setup for the location.</p>
             </div>
             <div class="heading-actions">
-              <button class="button button-outline" id="resetRoi" type="button">恢复示例参数</button>
-              <button class="button button-dark" id="saveRoi" type="button">保存测算</button>
+              <button class="button button-outline" id="resetRoi" type="button">Reset example</button>
+              <button class="button button-dark" id="saveRoi" type="button">Save Estimate</button>
             </div>
           </div>
 
           <div class="roi-layout">
             <div class="roi-left-col">
-              <!-- 01 点位与销售预估 (Location & Sales Assumptions) -->
+              <!-- 01 Location & Sales Assumptions -->
               <div class="panel form-panel">
                 <div class="panel-head">
                   <div class="roi-section-title">
                     <span class="criterion-num">01</span>
                     <div>
-                      <h3>点位与销售预估</h3>
-                      <p>使用合理预估即可，现阶段无需精确历史销售数据。</p>
+                      <h3>Location & Sales Assumptions</h3>
+                      <p>Use a reasonable estimate. Exact sales data is not required at this stage.</p>
                     </div>
                   </div>
-                  <span class="step-tag">物业收益测算</span>
+                  <span class="step-tag">Property earnings estimate</span>
                 </div>
                 <div class="roi-fields-grid">
                   <label class="field">
-                    <span>点位名称</span>
-                    <input id="roiLocation" value="Sunrise Apartments" placeholder="例如: Sunrise Apartments" />
+                    <span>Location Name</span>
+                    <input id="roiLocation" value="Sunrise Apartments" placeholder="e.g. Sunrise Apartments" />
                   </label>
                   <label class="field">
-                    <span>场地类型</span>
+                    <span>Venue Type</span>
                     <select id="roiVenue">
-                      <option value="Gym & Fitness Center">健身房与运动中心</option>
-                      <option value="Factory & Industrial Plant">工厂与工业园区</option>
-                      <option value="Airport & Transit Hub">机场与交通枢纽</option>
-                      <option value="Apartment & Residential" selected>公寓与住宅社区</option>
-                      <option value="Construction Site">建筑工地与施工现场</option>
-                      <option value="Hospital & Medical Center">医院与医疗中心</option>
-                      <option value="Hotel & Hospitality">酒店与文旅住宿</option>
-                      <option value="Office & Corporate Campus">写字楼与企业园区</option>
-                      <option value="School & University Campus">学校与大学校园</option>
+                      <option value="Gym & Fitness Center">Gym & Fitness Center</option>
+                      <option value="Factory & Industrial Plant">Factory & Industrial Plant</option>
+                      <option value="Airport & Transit Hub">Airport & Transit Hub</option>
+                      <option value="Apartment & Residential" selected>Apartment & Residential</option>
+                      <option value="Construction Site">Construction Site</option>
+                      <option value="Hospital & Medical Center">Hospital & Medical Center</option>
+                      <option value="Hotel & Hospitality">Hotel & Hospitality</option>
+                      <option value="Office & Corporate Campus">Office & Corporate Campus</option>
+                      <option value="School & University Campus">School & University Campus</option>
                     </select>
                   </label>
                   <label class="field">
-                    <span>预估日均销售件数 (件)</span>
+                    <span>Estimated Items Sold / Day</span>
                     <input id="roiOrders" type="number" min="0" step="1" value="55" />
                   </label>
                   <label class="field">
-                    <span>平均商品售价 ($ / 件)</span>
+                    <span>Average Selling Price / Item</span>
                     <div class="input-prefix">
                       <i>$</i>
                       <input id="roiTicket" type="number" min="0" step="0.01" value="5.00" />
                     </div>
                   </label>
                   <label class="field">
-                    <span>每月营业天数</span>
+                    <span>Operating Days / Month</span>
                     <input id="roiDays" type="number" min="0" max="31" step="1" value="30" />
                   </label>
                   <label class="field">
-                    <span>合作期限 (月)</span>
-                    <input id="roiPeriod" type="number" min="1" max="120" step="1" value="30" placeholder="直接输入月份数，如 30" />
+                    <span>Partnership Term (Months)</span>
+                    <input id="roiPeriod" type="number" min="1" max="120" step="1" value="30" placeholder="Enter months directly, e.g. 30" />
                   </label>
                 </div>
-                <div class="method-note">预计月销售额 = 日均销售件数 × 平均商品售价 × 每月营业天数。该估算仅用于计算点位方的潜在合作收益。</div>
+                <div class="method-note">Estimated monthly sales = daily items sold × average selling price × operating days. The estimate is used only to calculate the property’s potential earnings.</div>
               </div>
 
-              <!-- 02 合作模式设置 (Partnership Setup) -->
+              <!-- 02 Partnership Setup -->
               <div class="panel form-panel">
                 <div class="panel-head">
                   <div class="roi-section-title">
                     <span class="criterion-num">02</span>
                     <div>
-                      <h3>合作模式设置</h3>
-                      <p>选择物业方从本次智能零售柜投放中获得收益或价值的方式。</p>
+                      <h3>Partnership Setup</h3>
+                      <p>Choose how the property will benefit financially from the placement.</p>
                     </div>
                   </div>
-                  <span class="step-tag">三选一</span>
+                  <span class="step-tag">Choose one</span>
                 </div>
 
                 <input type="hidden" id="roiDealType" value="revenueShare" />
-                <div class="roi-mode-grid" id="roiModeGrid" role="radiogroup" aria-label="合作模式设置">
+                <div class="roi-mode-grid" id="roiModeGrid" role="radiogroup" aria-label="Partnership Setup">
                   <div class="roi-mode-card active" data-mode="revenueShare" tabindex="0" role="radio" aria-checked="true">
                     <span class="roi-mode-mark">✓</span>
                     <div class="roi-mode-symbol">％</div>
-                    <strong>按销售额分成</strong>
-                    <small>物业按约定的月销售额比例获得分成。</small>
+                    <strong>Revenue Share</strong>
+                    <small>Property receives an agreed percentage of sales.</small>
                   </div>
                   <div class="roi-mode-card" data-mode="fixedRent" tabindex="0" role="radio" aria-checked="false">
                     <span class="roi-mode-mark">✓</span>
                     <div class="roi-mode-symbol">＄</div>
-                    <strong>固定月租</strong>
-                    <small>运营商按月向物业支付固定的场地租金。</small>
+                    <strong>Fixed Monthly Rent</strong>
+                    <small>Operator pays an agreed monthly placement fee.</small>
                   </div>
                   <div class="roi-mode-card" data-mode="amenity" tabindex="0" role="radio" aria-checked="false">
                     <span class="roi-mode-mark">✓</span>
                     <div class="roi-mode-symbol">✦</div>
-                    <strong>纯便民配套</strong>
-                    <small>无直接租金；设备作为场地便民福利配套提供。</small>
+                    <strong>Amenity-Only</strong>
+                    <small>No direct payment; the cooler is provided as a site amenity.</small>
                   </div>
                 </div>
 
                 <div class="roi-dynamic-box">
                   <div class="field" id="roiShareField">
-                    <span>点位方销售额分成比例 (%)</span>
+                    <span>Property Revenue Share (%)</span>
                     <input id="roiShare" type="number" min="0" max="100" step="0.5" value="10" />
-                    <small class="field-hint">示例：按双方约定销售额基数的 10% 计算分成。</small>
+                    <small class="field-hint">Example: 10% of the agreed sales base.</small>
                   </div>
                   <div class="field" id="roiRentField" hidden>
-                    <span>固定场地月租金 ($ / 月)</span>
+                    <span>Fixed Monthly Rent ($)</span>
                     <div class="input-prefix">
                       <i>$</i>
                       <input id="roiRent" type="number" min="0" step="10" value="200" />
                     </div>
-                    <small class="field-hint">输入与物业方约定的每月固定场地费用。</small>
+                    <small class="field-hint">Enter the monthly placement fee agreed with the property.</small>
                   </div>
                   <div class="roi-amenity-note" id="roiAmenityField" hidden>
-                    智能零售柜作为场地便民福利设施免费投放，直接月度分成或租金为 $0；核心价值在于为住户、员工或访客提供 24/7 即时便利服务，无需物业投入人力物力。
+                    The Smart Cooler is provided as a site amenity. Direct monthly payment is $0; the value is convenience and service rather than revenue share or rent.
                   </div>
                 </div>
 
-                <div class="method-note">请在书面合作协议中明确销售额核算基数（例如总销售额，或扣除退款、折扣及适用税费后的净销售额）。本测算工具不决定具体合同条款定义。</div>
+                <div class="method-note">Define the sales basis in the written agreement (for example, gross sales or sales after refunds, discounts and applicable taxes). This calculator does not determine the contract definition.</div>
               </div>
             </div>
 
-            <!-- 右侧：Estimated Monthly Partner Earnings 汇总面板 -->
+            <!-- Right Sidebar: Estimated Monthly Partner Earnings -->
             <aside class="roi-results">
               <div class="panel roi-summary-card">
                 <span class="result-label">ESTIMATED MONTHLY PARTNER EARNINGS</span>
-                <div class="roi-summary-sub">物业预计每月可获得</div>
+                <div class="roi-summary-sub">Estimated Monthly Partner Earnings</div>
                 <strong class="roi-big-value" id="landlordMonthly">$825</strong>
-                <div class="roi-earnings-basis" id="roiEarningsType">基于 10% 销售额分成</div>
+                <div class="roi-earnings-basis" id="roiEarningsType">Based on 10% revenue share</div>
 
                 <div class="roi-summary-grid">
                   <div class="roi-summary-metric">
-                    <span>预计年收益</span>
+                    <span>Estimated Annual Earnings</span>
                     <strong id="landlordAnnual">$9,900</strong>
                   </div>
                   <div class="roi-summary-metric">
-                    <span>合作期累计收益</span>
+                    <span>Partnership-Term Earnings</span>
                     <strong id="landlordTermTotal">$24,750</strong>
                   </div>
                 </div>
@@ -422,321 +421,311 @@
 
                 <div class="roi-lineitems">
                   <div class="roi-lineitem">
-                    <span>预计月销售额</span>
+                    <span>Estimated Monthly Sales</span>
                     <strong id="roiMonthlySales">$8,250</strong>
                   </div>
                   <div class="roi-lineitem">
-                    <span>合作模式</span>
-                    <strong id="roiModelLabel">10% 销售额分成</strong>
+                    <span>Partnership Model</span>
+                    <strong id="roiModelLabel">10% Revenue Share</strong>
                   </div>
                   <div class="roi-lineitem">
-                    <span>合作期限</span>
-                    <strong id="roiTermLabel">30 个月</strong>
+                    <span>Partnership Term</span>
+                    <strong id="roiTermLabel">30 months</strong>
                   </div>
                 </div>
 
-                <p class="scorer-disclaimer" style="margin-top:14px;">以上为基于输入参数的测算示例，不构成销售额或收益保证。实际结果取决于现场销量、营业天数及书面合作条款。</p>
+                <p class="scorer-disclaimer" style="margin-top:14px;">Illustrative estimate, not a sales or earnings guarantee. Actual results depend on sales, operating days and the written partnership terms.</p>
 
                 <div class="button-row" style="margin-top:18px;">
-                  <button class="button button-dark button-wide" id="roiToProposal" type="button">下一步：创建商业提案 →</button>
+                  <button class="button button-dark button-wide" id="roiToProposal" type="button">Next: Create a Business Proposal →</button>
                 </div>
               </div>
             </aside>
           </div>
         </section>
 
-                <!-- 页面四：商业提案生成 -->
+        <!-- Page 4: Business Proposal -->
         <section class="page" id="page-proposal">
           <div class="page-heading">
             <div>
               <div class="eyebrow">03 / AUTOMATED PROPOSAL GENERATOR</div>
-              <h1>商业提案生成</h1>
-              <p>左侧按模块填写或勾选内容，右侧实时生成提案预览；支持一键导出独立网页或打印保存 PDF。</p>
+              <h1>Business Proposal</h1>
+              <p>Edit or toggle proposal modules on the left to update the live preview on the right; export as a webpage or print/save as PDF.</p>
             </div>
             <div class="heading-actions">
-              <button class="button button-outline" id="loadProposalExample" type="button">载入示例</button>
-              <button class="button button-dark" id="exportProposal" type="button">导出提案网页 ↗</button>
+              <button class="button button-outline" id="loadProposalExample" type="button">Load Example</button>
+              <button class="button button-dark" id="exportProposal" type="button">Export Proposal ↗</button>
             </div>
           </div>
           <div class="proposal-layout">
             <div class="panel form-panel proposal-form">
               <div class="panel-head">
                 <div>
-                  <h3>提案模块设置</h3>
-                  <p>01、02 为必选核心模块；03–08 可按需打勾启用或取消隐藏</p>
+                  <h3>Proposal Modules</h3>
+                  <p>Modules 01 & 02 are required core sections; check or uncheck 03–08 as needed.</p>
                 </div>
                 <span class="step-tag">MODULAR EDIT</span>
               </div>
 
-              <!-- 模块 01：合作方案概述（必选） -->
+              <!-- Module 01: Partnership Overview (Required) -->
               <div class="prop-module-card" data-module-card="basic">
                 <div class="prop-module-head">
                   <div class="prop-module-check is-locked">
                     <span class="criterion-num">01</span>
-                    <strong>合作方案概述</strong>
+                    <strong>Partnership Overview</strong>
                   </div>
-                  <span class="step-tag">必选模块</span>
+                  <span class="step-tag">REQUIRED</span>
                 </div>
                 <div class="prop-module-body">
                   <div class="form-grid">
-                    <label class="field full"><span>提案标题</span><input id="propTitle" value="智能零售柜点位合作提案" /></label>
-                    <label class="field"><span>物业 / 点位名称</span><input id="propProperty" placeholder="物业名称" /></label>
-                    <label class="field"><span>所在城市</span><input id="propCity" placeholder="City, State" /></label>
-                    <label class="field"><span>场地类型</span>
+                    <label class="field full"><span>Proposal Title</span><input id="propTitle" value="Smart Retail Amenity Partnership Proposal" /></label>
+                    <label class="field"><span>Property / Location Name</span><input id="propProperty" placeholder="Property name" /></label>
+                    <label class="field"><span>City</span><input id="propCity" placeholder="City, State" /></label>
+                    <label class="field"><span>Venue Type</span>
                       <select id="propVenue">
-                        <option value="Gym & Fitness Center">健身房与运动中心</option>
-                        <option value="Factory & Industrial Plant">工厂与工业园区</option>
-                        <option value="Airport & Transit Hub">机场与交通枢纽</option>
-                        <option value="Apartment & Residential" selected>公寓与住宅社区</option>
-                        <option value="Construction Site">建筑工地与施工现场</option>
-                        <option value="Hospital & Medical Center">医院与医疗中心</option>
-                        <option value="Hotel & Hospitality">酒店与文旅住宿</option>
-                        <option value="Office & Corporate Campus">写字楼与企业园区</option>
-                        <option value="School & University Campus">学校与大学校园</option>
+                        <option value="Gym & Fitness Center">Gym & Fitness Center</option>
+                        <option value="Factory & Industrial Plant">Factory & Industrial Plant</option>
+                        <option value="Airport & Transit Hub">Airport & Transit Hub</option>
+                        <option value="Apartment & Residential" selected>Apartment & Residential</option>
+                        <option value="Construction Site">Construction Site</option>
+                        <option value="Hospital & Medical Center">Hospital & Medical Center</option>
+                        <option value="Hotel & Hospitality">Hotel & Hospitality</option>
+                        <option value="Office & Corporate Campus">Office & Corporate Campus</option>
+                        <option value="School & University Campus">School & University Campus</option>
                       </select>
                     </label>
-                    <label class="field"><span>预计上线时间</span><input id="propLaunch" placeholder="例如: 双方确认后 2-4 周" /></label>
-                    <label class="field"><span>运营商名称</span><input id="propOperator" placeholder="运营公司名称" /></label>
-                    <label class="field"><span>联系人</span><input id="propContactName" placeholder="姓名" /></label>
-                    <label class="field"><span>联系人邮箱</span><input id="propContactEmail" type="email" placeholder="name@example.com" /></label>
-                    <label class="field"><span>联系电话</span><input id="propContactPhone" type="tel" placeholder="(555) 019-2834" /></label>
+                    <label class="field"><span>Estimated Launch Date</span><input id="propLaunch" placeholder="e.g. 2-4 weeks after approval" /></label>
+                    <label class="field"><span>Operator Name</span><input id="propOperator" placeholder="Operator company name" /></label>
+                    <label class="field"><span>Contact Name</span><input id="propContactName" placeholder="Full name" /></label>
+                    <label class="field"><span>Contact Email</span><input id="propContactEmail" type="email" placeholder="name@example.com" /></label>
+                    <label class="field"><span>Contact Phone</span><input id="propContactPhone" type="tel" placeholder="(555) 019-2834" /></label>
                   </div>
                 </div>
               </div>
 
-              <!-- 模块 02：推荐设备与部署方案（必选） -->
+              <!-- Module 02: Recommended Equipment (Required — Left only shows Model & Quantity + Add Equipment) -->
               <div class="prop-module-card" data-module-card="equipment">
                 <div class="prop-module-head">
                   <div class="prop-module-check is-locked">
                     <span class="criterion-num">02</span>
-                    <strong>推荐设备与部署方案</strong>
+                    <strong>Recommended Equipment & Site Rendering</strong>
                   </div>
-                  <button class="button button-outline button-small" id="addMachineRowBtn" type="button">+ 增加设备</button>
+                  <button class="button button-outline button-small" id="addMachineRowBtn" type="button">+ Add Equipment</button>
                 </div>
                 <div class="prop-module-body">
-                  <div class="power-unified-bar">
-                    <span>统一供电要求</span>
-                    <strong>110–120V / 60Hz</strong>
-                  </div>
-                  <div id="propMachinesList" class="prop-machines-list"></div>
-                  <div id="propLeftVisualPair" class="prop-visual-pair"></div>
+                  <div id="propMachinesList" class="prop-machines-list" style="margin-bottom:0;"></div>
                 </div>
               </div>
 
-              <!-- 模块 03：场地合作价值（可选） -->
+              <!-- Module 03: Venue Value Proposition (Optional) -->
               <div class="prop-module-card" data-module-card="venueValue">
                 <div class="prop-module-head">
                   <label class="prop-module-check">
                     <input type="checkbox" id="modToggle_venueValue" data-mod-key="venueValue" checked />
                     <span class="criterion-num">03</span>
-                    <strong>场地合作价值</strong>
+                    <strong>Venue Value Proposition</strong>
                   </label>
-                  <button class="text-button" id="resetVenueValueBtn" type="button">恢复默认文案</button>
+                  <button class="text-button" id="resetVenueValueBtn" type="button">Reset Default Copy</button>
                 </div>
                 <div class="prop-module-body">
                   <label class="field full">
-                    <span>根据场地类型自动匹配 4 条核心价值（每行自动按圆点列表对齐，包含冒号“：”会自动加粗前缀）</span>
+                    <span>Auto-populated 4 core value points by venue (each line formats as a bullet item; text before ":" is automatically bolded)</span>
                     <textarea id="propVenueValue" rows="5"></textarea>
                   </label>
                 </div>
               </div>
 
-              <!-- 模块 04：商品组合与陈列建议（可选） -->
+              <!-- Module 04: Product Mix & Merchandising (Optional) -->
               <div class="prop-module-card" data-module-card="planogram">
                 <div class="prop-module-head">
                   <label class="prop-module-check">
                     <input type="checkbox" id="modToggle_planogram" data-mod-key="planogram" checked />
                     <span class="criterion-num">04</span>
-                    <strong>商品组合与陈列建议</strong>
+                    <strong>Product Mix & Merchandising</strong>
                   </label>
-                  <button class="text-button" id="resetPlanogramBtn" type="button">恢复默认组合</button>
+                  <button class="text-button" id="resetPlanogramBtn" type="button">Reset Product Mix</button>
                 </div>
                 <div class="prop-module-body">
                   <label class="field full">
-                    <span>根据场地类型自动匹配推荐商品组合（每行自动按圆点列表对齐，包含冒号“：”会自动加粗类别名）</span>
+                    <span>Auto-populated product mix by venue (each line formats as a bullet item; category names before ":" are automatically bolded)</span>
                     <textarea id="propPlanogram" rows="5"></textarea>
                   </label>
                 </div>
               </div>
 
-              <!-- 模块 05：物业合作与收益方式（可选） -->
+              <!-- Module 05: Partnership Model & Property Earnings (Optional) -->
               <div class="prop-module-card" data-module-card="deal">
                 <div class="prop-module-head">
                   <label class="prop-module-check">
                     <input type="checkbox" id="modToggle_deal" data-mod-key="deal" checked />
                     <span class="criterion-num">05</span>
-                    <strong>物业合作与收益方式</strong>
+                    <strong>Partnership Model & Property Earnings</strong>
                   </label>
-                  <button class="text-button" id="syncFromRoi" type="button">同步收益测算数据</button>
+                  <button class="text-button" id="syncFromRoi" type="button">Sync Earnings Estimate</button>
                 </div>
                 <div class="prop-module-body">
                   <div class="form-grid">
-                    <label class="field"><span>合作方式</span>
+                    <label class="field"><span>Partnership Model</span>
                       <select id="propDeal">
-                        <option value="revenueShare">按销售额分成</option>
-                        <option value="fixedRent">固定月租</option>
-                        <option value="amenity">纯便民配套</option>
+                        <option value="revenueShare">Revenue Share</option>
+                        <option value="fixedRent">Fixed Monthly Rent</option>
+                        <option value="amenity">Amenity-Only</option>
                       </select>
                     </label>
-                    <label class="field" id="propShareField"><span>点位方销售额分成 (%)</span><input id="propShare" type="number" min="0" max="100" value="10" /></label>
-                    <label class="field" id="propRentField" hidden><span>固定月租 ($)</span><input id="propRent" type="number" min="0" value="200" /></label>
+                    <label class="field" id="propShareField"><span>Site Partner Share of Sales (%)</span><input id="propShare" type="number" min="0" max="100" value="10" /></label>
+                    <label class="field" id="propRentField" hidden><span>Fixed Monthly Rent ($)</span><input id="propRent" type="number" min="0" value="200" /></label>
                   </div>
                 </div>
               </div>
 
-              <!-- 模块 06：日常运营与质保售后（可选） -->
+              <!-- Module 06: Daily Operations & Warranty Support (Optional) -->
               <div class="prop-module-card" data-module-card="operations">
                 <div class="prop-module-head">
                   <label class="prop-module-check">
                     <input type="checkbox" id="modToggle_operations" data-mod-key="operations" checked />
                     <span class="criterion-num">06</span>
-                    <strong>日常运营与质保售后</strong>
+                    <strong>Daily Operations & Warranty Support</strong>
                   </label>
-                  <span class="step-tag">省心托管</span>
+                  <span class="step-tag">TURNKEY OPS</span>
                 </div>
                 <div class="prop-module-body">
                   <div class="form-grid">
                     <label class="field full">
-                      <span>1. 日常运营说明</span>
-                      <textarea id="propService" rows="4">运营商负责商品采购、定期补货、设备清洁及日常维护，并持续关注商品库存和设备运行状态。运营商与点位方协调现场进出及日常运营安排。
-点位方负责提供合适的设备安装区域、电源及合理的现场进出权限，以便运营商开展补货、清洁和维护工作。双方共同协调场地特殊要求，确保日常运营顺利进行。</textarea>
+                      <span>1. Daily Operations</span>
+                      <textarea id="propService" rows="4">The Operator is responsible for product sourcing, regular restocking, machine cleaning, and routine maintenance. The Operator will monitor inventory and machine status, and coordinate with the Property Owner regarding site access and operational arrangements.
+The Property Owner agrees to provide a suitable installation area, access to electricity, and reasonable site access for restocking, cleaning, and maintenance. Both parties will coordinate any site-specific requirements to ensure smooth daily operations.</textarea>
                     </label>
                     <label class="field full">
-                      <span>2. 质保与售后说明</span>
-                      <textarea id="propWarranty" rows="4">运营商负责关注设备异常提醒、协调故障排查及维修服务，并根据适用的设备质保条款，通过设备制造商协调质保申请及技术支持。运营商应维持适用的商业责任保险，并根据要求提供保险证明。
-点位方负责及时告知运营商现场发现的设备故障、损坏或异常情况，不得擅自移动、开启或拆卸设备。运营商负责协调后续处理，并及时向点位方同步相关服务安排。</textarea>
+                      <span>2. Warranty & After-Sales Support</span>
+                      <textarea id="propWarranty" rows="4">The Operator is responsible for monitoring machine alerts, coordinating troubleshooting and repair services, and handling warranty claims through the equipment manufacturer, subject to applicable warranty terms. The Operator will maintain applicable business liability insurance and provide proof of coverage upon request.
+The Property Owner agrees to notify the Operator of any equipment issues, damage, or unusual conditions observed on-site, and to avoid unauthorized relocation, opening, or tampering with the machine. The Operator will coordinate necessary follow-up actions and keep the Property Owner informed of relevant service arrangements.</textarea>
                     </label>
                   </div>
                 </div>
               </div>
 
-              <!-- 模块 07：合规资料（可选） -->
+              <!-- Module 07: Compliance Documents (Optional) -->
               <div class="prop-module-card" data-module-card="compliance">
                 <div class="prop-module-head">
                   <label class="prop-module-check">
                     <input type="checkbox" id="modToggle_compliance" data-mod-key="compliance" checked />
                     <span class="criterion-num">07</span>
-                    <strong>合规资料</strong>
+                    <strong>Compliance Documents</strong>
                   </label>
-                  <button class="text-button" type="button" data-goto="compliance">管理合规文件库 →</button>
+                  <button class="text-button" type="button" data-goto="compliance">Manage Compliance Docs →</button>
                 </div>
                 <div class="prop-module-body">
                   <div class="field full">
-                    <span>勾选本次提案需要附带的合规资料（在「合规文件中心」新增的文件会自动同步到此处）</span>
+                    <span>Check compliance files to attach (new files added in Compliance Center sync here automatically)</span>
                     <div class="doc-select-grid" id="propDocSelectGrid"></div>
-                    <small class="muted-mini">导出网页版提案时将附带已配置的文件下载链接；打印或保存 PDF 时将自动转换为正式的纸质资质核验清单。</small>
+                    <small class="muted-mini">Exported web proposals include download links for configured files; printing or saving as PDF automatically formats them as a formal verification checklist.</small>
                   </div>
                 </div>
               </div>
 
-              <!-- 模块 08：后续确认事项与补充说明（可选） -->
+              <!-- Module 08: Final Arrangements & Additional Notes (Optional) -->
               <div class="prop-module-card" data-module-card="finalNotes">
                 <div class="prop-module-head">
                   <label class="prop-module-check">
                     <input type="checkbox" id="modToggle_finalNotes" data-mod-key="finalNotes" checked />
                     <span class="criterion-num">08</span>
-                    <strong>后续确认事项与补充说明</strong>
+                    <strong>Final Arrangements & Additional Notes</strong>
                   </label>
-                  <span class="step-tag">安装前确认</span>
+                  <span class="step-tag">PRE-INSTALL</span>
                 </div>
                 <div class="prop-module-body">
                   <div class="form-grid">
                     <label class="field full">
-                      <span>1. 后续确认事项</span>
-                      <textarea id="propConfirmItems" rows="6">设备安装前，双方需进一步确认以下事项：
-- 最终设备摆放位置及安装区域。
-- 现场电源及网络条件。
-- 允许销售的商品类别及场地特殊限制。
-- 电费及其他相关场地费用的承担方式。
-- 销售分成比例或固定场地租金。
-- 设备安装时间、现场进出权限及运营时间。</textarea>
+                      <span>1. Items to Be Confirmed</span>
+                      <textarea id="propConfirmItems" rows="6">The following details will be confirmed by both parties before installation:
+- Final machine placement and installation area.
+- Power supply and network availability.
+- Approved product categories and any site-specific restrictions.
+- Responsibility for electricity and other applicable site costs.
+- Revenue-sharing percentage or rental arrangement.
+- Installation date, site access, and operating hours.</textarea>
                     </label>
                     <label class="field full">
-                      <span>2. 补充说明</span>
-                      <textarea id="propNotes" rows="3">双方商定的任何其他要求、场地特殊安排或特别条款均可在此处记录。最终合作安排以点位方与运营商双方达成的共同协议为准。</textarea>
+                      <span>2. Additional Notes</span>
+                      <textarea id="propNotes" rows="3">Any additional requirements, site-specific arrangements, or special terms agreed upon by both parties may be documented here. Final arrangements will be subject to mutual agreement between the Property Owner and the Operator.</textarea>
                     </label>
                   </div>
                 </div>
               </div>
 
-              <!-- 自定义模块容器 (09, 10...) -->
+              <!-- Custom Modules Container (09, 10...) -->
               <div id="propCustomModulesList" class="prop-custom-modules-list"></div>
 
               <button class="button button-outline button-wide" id="addCustomModuleBtn" type="button" style="border-style:dashed;margin-top:6px;">
-                + 添加自定义模块（09、10... 按需补充其他条款）
+                + Add Custom Section
               </button>
 
               <div class="form-actions">
-                <button class="button button-dark" id="saveProposal" type="button">保存到当前项目</button>
-                <span class="muted-mini">提案预览会随勾选和输入自动实时更新</span>
+                <button class="button button-dark" id="saveProposal" type="button">Save to Current Project</button>
+                <span class="muted-mini">Live preview updates automatically as you toggle or edit modules</span>
               </div>
             </div>
             <div class="proposal-preview-wrap">
               <div class="preview-toolbar">
-                <span><i></i> 实时预览</span>
-                <button class="text-button" id="printProposal" type="button">打印 / 保存 PDF ↗</button>
+                <span><i></i> Live Preview</span>
+                <button class="text-button" id="printProposal" type="button">Print / Save as PDF ↗</button>
               </div>
               <article class="proposal-paper" id="proposalPreview"></article>
             </div>
           </div>
         </section>
 
-        <!-- 页面五：合规文件中心 -->
+        <!-- Page 5: Compliance Documents -->
         <section class="page" id="page-compliance">
           <div class="page-heading">
             <div>
               <div class="eyebrow">04 / COMPLIANCE REPOSITORY</div>
-              <h1>合规文件中心</h1>
-              <p>集中管理设备认证、食品安全资料、保险证明和税务文件，按物业要求整理材料。</p>
+              <h1>Compliance Documents</h1>
+              <p>Organize equipment certificates, food safety materials, insurance, and tax documents for property reviews.</p>
             </div>
             <div class="heading-actions">
-              <button class="button button-outline" id="addComplianceLink" type="button">+ 添加文件链接</button>
+              <button class="button button-outline" id="addComplianceLink" type="button">+ Add File Link</button>
             </div>
           </div>
           <div class="compliance-banner">
             <div>
               <span class="eyebrow">DOCUMENT READINESS</span>
-              <h2>让物业审查更清晰、更高效。</h2>
-              <p>填写权限受控的 Google Drive 或 HTTPS 文件链接。当前页面不包含任何虚构认证。</p>
-            </div>
-            <div class="compliance-progress">
-              <strong id="complianceCount">0 / 7</strong>
-              <span>已配置文件</span>
-              <div class="progress-track"><i id="complianceProgressBar"></i></div>
+              <h2>Make property reviews clearer and more efficient.</h2>
+              <p>Add access-controlled Google Drive or HTTPS file links. No fictional certifications are included.</p>
             </div>
           </div>
           <div class="compliance-grid" id="complianceGrid"></div>
           <div class="panel compliance-note-panel">
             <div class="note-icon">i</div>
             <div>
-              <strong>资料管理注意事项</strong>
-              <p>W-9 可能包含企业税务识别信息，COI 也可能包含保单信息。建议放在有访问权限控制的 Google Drive 中，不要将敏感文件提交到公开 GitHub 仓库。ADA 通常应作为无障碍合规说明或适用性资料呈现，不应在未核实的情况下称为“认证”。</p>
+              <strong>Document Handling Notice</strong>
+              <p>W-9 forms may contain tax IDs and COI files may contain policy details. Keep them in access-controlled Google Drive folders rather than public GitHub repositories. Present ADA details as accessibility guidance rather than an unverified certification.</p>
             </div>
           </div>
         </section>
 
-        <!-- 页面六：我的项目 -->
+        <!-- Page 6: My Projects -->
         <section class="page" id="page-projects">
           <div class="page-heading">
             <div>
               <div class="eyebrow">MY LOCATION PIPELINE</div>
-              <h1>我的项目</h1>
-              <p>查看和管理保存在当前浏览器中的点位项目。</p>
+              <h1>My Projects</h1>
+              <p>View and manage location projects saved in this browser.</p>
             </div>
             <div class="heading-actions">
-              <button class="button button-dark" id="newProjectList" type="button">+ 新建项目</button>
+              <button class="button button-dark" id="newProjectList" type="button">+ New Project</button>
             </div>
           </div>
           <div class="project-toolbar">
-            <div class="search-box"><span>🔍</span><input id="projectSearch" placeholder="搜索点位名称或城市" /></div>
-            <span class="muted-mini" id="projectCountLabel">0 个项目</span>
+            <div class="search-box"><span>🔍</span><input id="projectSearch" placeholder="Search location or city" /></div>
+            <span class="muted-mini" id="projectCountLabel">0 projects</span>
           </div>
           <div id="projectsGrid" class="projects-grid"></div>
         </section>
 
         <footer class="app-footer">
           <span>HAHA VENDING · LOCATION PITCH BUILDER</span>
-          <span>第一版原型 · 数据存储于本地浏览器</span>
+          <span>Smart Retail Partnership Workspace</span>
         </footer>
       </div>
     </main>
@@ -744,64 +733,64 @@
 
   <div class="toast" id="toast" role="status" aria-live="polite"></div>
 
-  <!-- 新建项目弹窗 -->
+  <!-- New Project Modal -->
   <div class="modal-backdrop" id="newProjectModal" hidden>
     <div class="modal">
-      <button class="modal-close" id="closeModal" type="button" aria-label="关闭">×</button>
+      <button class="modal-close" id="closeModal" type="button" aria-label="Close">×</button>
       <div class="modal-head">
         <div class="eyebrow">NEW LOCATION PROJECT</div>
-        <h3>新建点位项目</h3>
-        <p>先创建项目名称，之后可以逐步补充点位评估、收益测算和提案内容。</p>
+        <h3>New Location Project</h3>
+        <p>Name the project first, then add the location assessment, earnings estimate, and proposal details.</p>
       </div>
       <div class="form-grid">
-        <label class="field full"><span>项目 / 点位名称 <em>*</em></span><input id="newProjectName" placeholder="例如: Sunrise Apartments" /></label>
-        <label class="field full"><span>城市 / 州</span><input id="newProjectCity" placeholder="例如: Tampa, FL" /></label>
+        <label class="field full"><span>Project / Location Name <em>*</em></span><input id="newProjectName" placeholder="e.g. Sunrise Apartments" /></label>
+        <label class="field full"><span>City / State</span><input id="newProjectCity" placeholder="e.g. Tampa, FL" /></label>
       </div>
       <div class="modal-actions">
-        <button class="button button-outline" id="cancelNewProject" type="button">取消</button>
-        <button class="button button-yellow" id="confirmNewProject" type="button">创建项目 ↗</button>
+        <button class="button button-outline" id="cancelNewProject" type="button">Cancel</button>
+        <button class="button button-yellow" id="confirmNewProject" type="button">Create Project ↗</button>
       </div>
     </div>
   </div>
 
-  <!-- 合规文件编辑 / 新增弹窗 -->
+  <!-- Compliance Link Modal -->
   <div class="modal-backdrop" id="complianceModal" hidden>
     <div class="modal">
-      <button class="modal-close" id="closeComplianceModal" type="button" aria-label="关闭">×</button>
+      <button class="modal-close" id="closeComplianceModal" type="button" aria-label="Close">×</button>
       <div class="modal-head">
         <div class="eyebrow">COMPLIANCE DOCUMENT</div>
-        <h3 id="complianceModalTitle">添加文件链接</h3>
-        <p id="complianceModalDesc">请填写受控访问的 Google Drive 或 HTTPS 文件链接。</p>
+        <h3 id="complianceModalTitle">Add File Link</h3>
+        <p id="complianceModalDesc">Enter an access-controlled Google Drive or HTTPS file link.</p>
       </div>
       <div class="form-grid">
         <label class="field full" id="complianceTitleField">
-          <span>文件名称 <em>*</em></span>
-          <input id="complianceDocTitle" placeholder="例如: 设备规格表 / 保险附加被保险人证明" />
+          <span>Document Title <em>*</em></span>
+          <input id="complianceDocTitle" placeholder="e.g. Machine Spec Sheet / Additional Insured Endorsement" />
         </label>
         <label class="field full">
-          <span>文件链接 (HTTPS / Google Drive)</span>
+          <span>File Link (HTTPS / Google Drive)</span>
           <input id="complianceDocUrl" type="url" placeholder="https://drive.google.com/..." />
         </label>
       </div>
       <div class="modal-actions">
-        <button class="button button-outline" id="cancelComplianceModal" type="button">取消</button>
-        <button class="button button-yellow" id="confirmComplianceModal" type="button">保存</button>
+        <button class="button button-outline" id="cancelComplianceModal" type="button">Cancel</button>
+        <button class="button button-yellow" id="confirmComplianceModal" type="button">Save</button>
       </div>
     </div>
   </div>
 
-  <!-- 删除项目确认弹窗 -->
+  <!-- Delete Confirm Modal -->
   <div class="modal-backdrop" id="deleteConfirmModal" hidden>
     <div class="modal">
-      <button class="modal-close" id="closeDeleteModal" type="button" aria-label="关闭">×</button>
+      <button class="modal-close" id="closeDeleteModal" type="button" aria-label="Close">×</button>
       <div class="modal-head">
         <div class="eyebrow">CONFIRM DELETE</div>
-        <h3>确认删除项目</h3>
-        <p id="deleteModalMessage">确定删除该项目吗？此操作不可恢复。</p>
+        <h3>Confirm Project Deletion</h3>
+        <p id="deleteModalMessage">Delete this project? This action cannot be undone.</p>
       </div>
       <div class="modal-actions">
-        <button class="button button-outline" id="cancelDeleteModal" type="button">取消</button>
-        <button class="button button-dark" id="confirmDeleteModal" type="button">确认删除</button>
+        <button class="button button-outline" id="cancelDeleteModal" type="button">Cancel</button>
+        <button class="button button-dark" id="confirmDeleteModal" type="button">Confirm Delete</button>
       </div>
     </div>
   </div>

@@ -1,6 +1,5 @@
 /* ===================================================
-   应用入口：导航、项目状态、页面之间的数据联动
-   新增页面时：在 index.html 增加 section，再在这里增加路由映射。
+   Application Entry: Navigation, Project State & Sync
    =================================================== */
 import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, money, escapeHTML, normalizeVenue } from './data.js';
 import { loadStore, saveStore, createProject, cleanLegacyNotes } from './storage.js';
@@ -32,7 +31,7 @@ function toast(message) {
 
 function persist() {
   const success = saveStore(store);
-  if (!success) toast('本地保存失败，请检查浏览器存储空间或隐私设置。');
+  if (!success) toast('Local save failed. Please check browser storage or privacy settings.');
   return success;
 }
 
@@ -48,7 +47,7 @@ function setCurrentProject(project) {
 function ensureProject(nameHint = '') {
   let project = currentProject();
   if (project) return project;
-  const name = nameHint.trim() || $('locName')?.value.trim() || $('roiLocation')?.value.trim() || $('propProperty')?.value.trim() || '未命名点位项目';
+  const name = nameHint.trim() || $('locName')?.value.trim() || $('roiLocation')?.value.trim() || $('propProperty')?.value.trim() || 'Untitled Location Project';
   project = createProject(name, $('locCity')?.value.trim() || $('propCity')?.value.trim() || '');
   store.projects.unshift(project);
   store.currentProjectId = project.id;
@@ -69,7 +68,7 @@ function readScoreForm() {
     audience: $('locAudience')?.value.trim() || '',
     term: Number($('locTerm')?.value || 0),
     decision: $('locDecision')?.value.trim() || '',
-    source: $('locSource')?.value || '自主开发',
+    source: $('locSource')?.value || 'Direct Outreach',
     notes: $('locNotes')?.value.trim() || '',
     ratings: { ...scoreValues },
     readiness: { ...readinessValues }
@@ -144,15 +143,15 @@ function updateReadiness(readinessId, value) {
 function updateDecisionGuide() {
   const type = normalizeVenue($('locType')?.value);
   const guidance = {
-    'Office & Corporate Campus': '小办公室：Office Manager；大型办公室：Facilities / Workplace Manager；多租户办公楼：Property Manager 或前台。先确认是否存在企业级统一供应商协议。',
-    'Apartment & Residential': '优先联系 Property Manager（物业经理），必要时进一步确认区域 / Corporate Property Manager 是否拥有最终审批权。',
-    'Factory & Industrial Plant': '优先联系 Plant Manager（厂长）、HR 负责人或 Facilities / EHS 部门，重点沟通夜班/倒班员工的即时餐饮福利与免人工管理优势。',
-    'Gym & Fitness Center': '独立健身房：Owner 或 General Manager；连锁 / 加盟店：General Manager，并先核实是否已有全国性合作协议。',
-    'Hotel & Hospitality': '优先联系 General Manager、Director of Operations 或 Facilities Manager；大型连锁酒店需确认品牌或集团采购要求。',
-    'School & University Campus': '优先联系 Facilities Manager、学校行政或采购负责人；公立机构通常还需确认招标和供应商准入流程。',
-    'Hospital & Medical Center': '优先联系 Facilities / Supply Chain / Purchasing 部门，并提前了解院内供应商准入、保险及卫生审查要求。',
-    'Airport & Transit Hub': '优先联系机场/车站商业管理部（Concessions / Commercial Management）或 Facilities 部门，提前核实安检准入、合规资质与供电条件。',
-    'Construction Site': '优先联系项目经理（Project Manager）、Site Superintendent 或安全/后勤负责人，重点沟通高温补水、工间补给及临时电源稳定保障。'
+    'Office & Corporate Campus': 'Small office: Office Manager; Large office: Facilities / Workplace Manager; Multi-tenant building: Property Manager or front desk. Confirm whether an enterprise vendor agreement exists.',
+    'Apartment & Residential': 'Contact the Property Manager first, and confirm whether a Regional or Corporate Property Manager holds final approval authority.',
+    'Factory & Industrial Plant': 'Contact the Plant Manager, HR lead, or Facilities / EHS manager; highlight 24/7 refreshment access across shifts with zero staffing burden.',
+    'Gym & Fitness Center': 'Independent gym: Owner or General Manager; Chain / franchise: General Manager, and verify whether a national vendor contract is already in place.',
+    'Hotel & Hospitality': 'Contact the General Manager, Director of Operations, or Facilities Manager; for hotel chains, verify brand or corporate procurement standards.',
+    'School & University Campus': 'Contact the Facilities Manager, administration, or purchasing lead; public institutions usually require RFP and vendor onboarding steps.',
+    'Hospital & Medical Center': 'Contact Facilities, Supply Chain, or Purchasing, and review hospital vendor onboarding, insurance, and health compliance requirements.',
+    'Airport & Transit Hub': 'Contact Airport/Transit Concessions, Commercial Management, or Facilities to confirm security clearance, compliance credentials, and power access.',
+    'Construction Site': 'Contact the Project Manager, Site Superintendent, or EHS lead; highlight heat-safety hydration, on-site crew refueling, and stable 110–120V power.'
   };
   const guideEl = $('decisionGuideText');
   if (guideEl) guideEl.textContent = t(guidance[type] || guidance['Office & Corporate Campus']);
@@ -173,7 +172,9 @@ function updateProposalAutoSave() {
   const project = currentProject();
   if (project) {
     project.proposal = readProposalState();
-    if (!project.name || project.name === '未命名点位项目') project.name = project.proposal.property || project.name;
+    if (!project.name || project.name === 'Untitled Location Project' || project.name === '未命名点位项目') {
+      project.name = project.proposal.property || project.name;
+    }
     updateProjectTimestamp(project);
     persist();
   }
@@ -182,7 +183,7 @@ function updateProposalAutoSave() {
 function saveScore() {
   const data = readScoreForm();
   if (!data.name) {
-    toast('请先填写点位名称。');
+    toast('Please enter a location name first.');
     $('locName')?.focus();
     return;
   }
@@ -195,7 +196,7 @@ function saveScore() {
   setCurrentProject(project);
   persist();
   updateDashboard();
-  toast('点位评估已保存到本地项目。');
+  toast('Location assessment saved to local project.');
 }
 
 function saveROI() {
@@ -207,7 +208,7 @@ function saveROI() {
   setCurrentProject(project);
   persist();
   updateDashboard();
-  toast('点位方收益测算已保存到当前项目。');
+  toast('Site partner earnings estimate saved to current project.');
 }
 
 function saveProposal() {
@@ -220,7 +221,7 @@ function saveProposal() {
   setCurrentProject(project);
   persist();
   updateDashboard();
-  toast('提案信息已保存到当前项目。');
+  toast('Proposal details saved to current project.');
 }
 
 function loadProject(project) {
@@ -228,7 +229,7 @@ function loadProject(project) {
   if (project.score || project.scoreDraft) applyScoreForm(project.score || project.scoreDraft);
   else applyScoreForm({ name: project.name, city: project.city });
   if (project.roi) applyROIForm(project.roi);
-  else applyROIForm({ location: project.name, venue: (project.score || project.scoreDraft)?.type || '公寓 / 多户住宅' });
+  else applyROIForm({ location: project.name, venue: (project.score || project.scoreDraft)?.type || 'Apartment & Residential' });
   if (project.proposal) {
     project.proposal.notes = cleanLegacyNotes(project.proposal.notes);
     applyProposalForm(project.proposal);
@@ -239,24 +240,23 @@ function loadProject(project) {
   refreshProposalPreview();
   persist();
   setPage('scorer');
-  toast(`已打开项目：${project.name}`);
+  toast(`Opened project: ${project.name}`);
 }
 
-/* 导航：切换单页应用中的主内容区域，并自动滚回页面最顶端 */
 function setPage(page) {
   if (!$(`page-${page}`)) return;
   currentPage = page;
   document.querySelectorAll('.page').forEach(section => section.classList.toggle('active', section.id === `page-${page}`));
   document.querySelectorAll('.nav-item').forEach(button => button.classList.toggle('active', button.dataset.page === page));
   const names = {
-    dashboard: '工作台',
-    scorer: '点位评估',
-    roi: '点位方收益测算',
-    proposal: '商业提案',
-    compliance: '合规文件中心',
-    projects: '我的项目'
+    dashboard: 'Dashboard',
+    scorer: 'Location Assessment',
+    roi: 'Site Partner Earnings',
+    proposal: 'Business Proposal',
+    compliance: 'Compliance Documents',
+    projects: 'My Projects'
   };
-  if ($('breadcrumbCurrent')) $('breadcrumbCurrent').textContent = t(names[page] || '工作台');
+  if ($('breadcrumbCurrent')) $('breadcrumbCurrent').textContent = t(names[page] || 'Dashboard');
   $('sidebar')?.classList.remove('open');
   if (page === 'dashboard') updateDashboard();
   if (page === 'projects') renderProjects();
@@ -279,7 +279,6 @@ document.querySelectorAll('[data-goto]').forEach(button => {
 });
 $('mobileMenu')?.addEventListener('click', () => $('sidebar')?.classList.toggle('open'));
 
-/* 工作台数据卡片 */
 function updateDashboard() {
   const projects = store.projects;
   const scores = projects
@@ -287,10 +286,10 @@ function updateDashboard() {
     .filter(s => typeof s === 'number' && !Number.isNaN(s));
   const avg = scores.length ? Math.round(scores.reduce((a, b) => a + b, 0) / scores.length) : '-';
   const stats = [
-    [t('项目总数'), projects.length, t('当前浏览器已保存')],
-    [t('已完成评估'), scores.length, t('包含点位评分的项目')],
-    [t('平均点位得分'), avg, scores.length ? t('满分 100') : t('完成评估后显示')],
-    [t('已生成提案'), projects.filter(p => p.proposal?.property || p.proposal?.title).length, t('已填写提案内容')]
+    [t('Total Projects'), projects.length, t('Saved in this browser')],
+    [t('Assessments Completed'), scores.length, t('Projects with a location assessment')],
+    [t('Average Location Score'), avg, scores.length ? t('Out of 100') : t('Shown after assessment')],
+    [t('Proposals Created'), projects.filter(p => p.proposal?.property || p.proposal?.title).length, t('Proposals with saved details')]
   ];
   if ($('dashboardStats')) {
     $('dashboardStats').innerHTML = stats.map(s => `<div class="stat-card"><span>${s[0]}</span><strong>${s[1]}</strong><small>${s[2]}</small></div>`).join('');
@@ -299,8 +298,8 @@ function updateDashboard() {
   const recentEl = $('recentProjects');
   if (recentEl) {
     recentEl.innerHTML = recent.length
-      ? recent.map(project => `<div class="recent-row"><div><strong>${escapeHTML(project.name)}</strong><small>${escapeHTML(project.city || t('城市待补充'))} · ${t(`更新于 ${dateLabel(project.updatedAt)}`)}</small></div><button type="button" data-open-project="${project.id}">${t('打开')}</button></div>`).join('')
-      : `<div class="recent-empty">${t('暂无项目数据')}</div>`;
+      ? recent.map(project => `<div class="recent-row"><div><strong>${escapeHTML(project.name)}</strong><small>${escapeHTML(project.city || t('City not provided'))} · ${t(`Updated ${dateLabel(project.updatedAt)}`)}</small></div><button type="button" data-open-project="${project.id}">${t('Open')}</button></div>`).join('')
+      : `<div class="recent-empty">${t('No projects yet')}</div>`;
     recentEl.querySelectorAll('[data-open-project]').forEach(button => {
       button.addEventListener('click', () => {
         const project = store.projects.find(p => p.id === button.dataset.openProject);
@@ -310,14 +309,13 @@ function updateDashboard() {
   }
 }
 
-/* 项目管理页：搜索、打开、删除 */
 function openDeleteModal(projectId) {
   const project = store.projects.find(p => p.id === projectId);
   if (!project) return;
   pendingDeleteProjectId = projectId;
   const msgEl = $('deleteModalMessage');
   if (msgEl) {
-    msgEl.textContent = t(`确定删除「${project.name}」吗？此操作不可恢复。`);
+    msgEl.textContent = t(`Delete project "${project.name}"? This action cannot be undone.`);
   }
   if ($('deleteConfirmModal')) $('deleteConfirmModal').hidden = false;
 }
@@ -335,7 +333,7 @@ function confirmDeleteProject() {
   persist();
   renderProjects();
   updateDashboard();
-  toast('项目已删除。');
+  toast('Project deleted.');
 }
 
 $('closeDeleteModal')?.addEventListener('click', closeDeleteModal);
@@ -351,7 +349,7 @@ function renderProjects() {
     .filter(p => `${p.name} ${p.city}`.toLowerCase().includes(query))
     .sort((a, b) => new Date(b.updatedAt) - new Date(a.updatedAt));
   if ($('projectCountLabel')) {
-    $('projectCountLabel').textContent = t(`${filtered.length} 个项目`);
+    $('projectCountLabel').textContent = t(`${filtered.length} projects`);
   }
   const gridEl = $('projectsGrid');
   if (!gridEl) return;
@@ -362,21 +360,21 @@ function renderProjects() {
         return `
           <article class="project-card">
             <div class="project-card-top">
-              <span class="project-type">${hasScore ? t('已评估') : t('进行中')}</span>
-              ${project.id === store.currentProjectId ? `<span class="project-badge">${t('当前项目')}</span>` : ''}
+              <span class="project-type">${hasScore ? t('Assessed') : t('In Progress')}</span>
+              ${project.id === store.currentProjectId ? `<span class="project-badge">${t('Current Project')}</span>` : ''}
             </div>
             <h3>${escapeHTML(project.name)}</h3>
-            <p>${escapeHTML(project.city || t('城市待补充'))} · ${t(`更新于 ${dateLabel(project.updatedAt)}`)}</p>
+            <p>${escapeHTML(project.city || t('City not provided'))} · ${t(`Updated ${dateLabel(project.updatedAt)}`)}</p>
             <div class="project-card-bottom">
-              <small>${t(`点位评分：${hasScore ? scoreVal : t('待评估')} / 100`)}</small>
+              <small>${t(`Score: ${hasScore ? scoreVal : t('Not assessed')} / 100`)}</small>
               <span>
-                <button type="button" data-open-project="${project.id}">${t('打开')}</button>
-                <button type="button" data-delete-project="${project.id}">${t('删除')}</button>
+                <button type="button" data-open-project="${project.id}">${t('Open')}</button>
+                <button type="button" data-delete-project="${project.id}">${t('Delete')}</button>
               </span>
             </div>
           </article>`;
       }).join('')
-    : `<div class="recent-empty">${t('暂无相关项目')}</div>`;
+    : `<div class="recent-empty">${t('No matching projects')}</div>`;
 
   gridEl.querySelectorAll('[data-open-project]').forEach(button => {
     button.addEventListener('click', () => {
@@ -391,7 +389,6 @@ function renderProjects() {
 
 $('projectSearch')?.addEventListener('input', renderProjects);
 
-/* 新建项目弹窗 */
 function openNewProjectModal() {
   if (!$('newProjectModal')) return;
   $('newProjectModal').hidden = false;
@@ -416,7 +413,7 @@ $('newProjectModal')?.addEventListener('click', event => {
 $('confirmNewProject')?.addEventListener('click', () => {
   const name = ($('newProjectName')?.value || '').trim();
   if (!name) {
-    toast('请填写项目名称。');
+    toast('Please enter a project name.');
     $('newProjectName')?.focus();
     return;
   }
@@ -430,10 +427,9 @@ $('confirmNewProject')?.addEventListener('click', () => {
   closeNewProjectModal();
   setPage('scorer');
   updateDashboard();
-  toast('项目已创建，开始填写点位信息。');
+  toast('Project created. Start entering location details.');
 });
 
-/* 点位评估 */
 renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
 renderReadinessChecks($('readinessList'), readinessValues, updateReadiness);
 updateDecisionGuide();
@@ -444,7 +440,7 @@ $('resetScore')?.addEventListener('click', () => {
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
   renderReadinessChecks($('readinessList'), readinessValues, updateReadiness);
   updateScoring();
-  toast('点位评估参数已重置。');
+  toast('Assessment ratings and readiness checks reset.');
 });
 
 function advanceScoreToRoi() {
@@ -467,7 +463,12 @@ $('scoreToRoi')?.addEventListener('click', advanceScoreToRoi);
 
 ['locName', 'locCity', 'locType', 'locTraffic', 'locAudience', 'locTerm', 'locDecision', 'locSource', 'locNotes'].forEach(id => {
   $(id)?.addEventListener('input', () => {
-    if (id === 'locType') { updateDecisionGuide(); const nv = normalizeVenue($('locType')?.value); if ($('roiVenue')) $('roiVenue').value = nv; if ($('propVenue')) $('propVenue').value = nv; }
+    if (id === 'locType') {
+      updateDecisionGuide();
+      const nv = normalizeVenue($('locType')?.value);
+      if ($('roiVenue')) $('roiVenue').value = nv;
+      if ($('propVenue')) $('propVenue').value = nv;
+    }
     const project = currentProject();
     if (project) {
       if ($('locName')?.value.trim()) project.name = $('locName').value.trim();
@@ -478,16 +479,20 @@ $('scoreToRoi')?.addEventListener('click', advanceScoreToRoi);
     }
   });
   $(id)?.addEventListener('change', () => {
-    if (id === 'locType') { updateDecisionGuide(); const nv = normalizeVenue($('locType')?.value); if ($('roiVenue')) $('roiVenue').value = nv; if ($('propVenue')) $('propVenue').value = nv; }
+    if (id === 'locType') {
+      updateDecisionGuide();
+      const nv = normalizeVenue($('locType')?.value);
+      if ($('roiVenue')) $('roiVenue').value = nv;
+      if ($('propVenue')) $('propVenue').value = nv;
+    }
   });
 });
 
-/* 点位方收益测算 */
 bindROIInputs(result => {
   const project = currentProject();
   if (project) {
     project.roi = { ...readROIForm(), result };
-    if (result.location && (!project.name || project.name === '未命名点位项目')) {
+    if (result.location && (!project.name || project.name === 'Untitled Location Project' || project.name === '未命名点位项目')) {
       project.name = result.location;
     }
     updateProjectTimestamp(project);
@@ -500,7 +505,7 @@ $('resetRoi')?.addEventListener('click', () => {
   applyROIForm();
   renderROI();
   refreshProposalPreview();
-  toast('收益测算参数已恢复为示例值。');
+  toast('Partner earnings assumptions restored to example values.');
 });
 $('roiToProposal')?.addEventListener('click', () => {
   const roi = readROIForm();
@@ -511,25 +516,24 @@ $('roiToProposal')?.addEventListener('click', () => {
   setPage('proposal');
 });
 
-/* 商业提案 */
 bindProposalInputs(updateProposalAutoSave);
 $('saveProposal')?.addEventListener('click', saveProposal);
 $('exportProposal')?.addEventListener('click', () => {
   if (!$('propProperty')?.value.trim()) {
-    toast('建议先填写物业 / 点位名称，再导出提案。');
+    toast('Please enter the property or location name before exporting.');
     $('propProperty')?.focus();
     return;
   }
   exportProposalHTML(calculateROI(readROIForm()), calculateScore(scoreValues, readinessValues), store.docs);
   saveProposal();
-  toast('已导出独立提案网页 HTML。');
+  toast('Standalone proposal HTML exported.');
 });
 $('printProposal')?.addEventListener('click', () => {
   refreshProposalPreview();
   window.print();
 });
 $('loadProposalExample')?.addEventListener('click', () => {
-  const d = PROPOSAL_DEFAULTS[getLanguage() === 'en' ? 'en' : 'zh'];
+  const d = PROPOSAL_DEFAULTS[getLanguage() === 'zh' ? 'zh' : 'en'];
   applyProposalForm({
     title: d.title,
     property: 'Sunrise Apartments',
@@ -544,47 +548,42 @@ $('loadProposalExample')?.addEventListener('click', () => {
     share: 10,
     launch: d.launch,
     service: d.service,
+    warranty: d.warranty,
     confirmItems: d.confirmItems,
     notes: d.notes
   });
   updateProposalAutoSave();
-  toast('已载入示例提案内容，请替换为真实信息。');
+  toast('Example proposal loaded. Replace with actual property details.');
 });
 $('syncFromRoi')?.addEventListener('click', () => {
   const roi = calculateROI(readROIForm());
   applyROIToProposal(roi);
   updateProposalAutoSave();
-  toast('已同步点位方收益测算数据到提案。');
+  toast('Synced site partner earnings data to proposal.');
 });
 
-/* 合规文件中心 */
 setComplianceChangeHandler(docs => {
   store.docs = docs;
   persist();
   renderCompliance(store.docs);
   renderDocCheckboxes(store.docs);
   refreshProposalPreview();
-  toast('文件链接信息已保存到本地。');
+  toast('Document link saved locally.');
 }, toast);
 bindComplianceAddButton(store.docs);
 renderCompliance(store.docs);
 renderDocCheckboxes(store.docs);
 
-/* 语言切换时同步重绘所有动态内容 */
 onLanguageChange(() => {
   const names = {
-    dashboard: '工作台',
-    scorer: '点位评估',
-    roi: '点位方收益测算',
-    proposal: '商业提案',
-    compliance: '合规文件中心',
-    projects: '我的项目'
+    dashboard: 'Dashboard',
+    scorer: 'Location Assessment',
+    roi: 'Site Partner Earnings',
+    proposal: 'Business Proposal',
+    compliance: 'Compliance Documents',
+    projects: 'My Projects'
   };
-  if ($('breadcrumbCurrent')) $('breadcrumbCurrent').textContent = t(names[currentPage] || '工作台');
-  const roiNavBtn = document.querySelector('.nav-item[data-page="roi"]');
-  if (roiNavBtn) {
-    roiNavBtn.innerHTML = `<span class="nav-icon">$</span> ${getLanguage() === 'en' ? 'Site Partner Earnings' : '点位方收益测算'}`;
-  }
+  if ($('breadcrumbCurrent')) $('breadcrumbCurrent').textContent = t(names[currentPage] || 'Dashboard');
   syncProposalFormLanguage();
   updateDecisionGuide();
   renderScoreFactors($('scoreFactors'), scoreValues, updateScoring);
@@ -597,14 +596,13 @@ onLanguageChange(() => {
   renderProjects();
 });
 
-/* 页面初始化：恢复当前项目及首页统计 */
 function initialize() {
   const project = currentProject();
   if (project) {
     if (project.score || project.scoreDraft) applyScoreForm(project.score || project.scoreDraft);
     else applyScoreForm({ name: project.name, city: project.city });
     if (project.roi) applyROIForm(project.roi);
-    else applyROIForm({ location: project.name, venue: (project.score || project.scoreDraft)?.type || '公寓 / 多户住宅' });
+    else applyROIForm({ location: project.name, venue: (project.score || project.scoreDraft)?.type || 'Apartment & Residential' });
     if (project.proposal) {
       project.proposal.notes = cleanLegacyNotes(project.proposal.notes);
       applyProposalForm(project.proposal);

@@ -1,5 +1,5 @@
 /* ==================================================
-   合规文件中心：仅保留添加链接 / 修改链接与打开下载
+   Compliance Documents Module: Link Management & Download
    ================================================== */
 import { DEFAULT_DOCS, escapeHTML, safeURL } from './data.js';
 import { t } from './i18n.js';
@@ -16,7 +16,14 @@ export function setComplianceChangeHandler(callback, toastFn) {
 
 export function normalizeDocs(docs = []) {
   const byId = new Map(docs.map(doc => [doc.id, doc]));
-  const standard = DEFAULT_DOCS.map(base => ({ ...base, ...(byId.get(base.id) || {}) }));
+  const standard = DEFAULT_DOCS.map(base => {
+    const saved = byId.get(base.id) || {};
+    return {
+      ...base,
+      url: saved.url || base.url || '',
+      filename: saved.filename || base.filename || ''
+    };
+  });
   const custom = docs.filter(doc => !DEFAULT_DOCS.some(base => base.id === doc.id));
   return [...standard, ...custom];
 }
@@ -24,11 +31,6 @@ export function normalizeDocs(docs = []) {
 export function renderCompliance(docs = docsCache) {
   docsCache = docs;
   const list = normalizeDocs(docs);
-  const readyCount = list.filter(d => Boolean(d.downloadPath || safeURL(d.url))).length;
-  const countEl = document.getElementById('complianceCount');
-  if (countEl) countEl.textContent = `${readyCount} / ${list.length}`;
-  const barEl = document.getElementById('complianceProgressBar');
-  if (barEl) barEl.style.width = `${(readyCount / list.length) * 100}%`;
 
   const gridEl = document.getElementById('complianceGrid');
   if (!gridEl) return;
@@ -36,17 +38,17 @@ export function renderCompliance(docs = docsCache) {
   gridEl.innerHTML = list.map(doc => {
     const safeLink = safeURL(doc.url) || doc.downloadPath;
     const ready = Boolean(safeLink);
-    const status = ready ? t('已配置链接') : t('待补充');
+    const status = ready ? t('Link Configured') : t('To Be Provided');
     const statusClass = ready ? 'linked' : '';
     return `<article class="document-card" data-doc="${doc.id}">
       <div class="doc-top"><div class="doc-icon">▤</div><span class="doc-status ${statusClass}">${status}</span></div>
       <h3>${escapeHTML(t(doc.title))}</h3><p>${escapeHTML(t(doc.desc))}</p>
-      <div class="doc-meta">${escapeHTML(t(doc.category))} · ${escapeHTML(t(doc.note || '待补充'))}</div>
-      ${ready ? `<div class="doc-meta">${doc.downloadPath && !doc.url ? t('仓库认证文件') : t(`链接：${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : ''}
+      <div class="doc-meta">${escapeHTML(t(doc.category))} · ${escapeHTML(t(doc.note || 'To Be Provided'))}</div>
+      ${ready ? `<div class="doc-meta">${doc.downloadPath && !doc.url ? t('Repository Certificate File') : t(`Link: ${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : ''}
       <div class="doc-actions">
-        <button type="button" data-action="link" data-id="${doc.id}">${doc.url ? t('修改链接') : t('添加 Drive 链接')}</button>
+        <button type="button" data-action="link" data-id="${doc.id}">${doc.url ? t('Edit Link') : t('Add Drive Link')}</button>
       </div>
-      ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" download>${doc.downloadPath && !doc.url ? t('下载认证资料 ↓') : t('打开 / 下载资料 ↗')}</a>` : `<button type="button" class="doc-download" disabled>${t('下载资料 (待补充)')}</button>`}
+      ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" download>${doc.downloadPath && !doc.url ? t('Download Certificate ↓') : t('Open / Download File ↗')}</a>` : `<button type="button" class="doc-download" disabled>${t('Link Not Configured')}</button>`}
     </article>`;
   }).join('');
 
@@ -67,12 +69,12 @@ function openComplianceModal(docId = null) {
   if (docId) {
     const doc = docsCache.find(item => item.id === docId);
     if (!doc) return;
-    if (titleEl) titleEl.textContent = `${t('修改链接')} · ${t(doc.title)}`;
+    if (titleEl) titleEl.textContent = `${t('Edit Link')} · ${t(doc.title)}`;
     if (titleField) titleField.hidden = true;
     titleInput.value = doc.title;
     urlInput.value = doc.url || '';
   } else {
-    if (titleEl) titleEl.textContent = t('添加文件链接');
+    if (titleEl) titleEl.textContent = t('Add File Link');
     if (titleField) titleField.hidden = false;
     titleInput.value = '';
     urlInput.value = '';
@@ -92,7 +94,7 @@ function saveComplianceModal() {
   const urlInput = document.getElementById('complianceDocUrl');
   const rawUrl = urlInput?.value.trim() || '';
   if (rawUrl && !safeURL(rawUrl)) {
-    onToastCallback(t('链接格式不正确，请使用 https:// 或 http:// 开头的完整链接。'));
+    onToastCallback(t('Invalid URL format. Please enter a full URL starting with https:// or http://.'));
     urlInput?.focus();
     return;
   }
@@ -101,24 +103,24 @@ function saveComplianceModal() {
     const doc = docsCache.find(item => item.id === editingDocId);
     if (doc) {
       doc.url = rawUrl;
-      doc.filename = rawUrl ? (doc.filename || '云端文件链接') : '';
+      doc.filename = rawUrl ? (doc.filename || 'Cloud File Link') : '';
       onChangeCallback(docsCache);
     }
   } else {
     const title = titleInput?.value.trim() || '';
     if (!title) {
-      onToastCallback(t('请先填写点位名称。'));
+      onToastCallback(t('Please enter a location name first.'));
       titleInput?.focus();
       return;
     }
     docsCache.push({
       id: `custom_${Date.now()}`,
       title,
-      desc: '自定义补充资料，请核对文件内容及有效期。',
-      category: '补充文件',
-      filename: rawUrl ? '云端文件链接' : '',
+      desc: 'Custom supplemental document. Please verify content and validity.',
+      category: 'Supplemental Document',
+      filename: rawUrl ? 'Cloud File Link' : '',
       url: rawUrl,
-      note: '自定义资料'
+      note: 'Custom document'
     });
     onChangeCallback(docsCache);
   }

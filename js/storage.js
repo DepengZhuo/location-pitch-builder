@@ -1,16 +1,15 @@
 /* ===================================================
-   本地存储模块：统一读写项目、当前项目和合规文件元数据
-   数据使用 localStorage；不会上传到服务器。
+   Local Storage Module: Projects & Compliance Metadata
    =================================================== */
 import { DEFAULT_DOCS } from './data.js';
 
 const STORAGE_KEY = 'haha_location_pitch_builder_v1';
-const DEFAULT_SAFE_NOTES_ZH = '双方商定的任何其他要求、场地特殊安排或特别条款均可在此处记录。最终合作安排以点位方与运营商双方达成的共同协议为准。';
+const DEFAULT_SAFE_NOTES_EN = 'Any additional requirements, site-specific arrangements, or special terms agreed upon by both parties may be documented here. Final arrangements will be subject to mutual agreement between the Property Owner and the Operator.';
 
 const cloneDocs = () => JSON.parse(JSON.stringify(DEFAULT_DOCS));
 
 export function cleanLegacyNotes(notes) {
-  if (!notes) return DEFAULT_SAFE_NOTES_ZH;
+  if (!notes) return DEFAULT_SAFE_NOTES_EN;
   const trimmed = String(notes).trim();
   if (
     trimmed.includes('收益测算参考') ||
@@ -19,7 +18,7 @@ export function cleanLegacyNotes(notes) {
     trimmed.includes('零场地改造成本：设备即插即用') ||
     trimmed.includes('Zero cost to property: Plug-and-play setup')
   ) {
-    return DEFAULT_SAFE_NOTES_ZH;
+    return DEFAULT_SAFE_NOTES_EN;
   }
   return trimmed;
 }
@@ -41,7 +40,7 @@ export function loadStore() {
       docs: Array.isArray(parsed.docs) ? parsed.docs : cloneDocs()
     };
   } catch (error) {
-    console.warn('读取本地项目数据失败，已使用空白数据。', error);
+    console.warn('Failed to load local project data; using empty state.', error);
     return { projects: [], currentProjectId: null, docs: cloneDocs() };
   }
 }
@@ -51,7 +50,7 @@ export function saveStore(store) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
     return true;
   } catch (error) {
-    console.warn('保存本地数据失败：', error);
+    console.warn('Failed to save local project data:', error);
     return false;
   }
 }
@@ -60,7 +59,7 @@ export function createProject(name, city = '') {
   const now = new Date().toISOString();
   return {
     id: `loc_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
-    name: String(name || '').trim() || '未命名点位项目',
+    name: String(name || '').trim() || 'Untitled Location Project',
     city: String(city || '').trim(),
     createdAt: now,
     updatedAt: now,

@@ -1,8 +1,8 @@
 /* =========================================================
-   点位方收益测算模型（参考 partner-benefits-earnings-v4 重构）：
-   - 01 Location & Sales Assumptions（点位名称、场地类型、日均件数、均价、营业天数、数字月份合作期限）
-   - 02 Partnership Setup（按销售额分成 / 固定月租 / 纯便民配套 三选一）
-   - Estimated Monthly Partner Earnings（右侧实时汇总卡片）
+   Site Partner Earnings Calculator:
+   - 01 Location & Sales Assumptions
+   - 02 Partnership Setup (Revenue Share / Fixed Monthly Rent / Amenity-Only)
+   - Estimated Monthly Partner Earnings Summary
    ========================================================= */
 import { money, normalizeVenue } from './data.js';
 import { t } from './i18n.js';
@@ -126,18 +126,18 @@ export function renderROI() {
   const typeBasisEl = read('roiEarningsType');
   const modelLabelEl = read('roiModelLabel');
   if (input.dealType === 'revenueShare') {
-    if (typeBasisEl) typeBasisEl.textContent = t(`基于 ${input.shareRate}% 销售额分成`);
-    if (modelLabelEl) modelLabelEl.textContent = t(`${input.shareRate}% 销售额分成`);
+    if (typeBasisEl) typeBasisEl.textContent = t(`Based on ${input.shareRate}% revenue share`);
+    if (modelLabelEl) modelLabelEl.textContent = t(`${input.shareRate}% Revenue Share`);
   } else if (input.dealType === 'fixedRent') {
-    if (typeBasisEl) typeBasisEl.textContent = t('基于约定的固定月租金');
-    if (modelLabelEl) modelLabelEl.textContent = t(`固定月租 ${money(input.rent)}`);
+    if (typeBasisEl) typeBasisEl.textContent = t('Based on agreed fixed monthly rent');
+    if (modelLabelEl) modelLabelEl.textContent = t(`Fixed monthly rent ${money(input.rent)}`);
   } else {
-    if (typeBasisEl) typeBasisEl.textContent = t('纯便民配套投放（无直接货币分成）');
-    if (modelLabelEl) modelLabelEl.textContent = t('纯便民配套投放');
+    if (typeBasisEl) typeBasisEl.textContent = t('No direct monetary payment');
+    if (modelLabelEl) modelLabelEl.textContent = t('Amenity-Only Placement');
   }
 
   const termLabelEl = read('roiTermLabel');
-  if (termLabelEl) termLabelEl.textContent = t(`${input.period} 个月`);
+  if (termLabelEl) termLabelEl.textContent = t(`${input.period} months`);
 
   return result;
 }
