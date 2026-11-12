@@ -117,6 +117,11 @@ export function syncProposalFormLanguage() {
     }
   });
 
+  customModulesState.forEach(cm => {
+    if (cm.title) cm.title = t(cm.title.replace(/\s*\(\d+\)\s*$/, '').trim());
+    if (cm.content) cm.content = translateMultiline(cm.content);
+  });
+
   renderMachinesEditor();
   renderDocCheckboxes(cachedDocsList);
   renderCustomModulesEditor();
@@ -310,7 +315,9 @@ export function readProposalForm() {
   };
 }
 
-export function applyProposalForm(data = {}) {
+import { cleanLegacyProposalData } from './storage.js';
+export function applyProposalForm(rawData = {}) {
+  const data = cleanLegacyProposalData(rawData) || {};
   const lang = getLanguage() === 'zh' ? 'zh' : 'en';
   const d = PROPOSAL_DEFAULTS[lang];
   const venue = normalizeVenue(data.venue || 'Apartment & Residential');
@@ -337,7 +344,8 @@ export function applyProposalForm(data = {}) {
   customModulesState = Array.isArray(data.customModules)
     ? data.customModules.map(cm => ({
         ...cm,
-        title: String(cm.title || '').replace(/\s*\(\d+\)\s*$/, '').trim()
+        title: t(String(cm.title || '').replace(/\s*\(\d+\)\s*$/, '').trim()),
+        content: translateMultiline(cm.content || '')
       }))
     : [];
   selectedDocIds = Array.isArray(data.selectedDocs) ? [...data.selectedDocs] : ['nama', 'ul-etl', 'coi'];
@@ -524,7 +532,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
       : `We propose deploying ${p.quantity || 1} HAHA Vending smart retail unit(s) at <strong>${escapeHTML(p.property || 'your property')}</strong> to provide 24/7 grab-and-go beverages, fresh snacks, and daily essentials.`;
 
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="basic">
         <h3>${n} · ${isZh ? '合作方案概述' : 'Partnership Overview'}</h3>
         <p>${introParagraph}</p>
         <div class="proposal-meta" style="margin-top:12px;">
@@ -573,18 +581,18 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     }).join('');
 
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="equipment">
         <h3>${n} · ${isZh ? '推荐设备与部署方案' : 'Recommended Equipment & Site Rendering'}</h3>
         <div class="proposal-machines-table">${machineRowsHtml}</div>
         <div class="proposal-power-note">${isZh ? `标准供电要求：${POWER_SUPPLY_SPEC} 普通三孔插座` : `Standard power supply requirement: ${POWER_SUPPLY_SPEC} outlet`}</div>
         <div class="proposal-dual-gallery">
           <div class="proposal-gallery-card">
             <img src="${localMachineImg}" data-fallback="${fallbackMachineImg}" data-model="${escapeHTML(primaryModel)}" alt="${escapeHTML(primaryModel)} front view">
-            <strong>${isZh ? `设备产品正视图 · ${primaryModel}` : `Equipment Front View · ${primaryModel}`}</strong>
+            <strong>${isZh ? `拟投机型 · HAHA ${primaryModel}` : `Proposed Model · HAHA ${primaryModel}`}</strong>
           </div>
           <div class="proposal-gallery-card">
             <img class="site-photo" src="${localSiteImg}" data-fallback="${fallbackSiteImg}" alt="${escapeHTML(venueDisplay)}">
-            <strong>${isZh ? `场景部署效果图 · ${venueDisplay}` : `Deployment Scene · ${venueDisplay}`}</strong>
+            <strong>${isZh ? `实景空间融合参考 · ${venueDisplay}` : `On-Site Placement Reference · ${venueDisplay}`}</strong>
           </div>
         </div>
       </section>`);
@@ -594,7 +602,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   if (flags.venueValue !== false) {
     const n = nextNum();
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="venueValue">
         <h3>${n} · ${isZh ? '场地合作价值' : 'Venue Value Proposition'}</h3>
         ${renderRichLines(p.venueValue, 'bullets')}
       </section>`);
@@ -604,7 +612,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   if (flags.planogram !== false) {
     const n = nextNum();
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="planogram">
         <h3>${n} · ${isZh ? '商品组合与陈列建议' : 'Product Mix & Merchandising'}</h3>
         ${renderRichLines(p.planogram, 'bullets')}
       </section>`);
@@ -641,7 +649,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
       : `Proposed partnership model: <strong>${deal}</strong>. Settlement cycle, reporting statements, and payout dates will be defined in the written agreement.`;
 
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="deal">
         <h3>${n} · ${isZh ? '物业合作与收益方式' : 'Partnership Model & Property Earnings'}</h3>
         <p>${dealParagraph}</p>
         <div class="proposal-stat-row">
@@ -657,7 +665,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   if (flags.operations !== false) {
     const n = nextNum();
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="operations">
         <h3>${n} · ${isZh ? '日常运营与质保售后' : 'Daily Operations & Warranty Support'}</h3>
         <div class="proposal-subblock">
           <h4 class="proposal-subhead">${isZh ? '1. 日常运营说明' : '1. Daily Operations'}</h4>
@@ -689,7 +697,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
       : `<p>${t('No compliance documents are attached to this proposal yet. Configure links in the Compliance Center and check the items to include.')}</p>`;
 
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="compliance">
         <h3>${n} · ${isZh ? '合规资料' : 'Compliance Documents'}</h3>
         ${docsSection}
         <p class="doc-web-footnote">${t('Link permissions and validity are managed by the document provider; sensitive files are shared only with authorized recipients.')}</p>
@@ -700,7 +708,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   if (flags.finalNotes !== false) {
     const n = nextNum();
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="finalNotes">
         <h3>${n} · ${isZh ? '后续确认事项与补充说明' : 'Final Arrangements & Additional Notes'}</h3>
         <div class="proposal-subblock">
           <h4 class="proposal-subhead">${isZh ? '1. 后续确认事项' : '1. Items to Be Confirmed'}</h4>
@@ -720,7 +728,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     const rawTitle = String(cm.title || '').replace(/\s*\(\d+\)\s*$/, '').trim();
     const cTitle = rawTitle ? translateMultiline(rawTitle) : (isZh ? '特别合作约定' : 'Special Partnership Terms');
     sections.push(`
-      <section class="proposal-section">
+      <section class="proposal-section" data-section-key="${escapeHTML(cm.id)}">
         <h3>${n} · ${escapeHTML(cTitle)}</h3>
         ${renderRichLines(cm.content || '', 'auto')}
       </section>`);
@@ -771,6 +779,7 @@ export function exportProposalHTML(roiData = null, scoreData = null, complianceD
 
 export function bindProposalInputs(onUpdate = () => {}) {
   onUpdateCallback = onUpdate;
+  setupLeftRightScrollSync();
   const staticFields = [
     'propTitle', 'propProperty', 'propCity', 'propOperator',
     'propContactName', 'propContactEmail', 'propContactPhone', 'propVenue',
@@ -842,4 +851,86 @@ export function bindProposalInputs(onUpdate = () => {}) {
     renderCustomModulesEditor();
     onUpdate();
   });
+}
+
+
+let activeScrollKey = null;
+let userInteractingWithLeft = false;
+let interactionTimer = null;
+
+export function scrollPreviewToSection(sectionKey, smooth = true) {
+  if (!sectionKey) return;
+  const wrap = document.querySelector('.proposal-preview-wrap');
+  const previewEl = el('proposalPreview');
+  if (!wrap || !previewEl) return;
+  const targetSec = previewEl.querySelector(`.proposal-section[data-section-key="${sectionKey}"]`);
+  if (!targetSec) return;
+
+  previewEl.querySelectorAll('.proposal-section.is-active-sec').forEach(s => s.classList.remove('is-active-sec'));
+  targetSec.classList.add('is-active-sec');
+
+  // Scroll the internal preview container so targetSec is comfortably visible
+  const wrapRect = wrap.getBoundingClientRect();
+  const secRect = targetSec.getBoundingClientRect();
+  const currentScroll = wrap.scrollTop;
+  const offsetInsideWrap = secRect.top - wrapRect.top + currentScroll;
+  const desiredTop = Math.max(0, offsetInsideWrap - 56);
+
+  wrap.scrollTo({
+    top: desiredTop,
+    behavior: smooth ? 'smooth' : 'auto'
+  });
+}
+
+function setupLeftRightScrollSync() {
+  const formPanel = document.querySelector('.proposal-form');
+  if (!formPanel || formPanel.dataset.scrollSyncBound) return;
+  formPanel.dataset.scrollSyncBound = 'true';
+
+  // 1. When clicking, focusing, or typing inside any left module card, scroll right preview to that module
+  const handleCardActivate = (event) => {
+    const card = event.target.closest('.prop-module-card');
+    if (!card) return;
+    const key = card.dataset.moduleCard || card.dataset.cmodId;
+    if (!key) return;
+    userInteractingWithLeft = true;
+    clearTimeout(interactionTimer);
+    interactionTimer = setTimeout(() => { userInteractingWithLeft = false; }, 1200);
+    const isInputEvent = event.type === 'input';
+    // On input, wait one frame so renderProposalPreview finishes updating DOM first
+    if (isInputEvent) {
+      requestAnimationFrame(() => scrollPreviewToSection(key, false));
+    } else {
+      scrollPreviewToSection(key, true);
+    }
+  };
+
+  formPanel.addEventListener('focusin', handleCardActivate);
+  formPanel.addEventListener('click', handleCardActivate);
+  formPanel.addEventListener('input', handleCardActivate);
+
+  // 2. When scrolling the page vertically, sync the right preview to the module card currently in the viewport
+  window.addEventListener('scroll', () => {
+    if (userInteractingWithLeft) return;
+    const proposalPage = el('page-proposal');
+    if (!proposalPage || !proposalPage.classList.contains('active')) return;
+    const cards = [...formPanel.querySelectorAll('.prop-module-card:not(.is-unchecked)')];
+    if (!cards.length) return;
+
+    const triggerLine = window.innerHeight * 0.34;
+    let matchedCard = cards[0];
+    for (const card of cards) {
+      const rect = card.getBoundingClientRect();
+      if (rect.top <= triggerLine) {
+        matchedCard = card;
+      } else {
+        break;
+      }
+    }
+    const key = matchedCard.dataset.moduleCard || matchedCard.dataset.cmodId;
+    if (key && key !== activeScrollKey) {
+      activeScrollKey = key;
+      scrollPreviewToSection(key, true);
+    }
+  }, { passive: true });
 }

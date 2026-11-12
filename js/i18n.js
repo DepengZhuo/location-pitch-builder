@@ -1,3 +1,4 @@
+import { VENUE_TEMPLATES } from './data.js';
 /* =========================================================
    Internationalization Module (i18n) — Inverted Architecture:
    - Default & Source Language: English ('en')
@@ -56,6 +57,21 @@ The Property Owner agrees to notify the Operator of any equipment issues, damage
 
 // Source (en) -> Target (zh) mapping
 const enToZh = {
+  'The operator handles product sourcing, scheduled restocking, machine cleaning, and daily operations, with maintenance response tailored to site needs.': '运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。',
+  'Restocking & inventory management: Handled by the operator with frequency adjusted to actual sales.': '商品补货与库存管理：由运营商负责，具体频率根据销售情况确定。',
+  'Equipment maintenance & support: Service hours, reporting channels, and response SLAs confirmed by both parties.': '设备维护与故障响应：双方确认服务时间、报修渠道及响应标准。',
+  'On-site coordination: Confirm placement area, operating hours, power outlet, and network connectivity.': '现场运营协调：明确设备投放区域、营业时间、用电及网络安排。',
+  'Installation location, dimensions, power outlet, and network conditions.': '现场安装位置、尺寸、电源和网络条件。',
+  'Partnership term, revenue share basis, reconciliation statements, and payout schedule.': '合作期限、分成基数、对账依据和付款日期。',
+  'Utility responsibility, insurance and indemnification, building access, and operating hours.': '电费承担、保险与赔偿责任、访问权限和营业时间。',
+  'Termination, renewal, exclusivity, and equipment removal provisions.': '合同终止、续租、独家经营及设备移除安排。',
+  'Pilot Evaluation: 60-day trial period with full operator support.': '试运营评估：首期 60 天试运营，期间由运营商提供全流程支持。',
+  'Custom Merchandising: Product mix tailored to seasonal feedback.': '定制化选品：根据现场反馈按月优化商品结构。',
+  'Beverages, bottled water, healthy snacks, convenience foods, and daily essentials. Exact SKU mix is tailored to resident/visitor preferences and sales data.': '饮料、瓶装水、健康零食、方便食品及日常必需品。具体 SKU 根据物业人群和销售反馈调整。',
+  'Bottled water, sports drinks, soft drinks, healthy snacks, grab-and-go meals, and daily essentials. Continuously optimized based on resident demographics and sales velocity.': '瓶装水、运动饮料、碳酸饮料、健康零食、方便食品及日常必需品。根据住户画像和销售数据持续优化 SKU。',
+  'Document deleted.': '文件已删除。',
+  'Restore Default List': '恢复默认文件',
+  'Default compliance documents restored.': '已恢复默认合规文件列表。',
   'Workspace': '工作空间',
   'Dashboard': '工作台',
   'Location Assessment': '点位评估',
@@ -453,6 +469,23 @@ const enToZh = {
 };
 
 const normalize = value => String(value ?? '').replace(/\s+/g, ' ').trim();
+Object.values(VENUE_TEMPLATES || {}).forEach(tpl => {
+  const pairs = [
+    [tpl.valueEn, tpl.valueZh],
+    [tpl.planogramEn, tpl.planogramZh]
+  ];
+  pairs.forEach(([enBlock, zhBlock]) => {
+    if (!enBlock || !zhBlock) return;
+    enToZh[normalize(enBlock)] = zhBlock;
+    const enLines = enBlock.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+    const zhLines = zhBlock.split('\n').map(l => l.replace(/^[-•*]\s*/, '').trim()).filter(Boolean);
+    if (enLines.length === zhLines.length) {
+      enLines.forEach((eLine, i) => {
+        enToZh[normalize(eLine)] = zhLines[i];
+      });
+    }
+  });
+});
 const zhToEn = Object.fromEntries(
   Object.entries(enToZh).map(([en, zh]) => [normalize(zh), en])
 );
@@ -598,15 +631,27 @@ export function translateMultiline(text) {
       return language === 'zh' ? PROPOSAL_DEFAULTS.zh[field] : PROPOSAL_DEFAULTS.en[field];
     }
   }
+  for (const tpl of Object.values(VENUE_TEMPLATES || {})) {
+    if (raw === tpl.valueEn.trim() || raw === tpl.valueZh.trim()) {
+      return language === 'zh' ? tpl.valueZh : tpl.valueEn;
+    }
+    if (raw === tpl.planogramEn.trim() || raw === tpl.planogramZh.trim()) {
+      return language === 'zh' ? tpl.planogramZh : tpl.planogramEn;
+    }
+  }
   return String(text)
     .split('\n')
     .map(line => {
       const trimmed = line.trim();
       if (!trimmed) return '';
-      const isBullet = /^[-•*]\s+/.test(trimmed);
-      const core = trimmed.replace(/^[-•*]\s+/, '');
-      const converted = language === 'zh' ? translateToZh(core) : translateToEn(core);
-      return isBullet ? `- ${converted}` : converted;
+      const bulletMatch = trimmed.match(/^([-•*])\s+(.*)$/);
+      if (bulletMatch) {
+        const marker = bulletMatch[1];
+        const core = bulletMatch[2];
+        const converted = language === 'zh' ? translateToZh(core) : translateToEn(core);
+        return `${marker} ${converted}`;
+      }
+      return language === 'zh' ? translateToZh(trimmed) : translateToEn(trimmed);
     })
     .join('\n');
 }

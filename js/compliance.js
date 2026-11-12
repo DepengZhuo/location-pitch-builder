@@ -1,12 +1,12 @@
 /* ==================================================
-   Compliance Documents Module: Link Management & Download
+   Compliance Documents Module: Link Management, Delete & Sync
    ================================================== */
 import { DEFAULT_DOCS, escapeHTML, safeURL } from './data.js';
 import { t } from './i18n.js';
 
 let onChangeCallback = () => {};
 let onToastCallback = () => {};
-let docsCache = DEFAULT_DOCS;
+let docsCache = [...DEFAULT_DOCS];
 let editingDocId = null;
 
 export function setComplianceChangeHandler(callback, toastFn) {
@@ -14,28 +14,32 @@ export function setComplianceChangeHandler(callback, toastFn) {
   if (toastFn) onToastCallback = toastFn;
 }
 
-export function normalizeDocs(docs = []) {
-  const byId = new Map(docs.map(doc => [doc.id, doc]));
-  const standard = DEFAULT_DOCS.map(base => {
-    const saved = byId.get(base.id) || {};
-    return {
-      ...base,
-      url: saved.url || base.url || '',
-      filename: saved.filename || base.filename || ''
-    };
-  });
-  const custom = docs.filter(doc => !DEFAULT_DOCS.some(base => base.id === doc.id));
-  return [...standard, ...custom];
+export function normalizeDocs(docs) {
+  // If docs is already a saved array (even if user deleted some default items), respect the saved list
+  if (Array.isArray(docs)) {
+    const baseMap = new Map(DEFAULT_DOCS.map(d => [d.id, d]));
+    return docs.map(item => {
+      const base = baseMap.get(item.id);
+      if (base) {
+        return {
+          ...base,
+          url: item.url || base.url || '',
+          filename: item.filename || base.filename || ''
+        };
+      }
+      return item;
+    });
+  }
+  return JSON.parse(JSON.stringify(DEFAULT_DOCS));
 }
 
 export function renderCompliance(docs = docsCache) {
-  docsCache = docs;
-  const list = normalizeDocs(docs);
+  docsCache = normalizeDocs(docs);
 
   const gridEl = document.getElementById('complianceGrid');
   if (!gridEl) return;
 
-  gridEl.innerHTML = list.map(doc => {
+  gridEl.innerHTML = docsCache.map(doc => {
     const safeLink = safeURL(doc.url) || doc.downloadPath;
     const ready = Boolean(safeLink);
     const status = ready ? t('Link Configured') : t('To Be Provided');
@@ -47,6 +51,7 @@ export function renderCompliance(docs = docsCache) {
       ${ready ? `<div class="doc-meta">${doc.downloadPath && !doc.url ? t('Repository Certificate File') : t(`Link: ${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : ''}
       <div class="doc-actions">
         <button type="button" data-action="link" data-id="${doc.id}">${doc.url ? t('Edit Link') : t('Add Drive Link')}</button>
+        <button type="button" class="doc-delete-btn" data-action="delete" data-id="${doc.id}">${t('Delete')}</button>
       </div>
       ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" download>${doc.downloadPath && !doc.url ? t('Download Certificate ↓') : t('Open / Download File ↗')}</a>` : `<button type="button" class="doc-download" disabled>${t('Link Not Configured')}</button>`}
     </article>`;
@@ -54,6 +59,15 @@ export function renderCompliance(docs = docsCache) {
 
   gridEl.querySelectorAll('[data-action="link"]').forEach(button => {
     button.addEventListener('click', () => openComplianceModal(button.dataset.id));
+  });
+
+  gridEl.querySelectorAll('[data-action="delete"]').forEach(button => {
+    button.addEventListener('click', () => {
+      const id = button.dataset.id;
+      docsCache = docsCache.filter(item => item.id !== id);
+      onChangeCallback(docsCache);
+      onToastCallback(t('Document deleted.'));
+    });
   });
 }
 
@@ -128,8 +142,13 @@ function saveComplianceModal() {
 }
 
 export function bindComplianceAddButton(docs) {
-  docsCache = docs;
+  docsCache = normalizeDocs(docs);
   document.getElementById('addComplianceLink')?.addEventListener('click', () => openComplianceModal(null));
+  document.getElementById('restoreComplianceDefaults')?.addEventListener('click', () => {
+    docsCache = JSON.parse(JSON.stringify(DEFAULT_DOCS));
+    onChangeCallback(docsCache);
+    onToastCallback(t('Default compliance documents restored.'));
+  });
   document.getElementById('closeComplianceModal')?.addEventListener('click', closeComplianceModal);
   document.getElementById('cancelComplianceModal')?.addEventListener('click', closeComplianceModal);
   document.getElementById('confirmComplianceModal')?.addEventListener('click', saveComplianceModal);

@@ -453,3 +453,20 @@ body[data-language="en"]{font-family:Arial,"Segoe UI",Roboto,"Microsoft YaHei",s
 @media(max-width:650px){
   .proposal-dual-gallery,.proposal-machine-row{grid-template-columns:1fr}
 }
+
+
+/* =========================================================
+   Synchronized Scroll Preview & Compliance Delete Button (v6.3)
+   ========================================================= */
+.proposal-preview-wrap{max-height:calc(100vh - 104px);overflow-y:auto;scroll-behavior:smooth}
+.proposal-preview-wrap::-webkit-scrollbar{width:7px}
+.proposal-preview-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:99px}
+.preview-toolbar{position:sticky;top:0;z-index:5;background:#262626;padding:4px 0 10px;margin-bottom:10px;border-bottom:1px solid #3a3a3a}
+.proposal-section{transition:background-color .2s ease,box-shadow .2s ease;border-radius:8px}
+.proposal-section.is-active-sec{background:#fafaf8;box-shadow:0 0 0 6px #fafaf8}
+.doc-actions .doc-delete-btn{flex:0 0 auto;color:#b34b40;border-color:#e5c5c0}
+.doc-actions .doc-delete-btn:hover{background:#fdf3f2;border-color:#b34b40;color:#922b21}
+@media print{
+  .proposal-preview-wrap{max-height:none!important;overflow:visible!important}
+  .proposal-section.is-active-sec{background:transparent!important;box-shadow:none!important}
+}

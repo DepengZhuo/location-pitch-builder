@@ -23,6 +23,52 @@ export function cleanLegacyNotes(notes) {
   return trimmed;
 }
 
+export function cleanLegacyProposalData(prop) {
+  if (!prop || typeof prop !== 'object') return prop;
+  const out = { ...prop };
+  if (out.notes) out.notes = cleanLegacyNotes(out.notes);
+
+  // Upgrade legacy v5 service text to v6 standard
+  if (
+    typeof out.service === 'string' &&
+    (out.service.includes('运营商负责商品采购、定期补货、设备清洁与日常运营') ||
+     out.service.includes('商品补货与库存管理：由运营商负责') ||
+     out.service.includes('Restocking & inventory management: Handled by the operator'))
+  ) {
+    delete out.service;
+  }
+
+  // Upgrade legacy v5 confirmItems text to v6 standard
+  if (
+    typeof out.confirmItems === 'string' &&
+    (out.confirmItems.includes('现场安装位置、尺寸、电源和网络条件') ||
+     out.confirmItems.includes('合作期限、分成基数、对账依据和付款日期') ||
+     out.confirmItems.includes('Installation location, dimensions, power outlet'))
+  ) {
+    delete out.confirmItems;
+  }
+
+  // Upgrade legacy v5 warranty text to v6 standard
+  if (
+    typeof out.warranty === 'string' &&
+    (out.warranty.includes('7×24 小时云端温控与设备状态监控') ||
+     out.warranty.includes('24/7 cloud temperature & telemetry monitoring'))
+  ) {
+    delete out.warranty;
+  }
+
+  // Upgrade legacy v5 planogram text
+  if (
+    typeof out.planogram === 'string' &&
+    (out.planogram.includes('饮料、瓶装水、健康零食、方便食品及日常必需品') ||
+     out.planogram.includes('瓶装水、运动饮料、碳酸饮料、健康零食'))
+  ) {
+    delete out.planogram;
+  }
+
+  return out;
+}
+
 export function loadStore() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -30,8 +76,8 @@ export function loadStore() {
     const parsed = JSON.parse(raw);
     const projects = Array.isArray(parsed.projects) ? parsed.projects : [];
     projects.forEach(p => {
-      if (p?.proposal?.notes) {
-        p.proposal.notes = cleanLegacyNotes(p.proposal.notes);
+      if (p?.proposal) {
+        p.proposal = cleanLegacyProposalData(p.proposal);
       }
     });
     return {
