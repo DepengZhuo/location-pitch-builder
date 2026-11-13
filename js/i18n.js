@@ -57,6 +57,9 @@ The Property Owner agrees to notify the Operator of any equipment issues, damage
 
 // Source (en) -> Target (zh) mapping
 const enToZh = {
+  'Custom document deleted.': '自定义文件已删除。',
+  'Please enter a document title first.': '请先填写文件名称。',
+  'Delete this project? This action cannot be undone.': '确定删除该项目吗？此操作不可恢复。',
   'The operator handles product sourcing, scheduled restocking, machine cleaning, and daily operations, with maintenance response tailored to site needs.': '运营商负责商品采购、定期补货、设备清洁与日常运营，并根据现场情况安排维护响应。',
   'Restocking & inventory management: Handled by the operator with frequency adjusted to actual sales.': '商品补货与库存管理：由运营商负责，具体频率根据销售情况确定。',
   'Equipment maintenance & support: Service hours, reporting channels, and response SLAs confirmed by both parties.': '设备维护与故障响应：双方确认服务时间、报修渠道及响应标准。',

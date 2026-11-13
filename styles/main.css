@@ -456,17 +456,26 @@ body[data-language="en"]{font-family:Arial,"Segoe UI",Roboto,"Microsoft YaHei",s
 
 
 /* =========================================================
-   Synchronized Scroll Preview & Compliance Delete Button (v6.3)
+   Synchronized Scroll Preview (Fixed Toolbar Header + Inner Paper Scroll)
+   & Custom Compliance Delete Button (v6.4)
    ========================================================= */
-.proposal-preview-wrap{max-height:calc(100vh - 104px);overflow-y:auto;scroll-behavior:smooth}
-.proposal-preview-wrap::-webkit-scrollbar{width:7px}
-.proposal-preview-wrap::-webkit-scrollbar-thumb{background:rgba(255,255,255,.28);border-radius:99px}
-.preview-toolbar{position:sticky;top:0;z-index:5;background:#262626;padding:4px 0 10px;margin-bottom:10px;border-bottom:1px solid #3a3a3a}
+.proposal-preview-wrap{display:flex;flex-direction:column;max-height:calc(100vh - 104px);overflow:hidden}
+.preview-toolbar{flex-shrink:0;display:flex;justify-content:space-between;align-items:center;padding:0 2px 12px;margin-bottom:0;background:#262626;z-index:5}
+.proposal-paper{flex:1;min-height:0;overflow-y:auto;scroll-behavior:smooth}
+.proposal-paper::-webkit-scrollbar{width:7px}
+.proposal-paper::-webkit-scrollbar-track{background:#f1f1ef;border-radius:0 10px 10px 0}
+.proposal-paper::-webkit-scrollbar-thumb{background:#c4c4c0;border-radius:99px}
+.proposal-paper::-webkit-scrollbar-thumb:hover{background:#999}
 .proposal-section{transition:background-color .2s ease,box-shadow .2s ease;border-radius:8px}
 .proposal-section.is-active-sec{background:#fafaf8;box-shadow:0 0 0 6px #fafaf8}
 .doc-actions .doc-delete-btn{flex:0 0 auto;color:#b34b40;border-color:#e5c5c0}
 .doc-actions .doc-delete-btn:hover{background:#fdf3f2;border-color:#b34b40;color:#922b21}
+@media(max-width:1200px){
+  .proposal-preview-wrap{max-height:none;overflow:visible}
+  .proposal-paper{overflow-y:visible}
+}
 @media print{
-  .proposal-preview-wrap{max-height:none!important;overflow:visible!important}
+  .proposal-preview-wrap{display:block!important;max-height:none!important;overflow:visible!important}
+  .proposal-paper{max-height:none!important;overflow:visible!important}
   .proposal-section.is-active-sec{background:transparent!important;box-shadow:none!important}
 }

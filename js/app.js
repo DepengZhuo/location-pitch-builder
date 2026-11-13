@@ -5,7 +5,7 @@ import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, money, escap
 import { loadStore, saveStore, createProject, cleanLegacyNotes } from './storage.js';
 import { renderScoreFactors, renderReadinessChecks, calculateScore, paintScoreResult, normalizeRatings, normalizeReadiness } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
-import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage, renderDocCheckboxes } from './proposal.js';
+import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage, renderDocCheckboxes, removeDeletedDocFromSelection } from './proposal.js';
 import { renderCompliance, normalizeDocs, setComplianceChangeHandler, bindComplianceAddButton } from './compliance.js';
 import { initializeLanguageToggle, onLanguageChange, t, PROPOSAL_DEFAULTS, getLanguage } from './i18n.js';
 
@@ -562,13 +562,20 @@ $('syncFromRoi')?.addEventListener('click', () => {
   toast('Synced site partner earnings data to proposal.');
 });
 
-setComplianceChangeHandler(docs => {
+setComplianceChangeHandler((docs, deletedId = null) => {
   store.docs = docs;
+  if (deletedId) {
+    removeDeletedDocFromSelection(deletedId);
+    const proj = currentProject();
+    if (proj?.proposal?.selectedDocs) {
+      proj.proposal.selectedDocs = proj.proposal.selectedDocs.filter(id => id !== deletedId);
+    }
+  }
   persist();
   renderCompliance(store.docs);
   renderDocCheckboxes(store.docs);
   refreshProposalPreview();
-  toast('Document link saved locally.');
+  if (!deletedId) toast('Document link saved locally.');
 }, toast);
 bindComplianceAddButton(store.docs);
 renderCompliance(store.docs);

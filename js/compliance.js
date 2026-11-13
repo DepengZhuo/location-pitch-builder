@@ -1,8 +1,12 @@
 /* ==================================================
-   Compliance Documents Module: Link Management, Delete & Sync
+   Compliance Documents Module:
+   - Standard 7 documents are permanent (Edit/Add Link only, cannot be deleted)
+   - User-added custom documents support both Edit Link and Delete
    ================================================== */
 import { DEFAULT_DOCS, escapeHTML, safeURL } from './data.js';
 import { t } from './i18n.js';
+
+const DEFAULT_DOC_IDS = new Set(DEFAULT_DOCS.map(d => d.id));
 
 let onChangeCallback = () => {};
 let onToastCallback = () => {};
@@ -14,23 +18,21 @@ export function setComplianceChangeHandler(callback, toastFn) {
   if (toastFn) onToastCallback = toastFn;
 }
 
-export function normalizeDocs(docs) {
-  // If docs is already a saved array (even if user deleted some default items), respect the saved list
-  if (Array.isArray(docs)) {
-    const baseMap = new Map(DEFAULT_DOCS.map(d => [d.id, d]));
-    return docs.map(item => {
-      const base = baseMap.get(item.id);
-      if (base) {
-        return {
-          ...base,
-          url: item.url || base.url || '',
-          filename: item.filename || base.filename || ''
-        };
-      }
-      return item;
-    });
-  }
-  return JSON.parse(JSON.stringify(DEFAULT_DOCS));
+export function normalizeDocs(docs = []) {
+  const safeList = Array.isArray(docs) ? docs : [];
+  const byId = new Map(safeList.map(doc => [doc.id, doc]));
+  // Always retain the 7 standard compliance documents in canonical order
+  const standard = DEFAULT_DOCS.map(base => {
+    const saved = byId.get(base.id) || {};
+    return {
+      ...base,
+      url: saved.url || base.url || '',
+      filename: saved.filename || base.filename || ''
+    };
+  });
+  // Append user-added custom documents
+  const custom = safeList.filter(doc => doc && doc.id && !DEFAULT_DOC_IDS.has(doc.id));
+  return [...standard, ...custom];
 }
 
 export function renderCompliance(docs = docsCache) {
@@ -44,14 +46,15 @@ export function renderCompliance(docs = docsCache) {
     const ready = Boolean(safeLink);
     const status = ready ? t('Link Configured') : t('To Be Provided');
     const statusClass = ready ? 'linked' : '';
-    return `<article class="document-card" data-doc="${doc.id}">
+    const isCustom = !DEFAULT_DOC_IDS.has(doc.id);
+    return `<article class="document-card" data-doc="${escapeHTML(doc.id)}">
       <div class="doc-top"><div class="doc-icon">▤</div><span class="doc-status ${statusClass}">${status}</span></div>
       <h3>${escapeHTML(t(doc.title))}</h3><p>${escapeHTML(t(doc.desc))}</p>
       <div class="doc-meta">${escapeHTML(t(doc.category))} · ${escapeHTML(t(doc.note || 'To Be Provided'))}</div>
       ${ready ? `<div class="doc-meta">${doc.downloadPath && !doc.url ? t('Repository Certificate File') : t(`Link: ${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : ''}
       <div class="doc-actions">
-        <button type="button" data-action="link" data-id="${doc.id}">${doc.url ? t('Edit Link') : t('Add Drive Link')}</button>
-        <button type="button" class="doc-delete-btn" data-action="delete" data-id="${doc.id}">${t('Delete')}</button>
+        <button type="button" data-action="link" data-id="${escapeHTML(doc.id)}">${doc.url ? t('Edit Link') : t('Add Drive Link')}</button>
+        ${isCustom ? `<button type="button" class="doc-delete-btn" data-action="delete" data-id="${escapeHTML(doc.id)}">${t('Delete')}</button>` : ''}
       </div>
       ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" download>${doc.downloadPath && !doc.url ? t('Download Certificate ↓') : t('Open / Download File ↗')}</a>` : `<button type="button" class="doc-download" disabled>${t('Link Not Configured')}</button>`}
     </article>`;
@@ -64,9 +67,10 @@ export function renderCompliance(docs = docsCache) {
   gridEl.querySelectorAll('[data-action="delete"]').forEach(button => {
     button.addEventListener('click', () => {
       const id = button.dataset.id;
+      if (DEFAULT_DOC_IDS.has(id)) return;
       docsCache = docsCache.filter(item => item.id !== id);
-      onChangeCallback(docsCache);
-      onToastCallback(t('Document deleted.'));
+      onChangeCallback(docsCache, id);
+      onToastCallback(t('Custom document deleted.'));
     });
   });
 }
@@ -123,7 +127,7 @@ function saveComplianceModal() {
   } else {
     const title = titleInput?.value.trim() || '';
     if (!title) {
-      onToastCallback(t('Please enter a location name first.'));
+      onToastCallback(t('Please enter a document title first.'));
       titleInput?.focus();
       return;
     }
@@ -144,11 +148,6 @@ function saveComplianceModal() {
 export function bindComplianceAddButton(docs) {
   docsCache = normalizeDocs(docs);
   document.getElementById('addComplianceLink')?.addEventListener('click', () => openComplianceModal(null));
-  document.getElementById('restoreComplianceDefaults')?.addEventListener('click', () => {
-    docsCache = JSON.parse(JSON.stringify(DEFAULT_DOCS));
-    onChangeCallback(docsCache);
-    onToastCallback(t('Default compliance documents restored.'));
-  });
   document.getElementById('closeComplianceModal')?.addEventListener('click', closeComplianceModal);
   document.getElementById('cancelComplianceModal')?.addEventListener('click', closeComplianceModal);
   document.getElementById('confirmComplianceModal')?.addEventListener('click', saveComplianceModal);

@@ -858,25 +858,29 @@ let activeScrollKey = null;
 let userInteractingWithLeft = false;
 let interactionTimer = null;
 
+export function removeDeletedDocFromSelection(docId) {
+  if (!docId) return;
+  selectedDocIds = selectedDocIds.filter(id => id !== docId);
+}
+
 export function scrollPreviewToSection(sectionKey, smooth = true) {
   if (!sectionKey) return;
-  const wrap = document.querySelector('.proposal-preview-wrap');
   const previewEl = el('proposalPreview');
-  if (!wrap || !previewEl) return;
+  if (!previewEl) return;
   const targetSec = previewEl.querySelector(`.proposal-section[data-section-key="${sectionKey}"]`);
   if (!targetSec) return;
 
   previewEl.querySelectorAll('.proposal-section.is-active-sec').forEach(s => s.classList.remove('is-active-sec'));
   targetSec.classList.add('is-active-sec');
 
-  // Scroll the internal preview container so targetSec is comfortably visible
-  const wrapRect = wrap.getBoundingClientRect();
+  // Scroll #proposalPreview (.proposal-paper) directly so .preview-toolbar stays cleanly above it
+  const paperRect = previewEl.getBoundingClientRect();
   const secRect = targetSec.getBoundingClientRect();
-  const currentScroll = wrap.scrollTop;
-  const offsetInsideWrap = secRect.top - wrapRect.top + currentScroll;
-  const desiredTop = Math.max(0, offsetInsideWrap - 56);
+  const currentScroll = previewEl.scrollTop;
+  const offsetInsidePaper = secRect.top - paperRect.top + currentScroll;
+  const desiredTop = Math.max(0, offsetInsidePaper - 20);
 
-  wrap.scrollTo({
+  previewEl.scrollTo({
     top: desiredTop,
     behavior: smooth ? 'smooth' : 'auto'
   });
