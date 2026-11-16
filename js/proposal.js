@@ -280,14 +280,15 @@ function renderCustomModulesEditor() {
     // Strip any legacy trailing " (09)" from title
     const cleanTitle = String(cm.title || '').replace(/\s*\(\d+\)\s*$/, '').trim();
     cm.title = cleanTitle;
-    const displayTitle = cleanTitle ? t(cleanTitle) : (isZh ? '特别合作约定' : 'Special Partnership Terms');
+    const headerTitle = cleanTitle ? t(cleanTitle) : (isZh ? '自定义模块' : 'Custom Section');
+    const inputTitleValue = cleanTitle ? t(cleanTitle) : '';
     return `
       <div class="prop-module-card ${cm.enabled === false ? 'is-unchecked' : ''}" data-cmod-id="${cm.id}">
         <div class="prop-module-head">
           <label class="prop-module-check">
             <input type="checkbox" data-cmod-toggle="${cm.id}" ${cm.enabled !== false ? 'checked' : ''} />
             <span class="criterion-num">${numStr}</span>
-            <strong>${escapeHTML(displayTitle)}</strong>
+            <strong>${escapeHTML(headerTitle)}</strong>
           </label>
           <button type="button" class="text-button" data-cmod-del="${cm.id}">${isZh ? '删除模块' : 'Delete'}</button>
         </div>
@@ -295,7 +296,7 @@ function renderCustomModulesEditor() {
           <div class="form-grid">
             <label class="field full">
               <span>${isZh ? '模块标题' : 'Section Title'}</span>
-              <input type="text" data-cmod-title="${cm.id}" value="${escapeHTML(displayTitle)}" placeholder="${isZh ? '例如：特别合作约定' : 'e.g. Special Partnership Terms'}" />
+              <input type="text" data-cmod-title="${cm.id}" value="${escapeHTML(inputTitleValue)}" placeholder="${isZh ? '请输入模块标题' : 'Enter section title'}" />
             </label>
             <label class="field full">
               <span>${isZh ? '模块内容（支持多行输入，右侧实时同步）' : 'Section Content (multi-line supported)'}</span>
@@ -323,7 +324,7 @@ function renderCustomModulesEditor() {
       if (target) {
         target.title = inp.value.replace(/\s*\(\d+\)\s*$/, '');
         const headStrong = inp.closest('.prop-module-card')?.querySelector('.prop-module-check strong');
-        if (headStrong) headStrong.textContent = target.title || (getLanguage() === 'zh' ? '特别合作约定' : 'Special Partnership Terms');
+        if (headStrong) headStrong.textContent = target.title || (getLanguage() === 'zh' ? '自定义模块' : 'Custom Section');
         onUpdateCallback();
       }
     });
@@ -605,28 +606,25 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   const sections = [];
 
   // Module 01: Partnership Overview (Mandatory)
-  {
-    const n = nextNum();
-    const introParagraph = isZh
-      ? `我们建议在 <strong>${escapeHTML(p.property || '贵物业')}</strong> 部署 ${p.quantity || 1} 台 HAHA Vending 智能零售柜，为现场人群提供 24/7 即拿即走的饮品、零食与日常必需品服务。`
-      : `We propose deploying ${p.quantity || 1} HAHA Vending smart retail unit(s) at <strong>${escapeHTML(p.property || 'your property')}</strong> to provide 24/7 grab-and-go beverages, fresh snacks, and daily essentials.`;
-
-    sections.push(`
-      <section class="proposal-section" data-section-key="basic">
-        <h3>${n} · ${isZh ? '合作方案概述' : 'Partnership Overview'}</h3>
-        <p>${introParagraph}</p>
-        <div class="proposal-meta" style="margin-top:12px;">
-          <div><span>${t('Prepared For')}</span><strong>${safe('property')}</strong></div>
-          <div><span>${t('City')}</span><strong>${safe('city')}</strong></div>
-          <div><span>${t('Venue Type')}</span><strong>${escapeHTML(venueDisplay)}</strong></div>
-          <div><span>${t('Estimated Launch Date')}</span><strong>${safe('launch')}</strong></div>
-          <div><span>${t('Operating Partner')}</span><strong>${safe('operator')}</strong></div>
-          <div><span>${t('Contact Name')}</span><strong>${safe('contactName')}</strong></div>
-          <div><span>${t('Contact Email')}</span><strong>${safe('contactEmail')}</strong></div>
-          <div><span>${t('Contact Phone')}</span><strong>${safe('contactPhone')}</strong></div>
-        </div>
-      </section>`);
-  }
+  const mod1Num = nextNum();
+  const introParagraph = isZh
+    ? `我们建议在 <strong>${escapeHTML(p.property || '贵物业')}</strong> 部署 ${p.quantity || 1} 台 HAHA Vending 智能零售柜，为现场人群提供 24/7 即拿即走的饮品、零食与日常必需品服务。`
+    : `We propose deploying ${p.quantity || 1} HAHA Vending smart retail unit(s) at <strong>${escapeHTML(p.property || 'your property')}</strong> to provide 24/7 grab-and-go beverages, fresh snacks, and daily essentials.`;
+  const mod1Html = `
+    <section class="proposal-section">
+      <h3>${mod1Num} · ${isZh ? '合作方案概述' : 'Partnership Overview'}</h3>
+      <p>${introParagraph}</p>
+      <div class="proposal-meta" style="margin-top:12px;">
+        <div><span>${t('Prepared For')}</span><strong>${safe('property')}</strong></div>
+        <div><span>${t('City')}</span><strong>${safe('city')}</strong></div>
+        <div><span>${t('Venue Type')}</span><strong>${escapeHTML(venueDisplay)}</strong></div>
+        <div><span>${t('Estimated Launch Date')}</span><strong>${safe('launch')}</strong></div>
+        <div><span>${t('Operating Partner')}</span><strong>${safe('operator')}</strong></div>
+        <div><span>${t('Contact Name')}</span><strong>${safe('contactName')}</strong></div>
+        <div><span>${t('Contact Email')}</span><strong>${safe('contactEmail')}</strong></div>
+        <div><span>${t('Contact Phone')}</span><strong>${safe('contactPhone')}</strong></div>
+      </div>
+    </section>`;
 
   // Module 02: Recommended Equipment (Mandatory — Shows all distinct selected machine models + site rendering)
   {
@@ -823,7 +821,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     if (cm.enabled === false) return;
     const n = nextNum();
     const rawTitle = String(cm.title || '').replace(/\s*\(\d+\)\s*$/, '').trim();
-    const cTitle = rawTitle ? translateMultiline(rawTitle) : (isZh ? '特别合作约定' : 'Special Partnership Terms');
+    const cTitle = rawTitle ? translateMultiline(rawTitle) : (isZh ? '自定义模块' : 'Custom Section');
     sections.push(`
       <section class="proposal-section" data-section-key="${escapeHTML(cm.id)}">
         <h3>${n} · ${escapeHTML(cTitle)}</h3>
@@ -847,10 +845,13 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     : '';
 
   const html = `
-    <div class="proposal-brand">${brandLeftHtml}<div class="proposal-doc-type">LOCATION PARTNERSHIP PROPOSAL</div></div>
-    <h1 class="proposal-title">${safe('title')}</h1>
-    <div class="proposal-subtitle">${t('A turnkey smart retail amenity proposal tailored for your property')}</div>
-    ${headerMetaHtml}
+    <div class="proposal-top-block proposal-section" data-section-key="basic" style="margin-top:0;">
+      <div class="proposal-brand">${brandLeftHtml}<div class="proposal-doc-type">LOCATION PARTNERSHIP PROPOSAL</div></div>
+      <h1 class="proposal-title">${safe('title')}</h1>
+      <div class="proposal-subtitle">${t('A turnkey smart retail amenity proposal tailored for your property')}</div>
+      ${headerMetaHtml}
+      ${mod1Html}
+    </div>
     ${sections.join('')}
     <div class="proposal-footer">
       <span>HAHA VENDING · LOCATION PARTNERSHIP</span>
@@ -983,17 +984,19 @@ export function bindProposalInputs(onUpdate = () => {}) {
   });
 
   el('addCustomModuleBtn')?.addEventListener('click', () => {
-    const isZh = getLanguage() === 'zh';
+    const newId = `cmod_${Date.now()}`;
     customModulesState.push({
-      id: `cmod_${Date.now()}`,
+      id: newId,
       enabled: true,
-      title: isZh ? '特别合作约定' : 'Special Partnership Terms',
-      content: isZh
-        ? `- 试运营评估：首期 60 天试运营，期间由运营商提供全流程支持。\n- 定制化选品：根据现场反馈按月优化商品结构。`
-        : `- Pilot Evaluation: 60-day trial period with full operator support.\n- Custom Merchandising: Product mix tailored to seasonal feedback.`
+      title: '',
+      content: ''
     });
     renderCustomModulesEditor();
     onUpdate();
+    requestAnimationFrame(() => {
+      const titleInput = document.querySelector(`[data-cmod-title="${newId}"]`);
+      titleInput?.focus();
+    });
   });
 }
 
@@ -1010,6 +1013,7 @@ export function removeDeletedDocFromSelection(docId) {
 export function scrollPreviewToSection(sectionKey, smooth = true) {
   if (!sectionKey) return;
   const previewEl = el('proposalPreview');
+  const wrapEl = document.querySelector('.proposal-preview-wrap');
   if (!previewEl) return;
   const targetSec = previewEl.querySelector(`.proposal-section[data-section-key="${sectionKey}"]`);
   if (!targetSec) return;
@@ -1017,17 +1021,34 @@ export function scrollPreviewToSection(sectionKey, smooth = true) {
   previewEl.querySelectorAll('.proposal-section.is-active-sec').forEach(s => s.classList.remove('is-active-sec'));
   targetSec.classList.add('is-active-sec');
 
-  // Scroll #proposalPreview (.proposal-paper) directly so .preview-toolbar stays cleanly above it
+  // When editing or viewing Module 01 ('basic'), always pin #proposalPreview to top: 0
+  // so Company Logo, Proposal Title, Prepared By, Proposal Date, and Section 01 are all visible from the very top
+  if (sectionKey === 'basic') {
+    if (!smooth) {
+      previewEl.scrollTop = 0;
+      if (wrapEl) wrapEl.scrollTop = 0;
+    } else {
+      previewEl.scrollTo({ top: 0, behavior: 'smooth' });
+      if (wrapEl) wrapEl.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    return;
+  }
+
+  // For Modules 02+, scroll #proposalPreview (.proposal-paper) to the target section
   const paperRect = previewEl.getBoundingClientRect();
   const secRect = targetSec.getBoundingClientRect();
   const currentScroll = previewEl.scrollTop;
   const offsetInsidePaper = secRect.top - paperRect.top + currentScroll;
-  const desiredTop = Math.max(0, offsetInsidePaper - 20);
+  const desiredTop = Math.max(0, offsetInsidePaper - 16);
 
-  previewEl.scrollTo({
-    top: desiredTop,
-    behavior: smooth ? 'smooth' : 'auto'
-  });
+  if (!smooth) {
+    previewEl.scrollTop = desiredTop;
+  } else {
+    previewEl.scrollTo({
+      top: desiredTop,
+      behavior: 'smooth'
+    });
+  }
 }
 
 function setupLeftRightScrollSync() {
@@ -1035,18 +1056,18 @@ function setupLeftRightScrollSync() {
   if (!formPanel || formPanel.dataset.scrollSyncBound) return;
   formPanel.dataset.scrollSyncBound = 'true';
 
-  // 1. When clicking, focusing, or typing inside any left module card, scroll right preview to that module
   const handleCardActivate = (event) => {
     const card = event.target.closest('.prop-module-card');
     if (!card) return;
     const key = card.dataset.moduleCard || card.dataset.cmodId;
     if (!key) return;
+    activeScrollKey = key;
     userInteractingWithLeft = true;
     clearTimeout(interactionTimer);
-    interactionTimer = setTimeout(() => { userInteractingWithLeft = false; }, 1200);
-    const isInputEvent = event.type === 'input';
-    // On input, wait one frame so renderProposalPreview finishes updating DOM first
+    interactionTimer = setTimeout(() => { userInteractingWithLeft = false; }, 1500);
+    const isInputEvent = event.type === 'input' || event.type === 'change';
     if (isInputEvent) {
+      scrollPreviewToSection(key, false);
       requestAnimationFrame(() => scrollPreviewToSection(key, false));
     } else {
       scrollPreviewToSection(key, true);
@@ -1056,16 +1077,41 @@ function setupLeftRightScrollSync() {
   formPanel.addEventListener('focusin', handleCardActivate);
   formPanel.addEventListener('click', handleCardActivate);
   formPanel.addEventListener('input', handleCardActivate);
+  formPanel.addEventListener('change', handleCardActivate);
 
-  // 2. When scrolling the page vertically, sync the right preview to the module card currently in the viewport
   window.addEventListener('scroll', () => {
     if (userInteractingWithLeft) return;
     const proposalPage = el('page-proposal');
     if (!proposalPage || !proposalPage.classList.contains('active')) return;
+
+    // If user currently has an input focused inside a module card (e.g. Module 01), keep preview locked to that card
+    const focusedCard = document.activeElement?.closest?.('.prop-module-card');
+    if (focusedCard && formPanel.contains(focusedCard)) {
+      const fKey = focusedCard.dataset.moduleCard || focusedCard.dataset.cmodId;
+      if (fKey) {
+        activeScrollKey = fKey;
+        scrollPreviewToSection(fKey, false);
+        return;
+      }
+    }
+
     const cards = [...formPanel.querySelectorAll('.prop-module-card:not(.is-unchecked)')];
     if (!cards.length) return;
 
-    const triggerLine = window.innerHeight * 0.34;
+    // As long as Module 01 ('basic') has its bottom below 220px from viewport top, keep preview at top ('basic')
+    const basicCard = cards[0];
+    if (basicCard && basicCard.dataset.moduleCard === 'basic') {
+      const bRect = basicCard.getBoundingClientRect();
+      if (bRect.bottom > 220) {
+        if (activeScrollKey !== 'basic') {
+          activeScrollKey = 'basic';
+          scrollPreviewToSection('basic', true);
+        }
+        return;
+      }
+    }
+
+    const triggerLine = window.innerHeight * 0.28;
     let matchedCard = cards[0];
     for (const card of cards) {
       const rect = card.getBoundingClientRect();

@@ -66,6 +66,29 @@ export function cleanLegacyProposalData(prop) {
     delete out.planogram;
   }
 
+  if (Array.isArray(out.customModules)) {
+    out.customModules = out.customModules.map(cm => {
+      if (!cm || typeof cm !== 'object') return cm;
+      const copy = { ...cm };
+      if (
+        copy.title === 'Special Partnership Terms' ||
+        copy.title === '特别合作约定' ||
+        /^Special Partnership Terms\s*\(\d+\)$/.test(copy.title || '') ||
+        /^特别合作约定\s*\(\d+\)$/.test(copy.title || '')
+      ) {
+        copy.title = '';
+      }
+      if (
+        typeof copy.content === 'string' &&
+        (copy.content.includes('Pilot Evaluation: 60-day trial period') ||
+         copy.content.includes('试运营评估：首期 60 天试运营'))
+      ) {
+        copy.content = '';
+      }
+      return copy;
+    });
+  }
+
   return out;
 }
 

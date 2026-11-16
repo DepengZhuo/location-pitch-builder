@@ -112,16 +112,11 @@ export function renderReadinessChecks(container, readiness = DEFAULT_READINESS, 
 
   container.innerHTML = READINESS_ITEMS.map(item => {
     const current = normalized[item.id] || 'pending';
-    const activeDesc = (item.statusDescriptions && item.statusDescriptions[current]) || '';
-    const allHintsHtml = item.allHints
-      ? `<div class="readiness-subhints">${item.allHints.map(h => `<span>${t(h)}</span>`).join('')}</div>`
-      : (activeDesc ? `<div class="readiness-active-desc">${t(activeDesc)}</div>` : '');
     return `
       <div class="readiness-item" data-readiness-row="${item.id}">
         <div class="readiness-info">
           <div class="readiness-label">${t(item.label)}</div>
           <div class="readiness-help">${t(item.help)}</div>
-          ${allHintsHtml}
         </div>
         <select class="status-select readiness-select" data-readiness="${item.id}" aria-label="${t(item.label)}">
           ${options.map(opt => `<option value="${opt.value}" ${current === opt.value ? 'selected' : ''}>${t(opt.label)}</option>`).join('')}
@@ -131,15 +126,7 @@ export function renderReadinessChecks(container, readiness = DEFAULT_READINESS, 
 
   container.querySelectorAll('.readiness-select').forEach(select => {
     select.addEventListener('change', () => {
-      const id = select.dataset.readiness;
-      const val = select.value;
-      const itemObj = READINESS_ITEMS.find(r => r.id === id);
-      const row = select.closest('.readiness-item');
-      const descEl = row?.querySelector('.readiness-active-desc');
-      if (descEl && itemObj?.statusDescriptions?.[val]) {
-        descEl.textContent = t(itemObj.statusDescriptions[val]);
-      }
-      onChange(id, val);
+      onChange(select.dataset.readiness, select.value);
     });
   });
 }
