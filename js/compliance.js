@@ -1,12 +1,23 @@
 /* ==================================================
    Compliance Documents Module:
-   - Standard 7 documents are permanent (Edit/Add Link only, cannot be deleted)
-   - User-added custom documents support both Edit Link and Delete
+   - Standard 7 documents are permanent (cannot be deleted)
+   - User-added custom documents support Delete
+   - Supports 4 document statuses for accurate Print/PDF verification checklists:
+     1. 'attached' (Included / Link Ready)
+     2. 'on_request' (Available Upon Request)
+     3. 'pending' (In Progress / Pending Verification)
+     4. 'not_applicable' (Not Applicable / Per Site Requirement)
    ================================================== */
 import { DEFAULT_DOCS, escapeHTML, safeURL } from './data.js';
 import { t } from './i18n.js';
 
 const DEFAULT_DOC_IDS = new Set(DEFAULT_DOCS.map(d => d.id));
+export const DOC_STATUS_OPTIONS = [
+  { value: 'attached', label: 'Included / Link Ready', printLabel: 'Included with proposal / Link ready' },
+  { value: 'on_request', label: 'Available Upon Request', printLabel: 'Verified & available upon request' },
+  { value: 'pending', label: 'Pending / In Progress', printLabel: 'Pending site-specific verification' },
+  { value: 'not_applicable', label: 'Not Applicable', printLabel: 'Not applicable for this site' }
+];
 
 let onChangeCallback = () => {};
 let onToastCallback = () => {};
@@ -21,17 +32,27 @@ export function setComplianceChangeHandler(callback, toastFn) {
 export function normalizeDocs(docs = []) {
   const safeList = Array.isArray(docs) ? docs : [];
   const byId = new Map(safeList.map(doc => [doc.id, doc]));
-  // Always retain the 7 standard compliance documents in canonical order
   const standard = DEFAULT_DOCS.map(base => {
     const saved = byId.get(base.id) || {};
+    const url = saved.url || base.url || '';
+    const hasLink = Boolean(safeURL(url) || base.downloadPath);
+    const defaultStatus = hasLink ? 'attached' : 'on_request';
     return {
       ...base,
-      url: saved.url || base.url || '',
-      filename: saved.filename || base.filename || ''
+      url,
+      filename: saved.filename || base.filename || '',
+      docStatus: saved.docStatus || (hasLink ? 'attached' : defaultStatus)
     };
   });
-  // Append user-added custom documents
-  const custom = safeList.filter(doc => doc && doc.id && !DEFAULT_DOC_IDS.has(doc.id));
+  const custom = safeList
+    .filter(doc => doc && doc.id && !DEFAULT_DOC_IDS.has(doc.id))
+    .map(doc => {
+      const hasLink = Boolean(safeURL(doc.url) || doc.downloadPath);
+      return {
+        ...doc,
+        docStatus: doc.docStatus || (hasLink ? 'attached' : 'on_request')
+      };
+    });
   return [...standard, ...custom];
 }
 
@@ -47,11 +68,18 @@ export function renderCompliance(docs = docsCache) {
     const status = ready ? t('Link Configured') : t('To Be Provided');
     const statusClass = ready ? 'linked' : '';
     const isCustom = !DEFAULT_DOC_IDS.has(doc.id);
+    const curDocStatus = doc.docStatus || (ready ? 'attached' : 'on_request');
     return `<article class="document-card" data-doc="${escapeHTML(doc.id)}">
       <div class="doc-top"><div class="doc-icon">▤</div><span class="doc-status ${statusClass}">${status}</span></div>
       <h3>${escapeHTML(t(doc.title))}</h3><p>${escapeHTML(t(doc.desc))}</p>
       <div class="doc-meta">${escapeHTML(t(doc.category))} · ${escapeHTML(t(doc.note || 'To Be Provided'))}</div>
       ${ready ? `<div class="doc-meta">${doc.downloadPath && !doc.url ? t('Repository Certificate File') : t(`Link: ${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : ''}
+      <label class="field doc-status-field">
+        <span>${t('Print / Review Status')}</span>
+        <select class="doc-status-select" data-doc-status="${escapeHTML(doc.id)}">
+          ${DOC_STATUS_OPTIONS.map(opt => `<option value="${opt.value}" ${curDocStatus === opt.value ? 'selected' : ''}>${t(opt.label)}</option>`).join('')}
+        </select>
+      </label>
       <div class="doc-actions">
         <button type="button" data-action="link" data-id="${escapeHTML(doc.id)}">${doc.url ? t('Edit Link') : t('Add Drive Link')}</button>
         ${isCustom ? `<button type="button" class="doc-delete-btn" data-action="delete" data-id="${escapeHTML(doc.id)}">${t('Delete')}</button>` : ''}
@@ -62,6 +90,16 @@ export function renderCompliance(docs = docsCache) {
 
   gridEl.querySelectorAll('[data-action="link"]').forEach(button => {
     button.addEventListener('click', () => openComplianceModal(button.dataset.id));
+  });
+
+  gridEl.querySelectorAll('.doc-status-select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const target = docsCache.find(item => item.id === sel.dataset.docStatus);
+      if (target) {
+        target.docStatus = sel.value;
+        onChangeCallback(docsCache);
+      }
+    });
   });
 
   gridEl.querySelectorAll('[data-action="delete"]').forEach(button => {
@@ -122,6 +160,7 @@ function saveComplianceModal() {
     if (doc) {
       doc.url = rawUrl;
       doc.filename = rawUrl ? (doc.filename || 'Cloud File Link') : '';
+      if (rawUrl) doc.docStatus = 'attached';
       onChangeCallback(docsCache);
     }
   } else {
@@ -138,6 +177,7 @@ function saveComplianceModal() {
       category: 'Supplemental Document',
       filename: rawUrl ? 'Cloud File Link' : '',
       url: rawUrl,
+      docStatus: rawUrl ? 'attached' : 'on_request',
       note: 'Custom document'
     });
     onChangeCallback(docsCache);

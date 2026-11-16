@@ -34,8 +34,8 @@ export function applyROIForm(data = {}) {
   const defaults = {
     location: 'Sunrise Apartments',
     venue: 'Apartment & Residential',
-    orders: 55,
-    ticket: 5.00,
+    orders: 25,
+    ticket: 2.45,
     days: 30,
     period: 30,
     dealType: 'revenueShare',

@@ -1,7 +1,7 @@
 /* ===================================================
    Application Entry: Navigation, Project State & Sync
    =================================================== */
-import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, money, escapeHTML, normalizeVenue } from './data.js';
+import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, todayInputDate, money, escapeHTML, normalizeVenue } from './data.js';
 import { loadStore, saveStore, createProject, cleanLegacyNotes } from './storage.js';
 import { renderScoreFactors, renderReadinessChecks, calculateScore, paintScoreResult, normalizeRatings, normalizeReadiness } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
@@ -536,6 +536,8 @@ $('loadProposalExample')?.addEventListener('click', () => {
   const d = PROPOSAL_DEFAULTS[getLanguage() === 'zh' ? 'zh' : 'en'];
   applyProposalForm({
     title: d.title,
+    proposalDate: todayInputDate(),
+    preparedBy: 'Devin Zhuo',
     property: 'Sunrise Apartments',
     city: 'Tampa, FL',
     operator: 'HAHA Vending Operator LLC',

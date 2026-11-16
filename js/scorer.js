@@ -1,10 +1,10 @@
 /* ==================================================
    Location Assessment Module:
-   - 2. Rate the Location (5 criteria: Strong / Average / Weak / Not sure)
-   - 3. Deployment Readiness (4 checks)
+   - 2. Rate the Location (5 criteria: Strong / Average / Weak / Not Sure + helper descriptions)
+   - 3. Deployment Readiness (Property Approval, Space & Power, Network & Connectivity, Property Contact & Terms)
    - Assessment Summary & Live LOCATION SCORE Sidebar
    ================================================== */
-import { SCORE_CRITERIA, READINESS_ITEMS, DEFAULT_SCORE, DEFAULT_READINESS } from './data.js';
+import { SCORE_CRITERIA, READINESS_ITEMS, DEFAULT_SCORE, DEFAULT_READINESS, NOT_SURE_DESC } from './data.js';
 import { t } from './i18n.js';
 
 const SCORE_MAP = { strong: 1, average: 0.5, weak: 0 };
@@ -38,7 +38,10 @@ export function normalizeReadiness(raw = {}) {
   const out = { ...DEFAULT_READINESS };
   if (!raw || typeof raw !== 'object') return out;
   READINESS_ITEMS.forEach(item => {
-    const val = raw[item.id];
+    let val = raw[item.id];
+    if (val === 'ready') val = 'yes';
+    if (val === 'needs_confirmation') val = 'pending';
+    if (val === 'issue') val = 'no';
     if (typeof val === 'string' && VALID_READINESS.has(val)) {
       out[item.id] = val;
     }
@@ -53,11 +56,12 @@ export function renderScoreFactors(container, values = DEFAULT_SCORE, onChange =
     { value: 'strong', label: 'Strong' },
     { value: 'average', label: 'Average' },
     { value: 'weak', label: 'Weak' },
-    { value: 'unknown', label: 'Not sure' }
+    { value: 'unknown', label: 'Not Sure' }
   ];
 
   container.innerHTML = SCORE_CRITERIA.map(c => {
     const current = normalized[c.id] || '';
+    const descMap = c.optionDescriptions || {};
     return `
       <article class="criterion" data-key="${c.id}" data-weight="${c.weight}">
         <div class="criterion-top">
@@ -75,15 +79,16 @@ export function renderScoreFactors(container, values = DEFAULT_SCORE, onChange =
           ${choicesMeta.map(choice => {
             const inputId = `rate-${c.id}-${choice.value}`;
             const checked = current === choice.value ? 'checked' : '';
+            const desc = descMap[choice.value] || (choice.value === 'unknown' ? NOT_SURE_DESC : '');
             return `
               <div class="choice" data-value="${choice.value}">
                 <input type="radio" id="${inputId}" name="rate_${c.id}" value="${choice.value}" ${checked} />
-                <label for="${inputId}">${t(choice.label)}</label>
+                <label for="${inputId}">
+                  <strong class="choice-title">${t(choice.label)}</strong>
+                  <span class="choice-desc">${t(desc)}</span>
+                </label>
               </div>`;
           }).join('')}
-        </div>
-        <div class="help-row">
-          ${c.hints.map(h => `<span>${t(h)}</span>`).join('')}
         </div>
       </article>`;
   }).join('');
@@ -100,18 +105,23 @@ export function renderReadinessChecks(container, readiness = DEFAULT_READINESS, 
   if (!container) return;
   const normalized = normalizeReadiness(readiness);
   const options = [
-    { value: 'pending', label: 'Need to check' },
-    { value: 'yes', label: 'Confirmed' },
-    { value: 'no', label: 'Not available / Not permitted' }
+    { value: 'yes', label: 'Ready' },
+    { value: 'pending', label: 'Needs Confirmation' },
+    { value: 'no', label: 'Potential Issue' }
   ];
 
   container.innerHTML = READINESS_ITEMS.map(item => {
     const current = normalized[item.id] || 'pending';
+    const activeDesc = (item.statusDescriptions && item.statusDescriptions[current]) || '';
+    const allHintsHtml = item.allHints
+      ? `<div class="readiness-subhints">${item.allHints.map(h => `<span>${t(h)}</span>`).join('')}</div>`
+      : (activeDesc ? `<div class="readiness-active-desc">${t(activeDesc)}</div>` : '');
     return `
-      <div class="readiness-item">
-        <div>
+      <div class="readiness-item" data-readiness-row="${item.id}">
+        <div class="readiness-info">
           <div class="readiness-label">${t(item.label)}</div>
           <div class="readiness-help">${t(item.help)}</div>
+          ${allHintsHtml}
         </div>
         <select class="status-select readiness-select" data-readiness="${item.id}" aria-label="${t(item.label)}">
           ${options.map(opt => `<option value="${opt.value}" ${current === opt.value ? 'selected' : ''}>${t(opt.label)}</option>`).join('')}
@@ -121,7 +131,15 @@ export function renderReadinessChecks(container, readiness = DEFAULT_READINESS, 
 
   container.querySelectorAll('.readiness-select').forEach(select => {
     select.addEventListener('change', () => {
-      onChange(select.dataset.readiness, select.value);
+      const id = select.dataset.readiness;
+      const val = select.value;
+      const itemObj = READINESS_ITEMS.find(r => r.id === id);
+      const row = select.closest('.readiness-item');
+      const descEl = row?.querySelector('.readiness-active-desc');
+      if (descEl && itemObj?.statusDescriptions?.[val]) {
+        descEl.textContent = t(itemObj.statusDescriptions[val]);
+      }
+      onChange(id, val);
     });
   });
 }

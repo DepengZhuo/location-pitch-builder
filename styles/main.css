@@ -479,3 +479,127 @@ body[data-language="en"]{font-family:Arial,"Segoe UI",Roboto,"Microsoft YaHei",s
   .proposal-paper{max-height:none!important;overflow:visible!important}
   .proposal-section.is-active-sec{background:transparent!important;box-shadow:none!important}
 }
+
+
+/* =========================================================
+   Rate the Location Option Descriptions, Readiness Subhints,
+   Proposal Date / Prepared By & Company Logo Upload (v6.5)
+   ========================================================= */
+.choice label{min-height:86px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;text-align:left;padding:11px 12px;gap:5px}
+.choice label .choice-title{font-size:13px;font-weight:800;line-height:1.2;display:block}
+.choice label .choice-desc{font-size:11.5px;font-weight:500;line-height:1.4;color:#555;display:block}
+.choice[data-value="strong"] input:checked+label .choice-desc,
+.choice[data-value="average"] input:checked+label .choice-desc{color:#e0e0dc}
+.choice[data-value="weak"] input:checked+label .choice-desc,
+.choice[data-value="unknown"] input:checked+label .choice-desc{color:#333}
+
+.readiness-info{min-width:0}
+.readiness-active-desc{margin-top:5px;font-size:11.5px;color:#333;font-weight:600;line-height:1.45}
+.readiness-subhints{display:grid;gap:3px;margin-top:6px;padding:8px 10px;background:#f8f8f6;border-radius:7px;border:1px solid #ecece8;font-size:11px;color:#444;line-height:1.4}
+.readiness-subhints span::before{content:"• ";color:#888}
+
+.doc-status-field{margin-top:4px}
+.doc-status-field span{font-size:11px;color:#555;font-weight:700}
+.doc-status-select{padding:6px 9px;font-size:12px;border-radius:7px;background:#fafaf8}
+
+.logo-upload-field{padding-top:4px}
+.logo-upload-bar{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:4px;padding:10px 12px;background:#fafaf8;border:1px dashed #ccc;border-radius:10px}
+.logo-preview-wrap{background:#fff;border:1px solid #e2e2df;border-radius:8px;padding:6px 10px;display:flex;align-items:center;justify-content:center;max-width:170px;height:48px}
+.logo-preview-wrap img{max-width:150px;max-height:36px;width:auto;height:auto;object-fit:contain;display:block}
+.logo-upload-actions{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+.proposal-logo-wrap{display:flex;align-items:center}
+.proposal-custom-logo{max-width:180px;max-height:52px;width:auto;height:auto;object-fit:contain;display:block}
+.proposal-header-meta{display:flex;flex-wrap:wrap;gap:18px;margin:-6px 0 18px;padding:10px 14px;background:#f7f7f5;border:1px solid #e6e6e3;border-radius:8px;font-size:12.5px;color:#333}
+.proposal-header-meta span{color:#666;margin-right:4px}
+
+
+/* =========================================================
+   Typography Upgrade, Larger Font Sizes, Multi-Model Gallery,
+   & Centered Unified Hero Machine Visual (v6.6)
+   ========================================================= */
+:root{
+  --font:"Plus Jakarta Sans","Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"PingFang SC","Microsoft YaHei",sans-serif;
+}
+body,body[data-language="en"]{
+  font-family:var(--font);
+  font-size:14.5px;
+  letter-spacing:-0.008em;
+}
+
+/* 1. Hero Machine Graphic: Centered & Unified White Color */
+.machine-top{
+  font-size:10px;
+  font-weight:800;
+  letter-spacing:1.2px;
+  color:#fff;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:4px;
+  text-align:center;
+}
+.machine-top span{
+  color:#fff;
+}
+.machine-screen{
+  background:#262626;
+  border:1px solid #3a3a3a;
+  border-radius:6px;
+  padding:10px 8px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  text-align:center;
+  font-size:10px;
+  font-weight:800;
+  color:#fff;
+  letter-spacing:0.8px;
+  line-height:1.35;
+}
+.machine-screen .screen-label{
+  color:#fff;
+  text-align:center;
+}
+
+/* 2. Enlarged Form Labels, Inputs, Hints & Assessment Cards */
+.page-heading h1{font-size:29px;letter-spacing:-0.6px}
+.page-heading p{font-size:14.5px;color:#3d3d3b}
+.panel-head h3{font-size:18px}
+.panel-head p{font-size:13px;color:#4a4a48}
+.field span{font-size:13px;font-weight:700;color:#222}
+.field-hint,.muted-mini{font-size:12.5px;color:#4a4a48;line-height:1.5}
+.method-note{font-size:13px;color:#3d3d3b;line-height:1.65}
+input,select,textarea{font-size:14.5px;padding:10px 13px}
+
+.criterion h4{font-size:15.5px}
+.criterion-kicker{font-size:12.5px;color:#555}
+.criterion-question{font-size:13.5px;color:#2b2b29;line-height:1.55}
+.choice label{min-height:92px;padding:12px 13px;gap:6px}
+.choice label .choice-title{font-size:14px;font-weight:800}
+.choice label .choice-desc{font-size:12.5px;line-height:1.45;color:#444}
+
+.readiness-label{font-size:14px}
+.readiness-help{font-size:12.5px;color:#555}
+.readiness-active-desc{font-size:12.5px;color:#2b2b29}
+.readiness-subhints{font-size:12px;color:#3d3d3b;line-height:1.45}
+
+/* 3. Enlarged Proposal Live Preview Typography & Multi-Model Gallery */
+.proposal-title{font-size:26px;letter-spacing:-0.4px}
+.proposal-subtitle{font-size:14px;color:#4a4a48}
+.proposal-header-meta{font-size:13.5px}
+.proposal-section h3{font-size:17px;font-weight:800;margin:0 0 12px;padding-bottom:8px}
+.proposal-section p,.proposal-section li{font-size:14.5px;line-height:1.75;color:#262626;margin:0 0 8px}
+.proposal-subhead{font-size:14.5px;margin:0 0 7px}
+.proposal-meta div span{font-size:12px;color:#555}
+.proposal-meta div strong{font-size:14.5px;color:#111}
+.proposal-stat span{font-size:12px;color:#d0d0ce}
+.proposal-stat strong{font-size:17px;margin-top:6px;font-variant-numeric:tabular-nums}
+.prop-spec-box .spec-kicker{font-size:11.5px;color:#555}
+.prop-spec-box .spec-primary{font-size:16.5px;font-variant-numeric:tabular-nums}
+.prop-spec-box .spec-secondary{font-size:12.5px;color:#444}
+.proposal-power-note{font-size:12.5px;color:#4a4a48}
+
+.proposal-dual-gallery.is-multi-models{
+  grid-template-columns:repeat(auto-fit,minmax(205px,1fr));
+}

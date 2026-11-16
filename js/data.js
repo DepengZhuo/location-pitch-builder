@@ -224,6 +224,8 @@ Key Focus: Great-value drinks + Between-class/late-night food + Dorm emergency e
   }
 };
 
+export const NOT_SURE_DESC = "I don't have enough information to evaluate this yet.";
+
 export const SCORE_CRITERIA = [
   {
     id: 'traffic',
@@ -233,10 +235,16 @@ export const SCORE_CRITERIA = [
     kicker: 'Are people here regularly?',
     question: 'Think about how busy the location is during a normal day — not just its busiest hour.',
     weight: 25,
+    optionDescriptions: {
+      strong: 'Steady foot traffic throughout the day',
+      average: 'Moderate traffic, with busy periods at certain times',
+      weak: 'Low foot traffic, with few potential customers passing by',
+      unknown: NOT_SURE_DESC
+    },
     hints: [
-      'Strong: steady activity throughout the day',
-      'Average: busy at certain times',
-      'Weak: limited daily activity'
+      'Strong: Steady foot traffic throughout the day',
+      'Average: Moderate traffic, with busy periods at certain times',
+      'Weak: Low foot traffic, with few potential customers passing by'
     ],
     action: 'Visit during both busy and quiet hours to see how steady the traffic really is.'
   },
@@ -248,10 +256,16 @@ export const SCORE_CRITERIA = [
     kicker: 'Are the right people here?',
     question: 'Consider whether people spend enough time here and are likely to use a convenient snack or drink option.',
     weight: 25,
+    optionDescriptions: {
+      strong: 'Most people here are likely to buy your products',
+      average: 'Some people may be interested in your products',
+      weak: 'Few people here are likely to be interested in your products',
+      unknown: NOT_SURE_DESC
+    },
     hints: [
-      'Strong: residents, employees, students or guests',
-      'Average: some potential buyers',
-      'Weak: mostly pass-through visitors'
+      'Strong: Most people here are likely to buy your products',
+      'Average: Some people may be interested in your products',
+      'Weak: Few people here are likely to be interested in your products'
     ],
     action: 'Identify who is most likely to use the machine and when they would need it.'
   },
@@ -263,25 +277,37 @@ export const SCORE_CRITERIA = [
     kicker: 'Is it easy to buy nearby?',
     question: 'Look at nearby stores, cafés and food options. Is there an unmet need for convenient access?',
     weight: 20,
+    optionDescriptions: {
+      strong: 'People need convenient access to snacks, drinks, or everyday essentials here',
+      average: 'Some demand exists, but nearby alternatives are available',
+      weak: 'Limited demand, with convenient alternatives already nearby',
+      unknown: NOT_SURE_DESC
+    },
     hints: [
-      'Strong: few convenient options nearby',
-      'Average: alternatives exist but have limits',
-      'Weak: needs are already well served'
+      'Strong: People need convenient access to snacks, drinks, or everyday essentials here',
+      'Average: Some demand exists, but nearby alternatives are available',
+      'Weak: Limited demand, with convenient alternatives already nearby'
     ],
     action: 'Check nearby stores, their hours and the products people cannot easily get on site.'
   },
   {
     id: 'placement',
     num: '04',
-    name: 'Placement Visibility & Access',
+    name: 'Placement Visibility & Accessibility',
     short: 'Placement',
     kicker: 'Can people easily see and reach it?',
     question: 'Think about a visible, convenient spot along the normal path people take through the location.',
     weight: 15,
+    optionDescriptions: {
+      strong: 'Easy to see, easy to reach, and located in a high-traffic area',
+      average: 'Visible and accessible, but not in a prime location',
+      weak: 'Hard to notice or inconvenient for people to access',
+      unknown: NOT_SURE_DESC
+    },
     hints: [
-      'Strong: visible common area or main walkway',
-      'Average: usable, but off the main path',
-      'Weak: hidden or hard to access'
+      'Strong: Easy to see, easy to reach, and located in a high-traffic area',
+      'Average: Visible and accessible, but not in a prime location',
+      'Weak: Hard to notice or inconvenient for people to access'
     ],
     action: 'Walk the normal customer route and identify a visible, convenient placement spot.'
   },
@@ -293,10 +319,16 @@ export const SCORE_CRITERIA = [
     kicker: 'Can you operate it without hassle?',
     question: 'Consider space, power, network signal, and how easy it is to restock and service the machine.',
     weight: 15,
+    optionDescriptions: {
+      strong: 'Suitable space, power, and operating conditions are available',
+      average: 'Most requirements can be met, but some details need confirmation',
+      weak: 'Major space, power, or operating challenges may affect installation',
+      unknown: NOT_SURE_DESC
+    },
     hints: [
-      'Strong: space, power and restocking are easy',
-      'Average: a few items need checking',
-      'Weak: major access or setup issues'
+      'Strong: Suitable space, power, and operating conditions are available',
+      'Average: Most requirements can be met, but some details need confirmation',
+      'Weak: Major space, power, or operating challenges may affect installation'
     ],
     action: 'Confirm space, power, network signal and a practical route for restocking.'
   }
@@ -307,23 +339,48 @@ export const SCORE_FACTORS = SCORE_CRITERIA;
 export const READINESS_ITEMS = [
   {
     id: 'approval',
-    label: 'Property approval',
-    help: 'Has the property approved a vending machine?'
+    label: 'Property Approval',
+    help: 'Has the property approved placing a machine?',
+    statusDescriptions: {
+      yes: 'Ready: Property management has approved placing the machine.',
+      pending: 'Needs Confirmation: Property approval is still being reviewed.',
+      no: 'Potential Issue: Property approval has not been granted yet.'
+    }
   },
   {
     id: 'spacePower',
-    label: 'Space & power',
-    help: 'Is there enough space and a suitable power outlet?'
+    label: 'Space & Power',
+    help: 'Is there enough placement space and a suitable power outlet?',
+    statusDescriptions: {
+      yes: 'Ready: Sufficient placement space and power outlet are available.',
+      pending: 'Needs Confirmation: Placement space or power outlet needs to be checked.',
+      no: 'Potential Issue: Space or power limitations may affect installation.'
+    }
   },
   {
-    id: 'restockAccess',
-    label: 'Restocking access',
-    help: 'Can you access the location for restocking and service?'
+    id: 'network',
+    label: 'Network & Connectivity',
+    help: 'Is reliable cellular or Wi-Fi connectivity available?',
+    statusDescriptions: {
+      yes: 'Ready: Strong cellular or Wi-Fi signal is available in the proposed location.',
+      pending: 'Needs Confirmation: Network availability or signal strength needs to be checked.',
+      no: 'Potential Issue: Weak or unreliable network coverage may affect machine connectivity.'
+    },
+    allHints: [
+      'Ready: Strong cellular or Wi-Fi signal is available in the proposed location.',
+      'Needs Confirmation: Network availability or signal strength needs to be checked.',
+      'Potential Issue: Weak or unreliable network coverage may affect machine connectivity.'
+    ]
   },
   {
     id: 'contactTerms',
-    label: 'Property contact & terms',
-    help: 'Do you know who makes the decision and the basic terms?'
+    label: 'Property Contact & Terms',
+    help: 'Are the property contact and basic partnership terms identified?',
+    statusDescriptions: {
+      yes: 'Ready: Property decision maker and basic terms are confirmed.',
+      pending: 'Needs Confirmation: Property contact or partnership terms need confirmation.',
+      no: 'Potential Issue: Key contact or partnership terms remain unresolved.'
+    }
   }
 ];
 
@@ -362,6 +419,27 @@ export const money = value => new Intl.NumberFormat('en-US', { style: 'currency'
 export const money2 = value => new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(Number(value) || 0);
 export const number = value => new Intl.NumberFormat('en-US', { maximumFractionDigits: 1 }).format(Number(value) || 0);
 export const dateLabel = value => value ? new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Just now';
+export const todayInputDate = () => {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+};
+export const formatProposalDate = value => {
+  if (!value) return '';
+  const str = String(value).trim();
+  const m = str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if (m) {
+    const dt = new Date(Number(m[1]), Number(m[2]) - 1, Number(m[3]));
+    return dt.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
+  const parsed = new Date(str);
+  if (!Number.isNaN(parsed.getTime())) {
+    return parsed.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+  }
+  return str;
+};
 export const escapeHTML = value => String(value ?? '').replace(/[&<>"']/g, char => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[char]));
 export const safeURL = value => {
   try {

@@ -60,7 +60,7 @@
             <div class="hero-visual">
               <div class="visual-frame">
                 <div class="machine-top">HAHA <span>VENDING</span></div>
-                <div class="machine-screen"><div class="screen-label">SMART<br/>COOLER</div></div>
+                <div class="machine-screen"><div class="screen-label">SMART<br/>VENDING</div></div>
                 <div class="shelf-row"><i></i><i></i><i></i><i></i><i></i></div>
                 <div class="shelf-row"><i></i><i></i><i></i><i></i><i></i></div>
                 <div class="shelf-row"><i></i><i></i><i></i><i></i><i></i></div>
@@ -319,13 +319,13 @@
                   </label>
                   <label class="field">
                     <span>Estimated Items Sold / Day</span>
-                    <input id="roiOrders" type="number" min="0" step="1" value="55" />
+                    <input id="roiOrders" type="number" min="0" step="1" value="25" />
                   </label>
                   <label class="field">
                     <span>Average Selling Price / Item</span>
                     <div class="input-prefix">
                       <i>$</i>
-                      <input id="roiTicket" type="number" min="0" step="0.01" value="5.00" />
+                      <input id="roiTicket" type="number" min="0" step="0.01" value="2.45" />
                     </div>
                   </label>
                   <label class="field">
@@ -403,17 +403,17 @@
               <div class="panel roi-summary-card">
                 <span class="result-label">ESTIMATED MONTHLY PARTNER EARNINGS</span>
                 <div class="roi-summary-sub">Estimated Monthly Partner Earnings</div>
-                <strong class="roi-big-value" id="landlordMonthly">$825</strong>
+                <strong class="roi-big-value" id="landlordMonthly">$184</strong>
                 <div class="roi-earnings-basis" id="roiEarningsType">Based on 10% revenue share</div>
 
                 <div class="roi-summary-grid">
                   <div class="roi-summary-metric">
                     <span>Estimated Annual Earnings</span>
-                    <strong id="landlordAnnual">$9,900</strong>
+                    <strong id="landlordAnnual">$2,205</strong>
                   </div>
                   <div class="roi-summary-metric">
                     <span>Partnership-Term Earnings</span>
-                    <strong id="landlordTermTotal">$24,750</strong>
+                    <strong id="landlordTermTotal">$5,513</strong>
                   </div>
                 </div>
 
@@ -422,7 +422,7 @@
                 <div class="roi-lineitems">
                   <div class="roi-lineitem">
                     <span>Estimated Monthly Sales</span>
-                    <strong id="roiMonthlySales">$8,250</strong>
+                    <strong id="roiMonthlySales">$1,838</strong>
                   </div>
                   <div class="roi-lineitem">
                     <span>Partnership Model</span>
@@ -495,10 +495,27 @@
                       </select>
                     </label>
                     <label class="field"><span>Estimated Launch Date</span><input id="propLaunch" placeholder="e.g. 2-4 weeks after approval" /></label>
+                    <label class="field"><span>Proposal Date</span><input id="propDate" type="date" /></label>
+                    <label class="field"><span>Prepared By</span><input id="propPreparedBy" placeholder="e.g. Devin Zhuo" /></label>
                     <label class="field"><span>Operator Name</span><input id="propOperator" placeholder="Operator company name" /></label>
                     <label class="field"><span>Contact Name</span><input id="propContactName" placeholder="Full name" /></label>
                     <label class="field"><span>Contact Email</span><input id="propContactEmail" type="email" placeholder="name@example.com" /></label>
                     <label class="field"><span>Contact Phone</span><input id="propContactPhone" type="tel" placeholder="(555) 019-2834" /></label>
+                    <div class="field full logo-upload-field">
+                      <span>Company Logo</span>
+                      <small class="field-hint">Upload your company logo to personalize your proposal.</small>
+                      <input id="propLogoInput" type="file" accept=".png,.jpg,.jpeg,.webp,image/png,image/jpeg,image/webp" hidden />
+                      <div class="logo-upload-bar">
+                        <div class="logo-preview-wrap" id="propLogoPreviewWrap" hidden>
+                          <img id="propLogoPreviewImg" src="" alt="Company Logo Preview" />
+                        </div>
+                        <div class="logo-upload-actions">
+                          <button class="button button-outline button-small" id="uploadLogoBtn" type="button">Upload Logo</button>
+                          <button class="button button-outline button-small" id="replaceLogoBtn" type="button" hidden>Replace Logo</button>
+                          <button class="button button-outline button-small doc-delete-btn" id="removeLogoBtn" type="button" hidden>Remove Logo</button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -517,48 +534,12 @@
                 </div>
               </div>
 
-              <!-- Module 03: Venue Value Proposition (Optional) -->
-              <div class="prop-module-card" data-module-card="venueValue">
-                <div class="prop-module-head">
-                  <label class="prop-module-check">
-                    <input type="checkbox" id="modToggle_venueValue" data-mod-key="venueValue" checked />
-                    <span class="criterion-num">03</span>
-                    <strong>Venue Value Proposition</strong>
-                  </label>
-                  <button class="text-button" id="resetVenueValueBtn" type="button">Reset Default Copy</button>
-                </div>
-                <div class="prop-module-body">
-                  <label class="field full">
-                    <span>Auto-populated 4 core value points by venue (each line formats as a bullet item; text before ":" is automatically bolded)</span>
-                    <textarea id="propVenueValue" rows="5"></textarea>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Module 04: Product Mix & Merchandising (Optional) -->
-              <div class="prop-module-card" data-module-card="planogram">
-                <div class="prop-module-head">
-                  <label class="prop-module-check">
-                    <input type="checkbox" id="modToggle_planogram" data-mod-key="planogram" checked />
-                    <span class="criterion-num">04</span>
-                    <strong>Product Mix & Merchandising</strong>
-                  </label>
-                  <button class="text-button" id="resetPlanogramBtn" type="button">Reset Product Mix</button>
-                </div>
-                <div class="prop-module-body">
-                  <label class="field full">
-                    <span>Auto-populated product mix by venue (each line formats as a bullet item; category names before ":" are automatically bolded)</span>
-                    <textarea id="propPlanogram" rows="5"></textarea>
-                  </label>
-                </div>
-              </div>
-
-              <!-- Module 05: Partnership Model & Property Earnings (Optional) -->
+              <!-- Module 03: Partnership Model & Property Earnings (Optional — Moved right below 02) -->
               <div class="prop-module-card" data-module-card="deal">
                 <div class="prop-module-head">
                   <label class="prop-module-check">
                     <input type="checkbox" id="modToggle_deal" data-mod-key="deal" checked />
-                    <span class="criterion-num">05</span>
+                    <span class="criterion-num">03</span>
                     <strong>Partnership Model & Property Earnings</strong>
                   </label>
                   <button class="text-button" id="syncFromRoi" type="button">Sync Earnings Estimate</button>
@@ -574,7 +555,44 @@
                     </label>
                     <label class="field" id="propShareField"><span>Site Partner Share of Sales (%)</span><input id="propShare" type="number" min="0" max="100" value="10" /></label>
                     <label class="field" id="propRentField" hidden><span>Fixed Monthly Rent ($)</span><input id="propRent" type="number" min="0" value="200" /></label>
+                    <label class="field"><span>Partnership Term (Months)</span><input id="propTerm" type="number" min="1" max="120" value="30" /></label>
                   </div>
+                </div>
+              </div>
+
+              <!-- Module 04: Venue Value Proposition (Optional) -->
+              <div class="prop-module-card" data-module-card="venueValue">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_venueValue" data-mod-key="venueValue" checked />
+                    <span class="criterion-num">04</span>
+                    <strong>Venue Value Proposition</strong>
+                  </label>
+                  <button class="text-button" id="resetVenueValueBtn" type="button">Reset Default Copy</button>
+                </div>
+                <div class="prop-module-body">
+                  <label class="field full">
+                    <span>Auto-populated 4 core value points by venue (each line formats as a bullet item; text before ":" is automatically bolded)</span>
+                    <textarea id="propVenueValue" rows="5"></textarea>
+                  </label>
+                </div>
+              </div>
+
+              <!-- Module 05: Product Mix & Merchandising (Optional) -->
+              <div class="prop-module-card" data-module-card="planogram">
+                <div class="prop-module-head">
+                  <label class="prop-module-check">
+                    <input type="checkbox" id="modToggle_planogram" data-mod-key="planogram" checked />
+                    <span class="criterion-num">05</span>
+                    <strong>Product Mix & Merchandising</strong>
+                  </label>
+                  <button class="text-button" id="resetPlanogramBtn" type="button">Reset Product Mix</button>
+                </div>
+                <div class="prop-module-body">
+                  <label class="field full">
+                    <span>Auto-populated product mix by venue (each line formats as a bullet item; category names before ":" are automatically bolded)</span>
+                    <textarea id="propPlanogram" rows="5"></textarea>
+                  </label>
                 </div>
               </div>
 

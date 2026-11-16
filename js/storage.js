@@ -79,6 +79,10 @@ export function loadStore() {
       if (p?.proposal) {
         p.proposal = cleanLegacyProposalData(p.proposal);
       }
+      if (p?.roi && Number(p.roi.orders) === 55 && Number(p.roi.ticket) === 5) {
+        p.roi.orders = 25;
+        p.roi.ticket = 2.45;
+      }
     });
     return {
       projects,
@@ -96,8 +100,23 @@ export function saveStore(store) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(store));
     return true;
   } catch (error) {
-    console.warn('Failed to save local project data:', error);
-    return false;
+    console.warn('Primary localStorage save hit limit, attempting compact fallback:', error);
+    try {
+      // Fallback: keep current project's logo, trim logos only on older inactive projects if quota is tight
+      const fallbackStore = JSON.parse(JSON.stringify(store));
+      if (Array.isArray(fallbackStore.projects)) {
+        fallbackStore.projects.forEach(p => {
+          if (p.id !== fallbackStore.currentProjectId && p?.proposal?.companyLogo) {
+            p.proposal.companyLogo = '';
+          }
+        });
+      }
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(fallbackStore));
+      return true;
+    } catch (innerError) {
+      console.warn('Fallback save failed:', innerError);
+      return false;
+    }
   }
 }
 
