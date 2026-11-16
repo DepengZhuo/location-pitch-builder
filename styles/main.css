@@ -636,51 +636,16 @@ input[type=checkbox],
   color:#fff;
 }
 
-.print-page-table,.print-page-table>tbody,.print-page-table>tbody>tr,.print-page-table>tbody>tr>td{
-  display:block;
-  width:100%;
-  padding:0;
-  margin:0;
-  border:0;
-}
-.print-only-thead,.print-only-tfoot{
-  display:none;
-}
-
 @media print{
   @page{
     margin:0;
-  }
-  .print-page-table{
-    display:table!important;
-    width:100%!important;
-    border-collapse:collapse!important;
-  }
-  .print-page-table>tbody{
-    display:table-row-group!important;
-  }
-  .print-page-table>tbody>tr{
-    display:table-row!important;
-  }
-  .print-page-table>tbody>tr>td{
-    display:table-cell!important;
-    padding:0 15mm!important;
-  }
-  .print-only-thead{
-    display:table-header-group!important;
-  }
-  .print-only-tfoot{
-    display:table-footer-group!important;
-  }
-  .print-page-gap{
-    height:14mm;
   }
   *{
     -webkit-print-color-adjust:exact!important;
     print-color-adjust:exact!important;
   }
-  body{
-    background:#fff!important;
+  html,body,.app-shell,.main-area,.page-content,.proposal-preview-wrap,.proposal-paper{
+    background:#ffffff!important;
     margin:0!important;
   }
   .proposal-paper{
