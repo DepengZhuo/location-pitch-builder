@@ -603,3 +603,5 @@ input,select,textarea{font-size:14.5px;padding:10px 13px}
 .proposal-dual-gallery.is-multi-models{
   grid-template-columns:repeat(auto-fit,minmax(205px,1fr));
 }
+
+.doc-cert-logo{height:38px;max-width:130px;width:auto;object-fit:contain;display:block}

@@ -387,14 +387,55 @@ export const READINESS_ITEMS = [
 export const DEFAULT_SCORE = Object.fromEntries(SCORE_CRITERIA.map(c => [c.id, '']));
 export const DEFAULT_READINESS = Object.fromEntries(READINESS_ITEMS.map(r => [r.id, 'pending']));
 
+export const LEGACY_DEFAULT_DOC_IDS = new Set([
+  'nama', 'ul-etl', 'nsf', 'fcc', 'ada', 'coi', 'w9'
+]);
+
 export const DEFAULT_DOCS = [
-  { id: 'nama', title: 'NAMA Certification', short: 'NAMA Certification', category: 'Industry Certification', desc: 'NAMA certification file included in the repository. Verify applicability and recipient before sharing.', filename: 'NAMA.pdf', url: '', downloadPath: './assets/certificates/NAMA.pdf', note: 'For NAMA certification reference only' },
-  { id: 'ul-etl', title: 'UL / ETL Electrical Safety', short: 'Electrical Safety', category: 'Equipment Certification', desc: 'Documents electrical safety testing and certification. Provide the certificate matching the selected machine model.', filename: '', url: '', note: 'Verify certificate scope by machine model' },
-  { id: 'nsf', title: 'NSF Sanitation & Food Safety', short: 'Food Contact / Sanitation', category: 'Food Safety', desc: 'Addresses property review requirements regarding food-contact materials and sanitation standards.', filename: '', url: '', note: 'Confirm specific standards and scope' },
-  { id: 'fcc', title: 'FCC Wireless Compliance', short: 'Wireless Compliance', category: 'Equipment Certification', desc: 'Details FCC compliance for wireless communication modules and electronics inside the machine.', filename: '', url: '', note: 'Verify module, model, and filing entity' },
-  { id: 'ada', title: 'ADA Accessibility Guidance', short: 'Accessibility', category: 'Site Compliance', desc: 'Explains placement and operational accessibility considerations. Not a standalone "ADA certificate".', filename: '', url: '', note: 'Review with site layout and local regulations' },
-  { id: 'coi', title: 'Certificate of Insurance (COI)', short: 'Liability Insurance', category: 'Insurance', desc: 'Operator liability insurance certificate for the property (typically $2M coverage; verify actual policy limits).', filename: '', url: '', note: 'Check insured entity, coverage limits, expiration, and additional insured terms' },
-  { id: 'w9', title: 'W-9 Tax Form', short: 'Tax Document', category: 'Tax Document', desc: 'Tax identification form requested by properties for commission payouts. Contains sensitive tax information.', filename: '', url: '', note: 'Share only through access-controlled channels' }
+  {
+    id: 'etl-listed',
+    title: 'ETL Listed Certification',
+    category: 'Electrical & Product Safety',
+    desc: 'Electrical and product safety certification for applicable HAHA equipment models.',
+    filename: 'ETL Listed_All Models.pdf',
+    url: '',
+    downloadPath: './assets/certificates/ETL Listed_All Models.pdf',
+    logoPath: './assets/certificates/ETL-listed.png',
+    isFixed: true
+  },
+  {
+    id: 'etl-sanitation',
+    title: 'ETL Sanitation Certification',
+    category: 'Sanitation & Food Safety',
+    desc: 'Sanitation certification for applicable HAHA food equipment models.',
+    filename: 'ETL Sanitation_All Models.pdf',
+    url: '',
+    downloadPath: './assets/certificates/ETL Sanitation_All Models.pdf',
+    logoPath: './assets/certificates/ETL-sanitation.png',
+    isFixed: true
+  },
+  {
+    id: 'nsf-ansi-7',
+    title: 'NSF/ANSI 7 Certification',
+    category: 'Commercial Refrigeration',
+    desc: 'Certification for commercial refrigeration equipment. Refer to the NSF official listing for covered product models.',
+    filename: 'NSF Certificate - HAHA.pdf',
+    url: '',
+    downloadPath: './assets/certificates/NSF Certificate - HAHA.pdf',
+    logoPath: './assets/certificates/NSF_International_logo.png',
+    isFixed: true
+  },
+  {
+    id: 'pax-im30-fcc',
+    title: 'PAX IM30 – FCC Compliance',
+    category: 'Payment Terminal Compliance',
+    desc: 'FCC compliance documentation for the PAX IM30 payment terminal.',
+    filename: 'IM30_FCC_Cert（V2).pdf',
+    url: '',
+    downloadPath: './assets/certificates/IM30_FCC_Cert（V2).pdf',
+    logoPath: './assets/certificates/FCC.png',
+    isFixed: true
+  }
 ];
 
 export const POWER_SUPPLY_SPEC = '110–120V / 60Hz';
