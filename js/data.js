@@ -3,15 +3,15 @@
    9 Venue Categories, Machine Specs, Compliance Docs & Formatters
    ========================================================= */
 export const VENUE_TYPES = [
-  { id: 'Gym & Fitness Center', en: 'Gym & Fitness Center', zh: '健身房与运动中心' },
-  { id: 'Factory & Industrial Plant', en: 'Factory & Industrial Plant', zh: '工厂与工业园区' },
-  { id: 'Airport & Transit Hub', en: 'Airport & Transit Hub', zh: '机场与交通枢纽' },
-  { id: 'Apartment & Residential', en: 'Apartment & Residential', zh: '公寓与住宅社区' },
-  { id: 'Construction Site', en: 'Construction Site', zh: '建筑工地与施工现场' },
-  { id: 'Hospital & Medical Center', en: 'Hospital & Medical Center', zh: '医院与医疗中心' },
-  { id: 'Hotel & Hospitality', en: 'Hotel & Hospitality', zh: '酒店与文旅住宿' },
-  { id: 'Office & Corporate Campus', en: 'Office & Corporate Campus', zh: '写字楼与企业园区' },
-  { id: 'School & University Campus', en: 'School & University Campus', zh: '学校与大学校园' }
+  { id: 'Gym & Fitness Center', en: 'Gym & Fitness Center', zh: '健身房与运动中心', siteImage: './assets/site_images/Gym & Fitness Center.png' },
+  { id: 'Factory & Industrial Plant', en: 'Factory & Industrial Plant', zh: '工厂与工业园区', siteImage: './assets/site_images/Factory & Industrial Plant.png' },
+  { id: 'Airport & Transit Hub', en: 'Airport & Transit Hub', zh: '机场与交通枢纽', siteImage: './assets/site_images/Airport & Transit Hub.jpg' },
+  { id: 'Apartment & Residential', en: 'Apartment & Residential', zh: '公寓与住宅社区', siteImage: './assets/site_images/Apartment & Residential.jpg' },
+  { id: 'Construction Site', en: 'Construction Site', zh: '建筑工地与施工现场', siteImage: './assets/site_images/Construction Site.png' },
+  { id: 'Hospital & Medical Center', en: 'Hospital & Medical Center', zh: '医院与医疗中心', siteImage: './assets/site_images/Hospital & Medical Center.jpg' },
+  { id: 'Hotel & Hospitality', en: 'Hotel & Hospitality', zh: '酒店与文旅住宿', siteImage: './assets/site_images/Hotel & Hospitality.jpg' },
+  { id: 'Office & Corporate Campus', en: 'Office & Corporate Campus', zh: '写字楼与企业园区', siteImage: './assets/site_images/Office & Corporate Campus.jpg' },
+  { id: 'School & University Campus', en: 'School & University Campus', zh: '学校与大学校园', siteImage: './assets/site_images/School & University Campus.jpg' }
 ];
 
 export const LEGACY_VENUE_MAP = {

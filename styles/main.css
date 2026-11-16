@@ -605,3 +605,68 @@ input,select,textarea{font-size:14.5px;padding:10px 13px}
 }
 
 .doc-cert-logo{height:38px;max-width:130px;width:auto;object-fit:contain;display:block}
+
+
+/* =========================================================
+   Pre-Delivery Polish (v6.10):
+   - Black/white checkboxes everywhere
+   - Equal-height Download button alignment on Compliance cards
+   - Print/PDF: remove browser date/title header & URL footer (@page margin: 0),
+     preserve dark stat card backgrounds (print-color-adjust: exact),
+     and prevent mid-card page breaks
+   ========================================================= */
+input[type=checkbox],
+.doc-select-grid input[type=checkbox]{
+  accent-color:#111;
+}
+.document-card > .doc-download{
+  margin-top:auto;
+}
+.document-card > .doc-actions + .doc-download{
+  margin-top:4px;
+}
+.proposal-stat{
+  background:#111;
+  color:#fff;
+}
+.proposal-stat span{
+  color:#e2e2df;
+}
+.proposal-stat strong{
+  color:#fff;
+}
+
+@media print{
+  @page{
+    margin:0;
+  }
+  *{
+    -webkit-print-color-adjust:exact!important;
+    print-color-adjust:exact!important;
+  }
+  body{
+    background:#fff!important;
+    margin:0!important;
+  }
+  .proposal-paper{
+    padding:14mm 16mm!important;
+    box-shadow:none!important;
+  }
+  .proposal-stat{
+    background:#111!important;
+    color:#fff!important;
+    border:1px solid #111!important;
+  }
+  .proposal-stat span{
+    color:#e2e2df!important;
+  }
+  .proposal-stat strong{
+    color:#fff!important;
+  }
+  .proposal-machine-row,
+  .proposal-gallery-card,
+  .proposal-stat-row{
+    break-inside:avoid;
+    page-break-inside:avoid;
+  }
+}
