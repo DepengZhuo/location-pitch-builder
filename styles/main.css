@@ -670,3 +670,85 @@ input[type=checkbox],
     page-break-inside:avoid;
   }
 }
+
+
+/* =========================================================
+   Module 02 Two-Tier Gallery:
+   - Enlarged Adaptive Machine Showcase (1 / 2 / 3+ models, no cropping)
+   - Full-Width Uncropped On-Site Placement Reference (natural aspect ratio)
+   ========================================================= */
+.proposal-machines-gallery{
+  display:grid;
+  gap:14px;
+  margin:14px 0;
+}
+.proposal-machines-gallery.models-1{
+  grid-template-columns:1fr;
+}
+.proposal-machines-gallery.models-2{
+  grid-template-columns:repeat(2,1fr);
+}
+.proposal-machines-gallery.models-multi{
+  grid-template-columns:repeat(auto-fit,minmax(215px,1fr));
+}
+.proposal-machines-gallery .proposal-gallery-card{
+  padding:10px;
+  border:1px solid #e2e2df;
+  border-radius:10px;
+  background:#fff;
+}
+.proposal-machines-gallery .proposal-gallery-card img{
+  width:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  border-radius:6px;
+  background:#fafaf8;
+}
+.proposal-machines-gallery.models-1 .proposal-gallery-card img{
+  height:340px;
+}
+.proposal-machines-gallery.models-2 .proposal-gallery-card img{
+  height:300px;
+}
+.proposal-machines-gallery.models-multi .proposal-gallery-card img{
+  height:260px;
+}
+.proposal-machines-gallery .proposal-gallery-card img[data-model="Ultra 1200"]{
+  object-fit:contain;
+  object-position:center;
+}
+.proposal-site-showcase{
+  margin-top:14px;
+  border:1px solid #e2e2df;
+  border-radius:10px;
+  background:#fff;
+  padding:12px;
+  text-align:center;
+  break-inside:avoid;
+  page-break-inside:avoid;
+}
+.proposal-site-showcase img.site-photo-full{
+  width:100%;
+  height:auto;
+  max-height:460px;
+  object-fit:contain;
+  display:block;
+  border-radius:6px;
+  background:#fafaf8;
+}
+.proposal-site-showcase strong{
+  display:inline-block;
+  margin-top:10px;
+  font-size:12px;
+  color:#111;
+  background:#f0f0ee;
+  padding:4px 14px;
+  border-radius:999px;
+}
+@media(max-width:650px){
+  .proposal-machines-gallery.models-2,
+  .proposal-machines-gallery.models-multi{
+    grid-template-columns:1fr;
+  }
+}
