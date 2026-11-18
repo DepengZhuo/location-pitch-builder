@@ -11,7 +11,8 @@ export const VENUE_TYPES = [
   { id: 'Hospital & Medical Center', en: 'Hospital & Medical Center', zh: '医院与医疗中心', siteImage: './assets/site_images/Hospital & Medical Center.jpg' },
   { id: 'Hotel & Hospitality', en: 'Hotel & Hospitality', zh: '酒店与文旅住宿', siteImage: './assets/site_images/Hotel & Hospitality.jpg' },
   { id: 'Office & Corporate Campus', en: 'Office & Corporate Campus', zh: '写字楼与企业园区', siteImage: './assets/site_images/Office & Corporate Campus.jpg' },
-  { id: 'School & University Campus', en: 'School & University Campus', zh: '学校与大学校园', siteImage: './assets/site_images/School & University Campus.jpg' }
+  { id: 'School & University Campus', en: 'School & University Campus', zh: '学校与大学校园', siteImage: './assets/site_images/School & University Campus.jpg' },
+  { id: 'Other', en: 'Other', zh: '其他', siteImage: '' }
 ];
 
 export const LEGACY_VENUE_MAP = {
@@ -49,8 +50,8 @@ export const LEGACY_VENUE_MAP = {
   '机场与交通枢纽': 'Airport & Transit Hub',
   '建筑工地与施工现场 (Construction Site)': 'Construction Site',
   '建筑工地与施工现场': 'Construction Site',
-  '其他': 'Office & Corporate Campus',
-  'Other': 'Office & Corporate Campus'
+  '其他': 'Other',
+  'Other': 'Other'
 };
 
 export function normalizeVenue(val) {
@@ -221,6 +222,24 @@ Key Focus: Great-value drinks + Between-class/late-night food + Dorm emergency e
 • 食品：面包、三明治、饭团、方便食品、酸奶、薯片、饼干、巧克力、坚果、能量棒。
 • 日用品：纸巾、湿巾、文具应急品、充电线、个人护理用品（尤其适合宿舍区）。
 推荐重点：高性价比饮品 + 课间/夜宵食品 + 宿舍日常应急用品。`
+  },
+  'Other': {
+    valueEn: `• 24/7 Self-Service Convenience: Provides round-the-clock access to drinks, snacks, and everyday essentials on site.
+• Zero Staffing Burden: Fully automated grab-and-go checkout requires no front-desk handling or on-site cashier.
+• Compact & Clean Footprint: Fits easily into lobbies, break areas, or common corridors using a standard 110V–120V outlet.
+• Flexible Amenity Upgrade: Enhances convenience for visitors, tenants, or staff with full restocking and maintenance included.`,
+    valueZh: `• 24 小时自助便利：为现场人员全天候提供饮品、零食与日常简餐补给。
+• 零人工运营负担：全自动即拿即走结算，无需前台或专人值守收银。
+• 占地紧凑易部署：适配大堂、休息区或公共走廊，仅需标准 110V–120V 电源。
+• 省心的场地配套升级：由运营方负责全套补货与维护，提升访客、租户或员工体验。`,
+    planogramEn: `• Beverages: Bottled water, sparkling drinks, ready-to-drink coffee, tea, and energy drinks.
+• Food: Sandwiches, pastries, protein bars, chips, nuts, and grab-and-go snacks.
+• Other: Everyday convenience items tailored to on-site foot traffic and local preferences.
+Key Focus: Cold beverages + Grab-and-go snacks + High-turnover everyday essentials.`,
+    planogramZh: `• 饮料：瓶装水、气泡水、即饮咖啡、茶饮及功能饮料。
+• 食品：三明治、烘焙糕点、蛋白棒、薯片、坚果及便携零食。
+• 其他：根据现场客群偏好灵活搭配的日常便利商品。
+推荐重点：冷饮 + 即食零食 + 高周转日常高频刚需品。`
   }
 };
 
@@ -388,7 +407,7 @@ export const DEFAULT_SCORE = Object.fromEntries(SCORE_CRITERIA.map(c => [c.id, '
 export const DEFAULT_READINESS = Object.fromEntries(READINESS_ITEMS.map(r => [r.id, 'pending']));
 
 export const LEGACY_DEFAULT_DOC_IDS = new Set([
-  'nama', 'ul-etl', 'nsf', 'fcc', 'ada', 'coi', 'w9'
+  'nama', 'ul-etl', 'nsf', 'fcc', 'ada', 'coi', 'w9', 'pax-im30-fcc'
 ]);
 
 export const DEFAULT_DOCS = [
@@ -416,24 +435,57 @@ export const DEFAULT_DOCS = [
   },
   {
     id: 'nsf-ansi-7',
-    title: 'NSF/ANSI 7 Certification',
+    title: 'NSF Certification',
     category: 'Commercial Refrigeration',
-    desc: 'Certification for commercial refrigeration equipment. Refer to the NSF official listing for covered product models.',
-    filename: 'NSF Certificate - HAHA.pdf',
+    desc: 'Commercial refrigeration equipment certification. Applicable only to Pro 542.',
+    filename: 'NSF.pdf',
     url: '',
-    downloadPath: './assets/certificates/NSF Certificate - HAHA.pdf',
+    downloadPath: './assets/certificates/NSF.pdf',
     logoPath: './assets/certificates/NSF_International_logo.png',
     isFixed: true
   },
   {
-    id: 'pax-im30-fcc',
-    title: 'PAX IM30 – FCC Compliance',
-    category: 'Payment Terminal Compliance',
-    desc: 'FCC compliance documentation for the PAX IM30 payment terminal.',
-    filename: 'IM30_FCC_Cert（V2).pdf',
+    id: 'haha-fcc',
+    title: 'FCC Compliance',
+    category: 'Equipment RF & EMC Compliance',
+    desc: 'FCC compliance documentation for HAHA equipment. Applicable to Mini 360 and Ultra 1200.',
+    filename: '2509B0307SHA-V1-FCC.pdf',
     url: '',
-    downloadPath: './assets/certificates/IM30_FCC_Cert（V2).pdf',
+    downloadPath: './assets/certificates/2509B0307SHA-V1-FCC.pdf',
     logoPath: './assets/certificates/FCC.png',
+    isFixed: true
+  },
+  {
+    id: 'pax-im30-pci-pts',
+    title: 'PAX IM30 – PCI PTS Hardware Certification',
+    category: 'Payment Terminal Security',
+    desc: 'PCI PTS hardware security certification for the PAX IM30 payment terminal.',
+    filename: 'IM30_PCI PTS_Cert 20230728.pdf',
+    url: '',
+    downloadPath: './assets/certificates/IM30_PCI PTS_Cert 20230728.pdf',
+    logoPath: './assets/certificates/pci-dss-500.png',
+    isFixed: true
+  },
+  {
+    id: 'up-pci-dss-aoc',
+    title: 'Universal Processing – PCI DSS Service Provider AOC',
+    category: 'Payment Processing Compliance',
+    desc: 'PCI DSS v4.0.1 Attestation of Compliance for payment service provider Universal Processing (acquiring bank: Esquire Bank).',
+    filename: 'C1951-01-PIT1 UP_PCI_DSS_AOC_Service_Provider_atsec.pdf',
+    url: '',
+    downloadPath: './assets/certificates/C1951-01-PIT1 UP_PCI_DSS_AOC_Service_Provider_atsec.pdf',
+    logoPath: './assets/certificates/pci-dss-500.png',
+    isFixed: true
+  },
+  {
+    id: 'haha-rohs',
+    title: 'RoHS Compliance Certification',
+    category: 'Environmental Compliance',
+    desc: 'EU RoHS environmental compliance certification for HAHA equipment.',
+    filename: 'ROHS  VOC certificate.pdf',
+    url: '',
+    downloadPath: './assets/certificates/ROHS  VOC certificate.pdf',
+    logoPath: './assets/certificates/rohs-compliant.png',
     isFixed: true
   }
 ];
