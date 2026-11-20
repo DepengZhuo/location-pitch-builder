@@ -57,6 +57,46 @@ The Property Owner agrees to notify the Operator of any equipment issues, damage
 
 // Source (en) -> Target (zh) mapping
 const enToZh = {
+  // Compliance Documents Module (v6.9)
+  'Download HAHA equipment certifications or add documents requested by a specific property.': '下载 HAHA 设备认证文件，或添加物业要求的其他补充资料。',
+  'DOCUMENT READINESS': '资料准备',
+  'Keep important documents ready for property review.': '提前准备好物业审核所需的文件。',
+  'Access HAHA equipment certifications below, or add a document link when a property requests additional information.': '查看 HAHA 设备认证资料，或根据物业要求添加其他补充文件。',
+  'Document Sharing Notice': '文件共享提示',
+  'Only share documents approved for external use. Keep tax forms, insurance policies, and other sensitive files in access-controlled storage. Add a sharing link only when the intended recipient is authorized to view it.': '仅分享允许对外提供的文件。税务表格、保险文件及其他敏感资料应保存在受权限控制的位置。添加文件链接前，请确认接收方有权查看。',
+  'Enter a document title and an HTTPS or Google Drive sharing link.': '填写文件名称及 HTTPS 或 Google Drive 分享链接。',
+  'e.g. Certificate of Insurance (COI) / Business License': '例如: 商业责任险证明 (COI) / 营业执照',
+  'Save Link': '保存链接',
+  'Please enter a valid HTTPS or Google Drive link.': '请输入有效的 HTTPS 或 Google Drive 分享链接。',
+  'Download ↓': '下载 ↓',
+  'Download': '下载',
+  'Open / Download ↗': '打开 / 下载 ↗',
+  'Open / Download': '打开 / 下载',
+  'No compliance documents selected.': '本次提案暂未勾选附带合规文件。',
+  'ETL Listed Certification': 'ETL Listed 产品安全认证',
+  'Electrical and product safety certification for applicable HAHA equipment models.': 'HAHA 相关设备型号的电气及产品安全认证文件。',
+  'Electrical & Product Safety': '电气与产品安全',
+  'ETL Sanitation Certification': 'ETL Sanitation 卫生认证',
+  'Sanitation certification for applicable HAHA food equipment models.': 'HAHA 相关食品设备型号的卫生认证文件。',
+  'Sanitation & Food Safety': '卫生与食品安全',
+  'NSF Certification': 'NSF 认证',
+  'Commercial refrigeration equipment certification. Applicable only to Pro 542.': '商用制冷设备认证。仅适用于 Pro 542 机型。',
+  'Commercial Refrigeration': '商用制冷认证',
+  'FCC Compliance': 'FCC 合规文件',
+  'Equipment RF & EMC Compliance': '设备射频与电磁兼容合规',
+  'FCC compliance documentation for HAHA equipment. Applicable to Mini 360 and Ultra 1200.': 'HAHA 设备 FCC 合规文件。适用于 Mini 360 和 Ultra 1200 机型。',
+  'PAX IM30 – PCI PTS Hardware Certification': 'PAX IM30 – PCI PTS 硬件安全认证',
+  'Payment Terminal Security': '支付终端硬件安全',
+  'PCI PTS hardware security certification for the PAX IM30 payment terminal.': 'PAX IM30 支付终端的 PCI PTS 硬件安全认证。',
+  'Universal Processing – PCI DSS Service Provider AOC': 'Universal Processing – PCI DSS 服务商合规声明',
+  'Payment Processing Compliance': '支付处理服务合规',
+  'PCI DSS v4.0.1 Attestation of Compliance for payment service provider Universal Processing (acquiring bank: Esquire Bank).': '第三方支付服务商 Universal Processing 的 PCI DSS v4.0.1 合规声明（收单行：Esquire Bank）。',
+  'RoHS Compliance Certification': 'RoHS 环保合规认证',
+  'Environmental Compliance': '环保与有害物质合规',
+  'EU RoHS environmental compliance certification for HAHA equipment.': 'HAHA 设备 EU RoHS 环保合规认证文件。',
+  'NAMA Listed Certification': 'NAMA 认证',
+  'Vending Industry Compliance': '自动售货行业认证',
+  'NAMA certification for applicable HAHA vending equipment.': 'HAHA 适用自动售货设备的 NAMA 行业认证文件。',
   // 1. Rate the Location — Option Descriptions
   'Not Sure': '待确认',
   "I don't have enough information to evaluate this yet.": '目前还没有足够的信息进行判断。',
@@ -160,7 +200,7 @@ const enToZh = {
   'Location Assessment': '点位评估',
   'Site Partner Earnings': '点位方收益测算',
   'Business Proposal': '商业提案',
-  'Compliance Documents': '合规文件中心',
+  'Compliance Documents': '合规文件',
   'My Projects': '我的项目',
   'Local Workspace': '本地工作模式',
   'Data is saved in this browser': '数据保存在当前浏览器',
@@ -325,12 +365,15 @@ const enToZh = {
   'Estimated monthly sales = daily items sold × average selling price × operating days. The estimate is used only to calculate the property’s potential earnings.': '预计月销售额 = 日均销售件数 × 平均商品售价 × 每月营业天数。该估算仅用于计算点位方的潜在合作收益。',
   'Partnership Setup': '合作模式设置',
   'Choose how the property will benefit financially from the placement.': '选择物业方从本次智能零售柜投放中获得收益或价值的方式。',
-  'Choose one': '三选一',
+  'Choose one': '四选一',
   'Partnership Model': '合作方式',
   'Revenue Share': '按销售额分成',
   'Property receives an agreed percentage of sales.': '物业按约定的月销售额比例获得分成。',
   'Fixed Monthly Rent': '固定月租',
   'Operator pays an agreed monthly placement fee.': '运营商按月向物业支付固定的场地租金。',
+  'Combo (Rent + Share)': '组合模式（月租 + 分成）',
+  'Fixed Rent + Revenue Share': '固定月租 + 销售额占比',
+  'Combine a fixed monthly rent with a percentage of sales.': '固定月租叠加按约定比例的销售额分成。',
   'Amenity-Only': '纯便民配套',
   'No direct payment; the cooler is provided as a site amenity.': '无直接租金；设备作为场地便民福利配套提供。',
   'Property Revenue Share (%)': '点位方销售额分成比例 (%)',
@@ -627,6 +670,15 @@ export function translateToZh(value) {
 
   match = key.match(/^(\d+(?:\.\d+)?)% of monthly sales$/);
   if (match) return `按销售额分成 ${match[1]}%`;
+
+  match = key.match(/^Based on (.+)\/mo \+ ([\d.]+)% revenue share$/);
+  if (match) return `基于固定月租 ${match[1]} + 销售额 ${match[2]}% 分成计算`;
+
+  match = key.match(/^(.+)\/mo \+ ([\d.]+)% Share$/);
+  if (match) return `${match[1]}/月 + ${match[2]}% 分成`;
+
+  match = key.match(/^Fixed (.+)\/mo \+ ([\d.]+)% of monthly sales$/);
+  if (match) return `固定月租 ${match[1]} + 月销售额 ${match[2]}% 分成`;
 
   match = key.match(/^Fixed monthly rent (.+)$/);
   if (match) return `固定月租 ${match[1]}`;

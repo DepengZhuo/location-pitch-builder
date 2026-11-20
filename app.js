@@ -5,7 +5,7 @@ import { DEFAULT_SCORE, DEFAULT_READINESS, DEFAULT_DOCS, dateLabel, todayInputDa
 import { loadStore, saveStore, createProject, cleanLegacyNotes } from './storage.js';
 import { renderScoreFactors, renderReadinessChecks, calculateScore, paintScoreResult, normalizeRatings, normalizeReadiness } from './scorer.js';
 import { readROIForm, applyROIForm, calculateROI, renderROI, bindROIInputs } from './roi.js';
-import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, bindProposalInputs, syncProposalFormLanguage, renderDocCheckboxes, removeDeletedDocFromSelection } from './proposal.js';
+import { readProposalForm, applyProposalForm, applyROIToProposal, renderProposalPreview, exportProposalHTML, printProposalDocument, bindProposalInputs, syncProposalFormLanguage, renderDocCheckboxes, removeDeletedDocFromSelection } from './proposal.js';
 import { renderCompliance, normalizeDocs, setComplianceChangeHandler, bindComplianceAddButton } from './compliance.js';
 import { initializeLanguageToggle, onLanguageChange, t, PROPOSAL_DEFAULTS, getLanguage } from './i18n.js';
 
@@ -529,8 +529,7 @@ $('exportProposal')?.addEventListener('click', () => {
   toast('Standalone proposal HTML exported.');
 });
 $('printProposal')?.addEventListener('click', () => {
-  refreshProposalPreview();
-  window.print();
+  printProposalDocument(calculateROI(readROIForm()), calculateScore(scoreValues, readinessValues), store.docs);
 });
 $('loadProposalExample')?.addEventListener('click', () => {
   const d = PROPOSAL_DEFAULTS[getLanguage() === 'zh' ? 'zh' : 'en'];
