@@ -634,9 +634,10 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   // Module 02: Recommended Equipment (Mandatory — Shows all distinct selected machine models + site rendering)
   {
     const n = nextNum();
-    const rawSiteRel = venueObj.siteImage || `./assets/site_images/${p.venue}.jpg`;
-    const localSiteImg = encodeURI(rawSiteRel);
-    const fallbackSiteImg = `https://raw.githubusercontent.com/DepengZhuo/location-pitch-builder/main/${encodeURI(rawSiteRel.replace(/^\.\//, ''))}`;
+    const hasSiteImage = Boolean(venueObj && venueObj.siteImage);
+    const rawSiteRel = hasSiteImage ? venueObj.siteImage : '';
+    const localSiteImg = hasSiteImage ? encodeURI(rawSiteRel) : '';
+    const fallbackSiteImg = hasSiteImage ? `https://raw.githubusercontent.com/DepengZhuo/location-pitch-builder/main/${encodeURI(rawSiteRel.replace(/^\.\//, ''))}` : '';
 
     const distinctModels = [];
     p.machines.forEach(m => {
@@ -690,10 +691,10 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
         <div class="proposal-machines-gallery ${galleryCountClass}">
           ${machineGalleryCardsHtml}
         </div>
-        <div class="proposal-site-showcase">
+        ${hasSiteImage ? `<div class="proposal-site-showcase">
           <img class="site-photo-full" src="${localSiteImg}" data-fallback="${fallbackSiteImg}" alt="${escapeHTML(venueDisplay)}">
           <strong>${isZh ? `实景空间融合参考 · ${venueDisplay}` : `On-Site Placement Reference · ${venueDisplay}`}</strong>
-        </div>
+        </div>` : ''}
       </section>`);
   }
 
