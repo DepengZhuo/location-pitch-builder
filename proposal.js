@@ -12,8 +12,8 @@
    - 08 Final Arrangements & Additional Notes (Optional)
    - 09+ Custom Sections (No "(09)" suffix in default title)
    ================================================== */
-import { escapeHTML, money, machineFootprint, MACHINE_MODELS, VENUE_TYPES, VENUE_TEMPLATES, POWER_SUPPLY_SPEC, normalizeVenue, DEFAULT_DOCS, LEGACY_DEFAULT_DOC_IDS, todayInputDate, formatProposalDate } from './data.js';
-import { resolveExportDocHref } from './compliance.js';
+import { escapeHTML, money, machineFootprint, MACHINE_MODELS, VENUE_TYPES, VENUE_TEMPLATES, POWER_SUPPLY_SPEC, normalizeVenue, DEFAULT_DOCS, todayInputDate, formatProposalDate } from './data.js';
+import { DOC_STATUS_OPTIONS } from './compliance.js';
 import { cleanLegacyNotes } from './storage.js';
 import { getLanguage, t, translateMultiline, PROPOSAL_DEFAULTS } from './i18n.js';
 
@@ -33,7 +33,7 @@ const DEFAULT_MODULE_FLAGS = {
 let moduleFlags = { ...DEFAULT_MODULE_FLAGS };
 let machinesState = [{ id: 'm_1', model: 'Pro 542', quantity: 1 }];
 let customModulesState = [];
-let selectedDocIds = DEFAULT_DOCS.map(d => d.id);
+let selectedDocIds = ['nama', 'ul-etl', 'coi'];
 let companyLogoDataUrl = '';
 let cachedDocsList = DEFAULT_DOCS;
 let onUpdateCallback = () => {};
@@ -72,8 +72,8 @@ function compressLogoImage(file) {
       const img = new Image();
       img.onerror = () => reject(new Error('Invalid image file.'));
       img.onload = () => {
-        const maxW = 560;
-        const maxH = 200;
+        const maxW = 400;
+        const maxH = 130;
         let w = img.naturalWidth || img.width || 200;
         let h = img.naturalHeight || img.height || 80;
         const ratio = Math.min(1, maxW / w, maxH / h);
@@ -419,17 +419,10 @@ export function applyProposalForm(rawData = {}) {
         content: translateMultiline(cm.content || '')
       }))
     : [];
-  if (Array.isArray(data.selectedDocs)) {
-    const filtered = data.selectedDocs.filter(id => !LEGACY_DEFAULT_DOC_IDS.has(id));
-    selectedDocIds = filtered.length ? filtered : DEFAULT_DOCS.map(d => d.id);
-  } else {
-    selectedDocIds = DEFAULT_DOCS.map(d => d.id);
-  }
+  selectedDocIds = Array.isArray(data.selectedDocs) ? [...data.selectedDocs] : ['nama', 'ul-etl', 'coi'];
 
   let dealValue = 'revenueShare';
-  if (data.deal === 'combo' || String(data.deal || '').includes('组合')) {
-    dealValue = 'combo';
-  } else if (data.deal === 'amenity' || String(data.deal || '').includes('便民')) {
+  if (data.deal === 'amenity' || String(data.deal || '').includes('便民')) {
     dealValue = 'amenity';
   } else if (data.deal === 'fixedRent' || String(data.deal || '').includes('固定')) {
     dealValue = 'fixedRent';
@@ -511,8 +504,8 @@ export function applyProposalForm(rawData = {}) {
 
 function updateDealFields() {
   const mode = el('propDeal')?.value || 'revenueShare';
-  if (el('propShareField')) el('propShareField').hidden = mode !== 'revenueShare' && mode !== 'combo';
-  if (el('propRentField')) el('propRentField').hidden = mode !== 'fixedRent' && mode !== 'combo';
+  if (el('propShareField')) el('propShareField').hidden = mode !== 'revenueShare';
+  if (el('propRentField')) el('propRentField').hidden = mode !== 'fixedRent';
 }
 
 export function applyROIToProposal(roi) {
@@ -613,33 +606,34 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   const sections = [];
 
   // Module 01: Partnership Overview (Mandatory)
-  const mod1Num = nextNum();
-  const introParagraph = isZh
-    ? `我们建议在 <strong>${escapeHTML(p.property || '贵物业')}</strong> 部署 ${p.quantity || 1} 台 HAHA Vending 智能零售柜，为现场人群提供 24/7 即拿即走的饮品、零食与日常必需品服务。`
-    : `We propose deploying ${p.quantity || 1} HAHA Vending smart retail unit(s) at <strong>${escapeHTML(p.property || 'your property')}</strong> to provide 24/7 grab-and-go beverages, fresh snacks, and daily essentials.`;
-  const mod1Html = `
-    <section class="proposal-section">
-      <h3>${mod1Num} · ${isZh ? '合作方案概述' : 'Partnership Overview'}</h3>
-      <p>${introParagraph}</p>
-      <div class="proposal-meta" style="margin-top:12px;">
-        <div><span>${t('Prepared For')}</span><strong>${safe('property')}</strong></div>
-        <div><span>${t('City')}</span><strong>${safe('city')}</strong></div>
-        <div><span>${t('Venue Type')}</span><strong>${escapeHTML(venueDisplay)}</strong></div>
-        <div><span>${t('Estimated Launch Date')}</span><strong>${safe('launch')}</strong></div>
-        <div><span>${t('Operating Partner')}</span><strong>${safe('operator')}</strong></div>
-        <div><span>${t('Contact Name')}</span><strong>${safe('contactName')}</strong></div>
-        <div><span>${t('Contact Email')}</span><strong>${safe('contactEmail')}</strong></div>
-        <div><span>${t('Contact Phone')}</span><strong>${safe('contactPhone')}</strong></div>
-      </div>
-    </section>`;
+  {
+    const n = nextNum();
+    const introParagraph = isZh
+      ? `我们建议在 <strong>${escapeHTML(p.property || '贵物业')}</strong> 部署 ${p.quantity || 1} 台 HAHA Vending 智能零售柜，为现场人群提供 24/7 即拿即走的饮品、零食与日常必需品服务。`
+      : `We propose deploying ${p.quantity || 1} HAHA Vending smart retail unit(s) at <strong>${escapeHTML(p.property || 'your property')}</strong> to provide 24/7 grab-and-go beverages, fresh snacks, and daily essentials.`;
+
+    sections.push(`
+      <section class="proposal-section" data-section-key="basic">
+        <h3>${n} · ${isZh ? '合作方案概述' : 'Partnership Overview'}</h3>
+        <p>${introParagraph}</p>
+        <div class="proposal-meta" style="margin-top:12px;">
+          <div><span>${t('Prepared For')}</span><strong>${safe('property')}</strong></div>
+          <div><span>${t('City')}</span><strong>${safe('city')}</strong></div>
+          <div><span>${t('Venue Type')}</span><strong>${escapeHTML(venueDisplay)}</strong></div>
+          <div><span>${t('Estimated Launch Date')}</span><strong>${safe('launch')}</strong></div>
+          <div><span>${t('Operating Partner')}</span><strong>${safe('operator')}</strong></div>
+          <div><span>${t('Contact Name')}</span><strong>${safe('contactName')}</strong></div>
+          <div><span>${t('Contact Email')}</span><strong>${safe('contactEmail')}</strong></div>
+          <div><span>${t('Contact Phone')}</span><strong>${safe('contactPhone')}</strong></div>
+        </div>
+      </section>`);
+  }
 
   // Module 02: Recommended Equipment (Mandatory — Shows all distinct selected machine models + site rendering)
   {
     const n = nextNum();
-    const hasSiteImage = Boolean(venueObj && venueObj.siteImage);
-    const rawSiteRel = hasSiteImage ? venueObj.siteImage : '';
-    const localSiteImg = hasSiteImage ? encodeURI(rawSiteRel) : '';
-    const fallbackSiteImg = hasSiteImage ? `https://raw.githubusercontent.com/DepengZhuo/location-pitch-builder/main/${encodeURI(rawSiteRel.replace(/^\.\//, ''))}` : '';
+    const localSiteImg = `./assets/site_images/${encodeURIComponent(p.venue)}.jpg`;
+    const fallbackSiteImg = `https://raw.githubusercontent.com/DepengZhuo/location-pitch-builder/main/assets/site_images/${encodeURIComponent(p.venue)}.jpg`;
 
     const distinctModels = [];
     p.machines.forEach(m => {
@@ -658,9 +652,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
         </div>`;
     }).join('');
 
-    const galleryCountClass = distinctModels.length === 1
-      ? 'models-1'
-      : (distinctModels.length === 2 ? 'models-2' : 'models-multi');
+    const galleryCountClass = distinctModels.length > 1 ? 'is-multi-models' : '';
 
     const machineRowsHtml = p.machines.map(m => {
       const sp = machineFootprint(m.model) || machineFootprint('Pro 542');
@@ -690,13 +682,13 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
         <h3>${n} · ${isZh ? '推荐设备与部署方案' : 'Recommended Equipment & Site Rendering'}</h3>
         <div class="proposal-machines-table">${machineRowsHtml}</div>
         <div class="proposal-power-note">${isZh ? `标准供电要求：${POWER_SUPPLY_SPEC} 普通三孔插座` : `Standard power supply requirement: ${POWER_SUPPLY_SPEC} outlet`}</div>
-        <div class="proposal-machines-gallery ${galleryCountClass}">
+        <div class="proposal-dual-gallery ${galleryCountClass}">
           ${machineGalleryCardsHtml}
+          <div class="proposal-gallery-card">
+            <img class="site-photo" src="${localSiteImg}" data-fallback="${fallbackSiteImg}" alt="${escapeHTML(venueDisplay)}">
+            <strong>${isZh ? `实景空间融合参考 · ${venueDisplay}` : `On-Site Placement Reference · ${venueDisplay}`}</strong>
+          </div>
         </div>
-        ${hasSiteImage ? `<div class="proposal-site-showcase">
-          <img class="site-photo-full" src="${localSiteImg}" data-fallback="${fallbackSiteImg}" alt="${escapeHTML(venueDisplay)}">
-          <strong>${isZh ? `实景空间融合参考 · ${venueDisplay}` : `On-Site Placement Reference · ${venueDisplay}`}</strong>
-        </div>` : ''}
       </section>`);
   }
 
@@ -708,10 +700,6 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
       landlord = '$0';
     } else if (p.deal === 'fixedRent') {
       landlord = money(p.rent);
-    } else if (p.deal === 'combo') {
-      landlord = roiData
-        ? money(p.rent + (roiData.monthlyRevenue || 0) * (p.share / 100))
-        : `${money(p.rent)} + ${p.share}%`;
     } else if (roiData) {
       landlord = money((roiData.monthlyRevenue || 0) * (p.share / 100));
     }
@@ -721,9 +709,6 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     if (p.deal === 'fixedRent') {
       deal = t(`Fixed monthly rent ${money(p.rent)}`);
       landlordDeal = t(`Fixed monthly rent ${money(p.rent)}`);
-    } else if (p.deal === 'combo') {
-      deal = t(`Fixed ${money(p.rent)}/mo + ${p.share}% of monthly sales`);
-      landlordDeal = t(`${money(p.rent)}/mo + ${p.share}% Share`);
     } else if (p.deal === 'amenity') {
       deal = t('Amenity-Only ($0 Monthly Fee)');
       landlordDeal = t('Amenity-Only Placement');
@@ -795,13 +780,19 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     const selectedDocs = (cachedDocsList || []).filter(doc => (p.selectedDocs || []).includes(doc.id));
     const docsSection = selectedDocs.length
       ? `<ul>${selectedDocs.map(doc => {
-          const href = escapeHTML(resolveExportDocHref(doc));
-          const titleText = escapeHTML(t(doc.title));
-          return href
-            ? `<li><strong>${titleText}</strong> — <a class="doc-web-link" href="${href}" target="_blank" rel="noopener noreferrer">${escapeHTML(t('Open / Download ↗'))}</a></li>`
-            : `<li><strong>${titleText}</strong></li>`;
+          const url = doc.url || doc.downloadPath || '';
+          const href = /^https?:\/\//i.test(url)
+            ? escapeHTML(url)
+            : (doc.downloadPath ? `https://depengzhuo.github.io/location-pitch-builder/${escapeHTML(doc.downloadPath.replace(/^\.\//, ''))}` : '');
+          const curStatus = doc.docStatus || (href ? 'attached' : 'on_request');
+          const statusObj = DOC_STATUS_OPTIONS.find(o => o.value === curStatus) || DOC_STATUS_OPTIONS[1];
+          const webAction = href
+            ? `<a class="doc-web-link doc-web-only" href="${href}" target="_blank" rel="noopener noreferrer" download>${escapeHTML(t(`View / Download ${doc.title} ↗`))}</a>`
+            : `<span class="doc-web-status doc-web-only">(${escapeHTML(t(statusObj.label))})</span>`;
+          const printBadge = `<span class="doc-print-only"> — ${escapeHTML(t(statusObj.printLabel))}</span>`;
+          return `<li><strong>${escapeHTML(t(doc.title))}</strong> <span class="doc-web-only">— </span>${webAction}${printBadge}</li>`;
         }).join('')}</ul>`
-      : `<p>${t('No compliance documents selected.')}</p>`;
+      : `<p>${t('No compliance documents are attached to this proposal yet. Configure links in the Compliance Center and check the items to include.')}</p>`;
 
     sections.push(`
       <section class="proposal-section" data-section-key="compliance">
@@ -833,7 +824,7 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     if (cm.enabled === false) return;
     const n = nextNum();
     const rawTitle = String(cm.title || '').replace(/\s*\(\d+\)\s*$/, '').trim();
-    const cTitle = rawTitle ? translateMultiline(rawTitle) : (isZh ? '自定义模块' : 'Custom Section');
+    const cTitle = rawTitle ? translateMultiline(rawTitle) : (isZh ? '特别合作约定' : 'Special Partnership Terms');
     sections.push(`
       <section class="proposal-section" data-section-key="${escapeHTML(cm.id)}">
         <h3>${n} · ${escapeHTML(cTitle)}</h3>
@@ -857,13 +848,10 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     : '';
 
   const html = `
-    <div class="proposal-top-block proposal-section" data-section-key="basic" style="margin-top:0;">
-      <div class="proposal-brand">${brandLeftHtml}<div class="proposal-doc-type">LOCATION PARTNERSHIP PROPOSAL</div></div>
-      <h1 class="proposal-title">${safe('title')}</h1>
-      <div class="proposal-subtitle">${t('A turnkey smart retail amenity proposal tailored for your property')}</div>
-      ${headerMetaHtml}
-      ${mod1Html}
-    </div>
+    <div class="proposal-brand">${brandLeftHtml}<div class="proposal-doc-type">LOCATION PARTNERSHIP PROPOSAL</div></div>
+    <h1 class="proposal-title">${safe('title')}</h1>
+    <div class="proposal-subtitle">${t('A turnkey smart retail amenity proposal tailored for your property')}</div>
+    ${headerMetaHtml}
     ${sections.join('')}
     <div class="proposal-footer">
       <span>HAHA VENDING · LOCATION PARTNERSHIP</span>
@@ -881,25 +869,17 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
   return p;
 }
 
-export function buildStandaloneProposalHTML(roiData = null, scoreData = null, complianceDocs = [], useCurrentSrcForPrint = false) {
+export function exportProposalHTML(roiData = null, scoreData = null, complianceDocs = []) {
   renderProposalPreview(roiData, scoreData, complianceDocs);
   const p = readProposalForm();
   const clone = el('proposalPreview')?.cloneNode(true);
   if (clone) {
-    clone.querySelectorAll('.is-active-sec').forEach(s => s.classList.remove('is-active-sec'));
-    if (!useCurrentSrcForPrint) {
-      clone.querySelectorAll('img[data-fallback]').forEach(img => {
-        if (img.dataset.fallback) img.setAttribute('src', img.dataset.fallback);
-      });
-    }
+    clone.querySelectorAll('img[data-fallback]').forEach(img => {
+      if (img.dataset.fallback) img.setAttribute('src', img.dataset.fallback);
+    });
   }
   const paper = clone ? clone.innerHTML : (el('proposalPreview')?.innerHTML || '');
-  return `<!doctype html><html lang="${getLanguage() === 'zh' ? 'zh' : 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHTML(translateMultiline(p.title) || 'Location Partnership Proposal')}</title><style>*{box-sizing:border-box}html,body{margin:0;background:#ffffff;color:#222;font-family:"Plus Jakarta Sans","Inter",Arial,"Microsoft YaHei",sans-serif}.paper{width:min(1000px,calc(100% - 32px));margin:32px auto;background:#fff;padding:48px 52px;border-radius:10px}@media screen{body{background:#f3f3f2}}.proposal-brand{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:15px}.proposal-logo{font-weight:900;letter-spacing:1px;font-size:17px}.proposal-logo-wrap{display:flex;align-items:center}.proposal-custom-logo{max-width:260px;max-height:88px;width:auto;height:auto;object-fit:contain;display:block}.proposal-header-meta{display:flex;flex-wrap:wrap;gap:18px;margin:-8px 0 18px;padding:10px 14px;background:#f7f7f5;border:1px solid #e6e6e3;border-radius:8px;font-size:13px;color:#333}.proposal-header-meta span{color:#666;margin-right:4px}.proposal-doc-type{font-size:12px;letter-spacing:1.3px;color:#666;font-weight:700}.proposal-title{margin:24px 0 9px;font-size:28px}.proposal-subtitle{font-size:14px;color:#666;margin-bottom:20px}.proposal-section{margin:22px 0}.proposal-section h3{font-size:17px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #ddd}.proposal-section p,.proposal-section li{font-size:14.5px;line-height:1.75;color:#262626;margin:0 0 7px}.proposal-section ul{padding-left:18px;margin:6px 0}.proposal-subblock{margin:10px 0 14px}.proposal-subhead{font-size:14.5px;font-weight:800;color:#111;margin:0 0 6px}.proposal-focus-bar{margin-top:8px;padding:9px 12px;background:#f5f5f3;border-left:3px solid #111;border-radius:0 6px 6px 0;font-size:13px;color:#222}.proposal-callout{background:#f4f4f4;border-left:3px solid #111;padding:12px 14px;font-size:13.5px;line-height:1.7;color:#333;border-radius:0 6px 6px 0;margin-top:6px}.proposal-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#f5f5f5;padding:16px;border-radius:8px}.proposal-meta div span{font-size:12px;color:#666;display:block;margin-bottom:4px}.proposal-meta div strong{font-size:14.5px;color:#111}.proposal-machines-table{display:grid;gap:10px;margin:12px 0 6px}.proposal-power-note{font-size:12.5px;color:#555;margin:4px 0 12px}.proposal-machine-row{border:1px solid #ddd;border-radius:10px;padding:12px 14px;background:#fafafa;display:grid;grid-template-columns:.9fr 1.25fr 1.25fr;gap:10px;align-items:stretch}.proposal-machine-model-col{display:flex;flex-direction:column;justify-content:center}.proposal-machine-model-col strong{font-size:15px;color:#111;font-weight:900}.proposal-machine-model-col span{display:inline-block;margin-top:5px;font-size:12px;font-weight:700;background:#e8e8e5;padding:3px 9px;border-radius:999px;align-self:flex-start}.prop-spec-box{background:#fff;border:1px solid #e5e5e2;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;justify-content:center}.prop-spec-box .spec-kicker{display:block;font-size:11.5px;color:#555;font-weight:700;margin-bottom:4px}.prop-spec-box .spec-primary{display:block;font-size:16.5px;color:#111;font-weight:900}.prop-spec-box .spec-secondary{display:block;font-size:12.5px;color:#444;font-weight:600;margin-top:4px}.proposal-machines-gallery{display:grid;gap:14px;margin:14px 0}.proposal-machines-gallery.models-1{grid-template-columns:1fr}.proposal-machines-gallery.models-2{grid-template-columns:repeat(2,1fr)}.proposal-machines-gallery.models-multi{grid-template-columns:repeat(auto-fit,minmax(220px,1fr))}.proposal-gallery-card{border:1px solid #ddd;border-radius:10px;background:#fff;padding:10px;text-align:center;break-inside:avoid;page-break-inside:avoid}.proposal-machines-gallery.models-1 .proposal-gallery-card img{width:100%;height:340px;object-fit:contain;display:block;border-radius:6px;background:#fafaf8}.proposal-machines-gallery.models-2 .proposal-gallery-card img{width:100%;height:300px;object-fit:contain;display:block;border-radius:6px;background:#fafaf8}.proposal-machines-gallery.models-multi .proposal-gallery-card img{width:100%;height:260px;object-fit:contain;display:block;border-radius:6px;background:#fafaf8}.proposal-gallery-card strong{display:inline-block;margin-top:10px;font-size:12px;background:#eee;padding:4px 14px;border-radius:999px}.proposal-site-showcase{margin-top:14px;border:1px solid #ddd;border-radius:10px;background:#fff;padding:12px;text-align:center;break-inside:avoid;page-break-inside:avoid}.proposal-site-showcase img.site-photo-full{width:100%;height:auto;max-height:460px;object-fit:contain;display:block;border-radius:6px;background:#fafaf8}.proposal-site-showcase strong{display:inline-block;margin-top:10px;font-size:12px;background:#eee;padding:4px 14px;border-radius:999px}.proposal-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.proposal-stat{background:#111;color:#fff;padding:14px;border-radius:8px}.proposal-stat span{font-size:12px;color:#e2e2df;display:block}.proposal-stat strong{font-size:17px;color:#fff;display:block;margin-top:6px}.proposal-footer{border-top:1px solid #ddd;margin-top:30px;padding-top:12px;display:flex;justify-content:space-between;color:#666;font-size:12px}.doc-web-link{color:#111;font-weight:700}@media(max-width:650px){.paper{padding:24px 18px}.proposal-machines-gallery.models-2,.proposal-machines-gallery.models-multi,.proposal-machine-row,.proposal-stat-row{grid-template-columns:1fr}}.print-page-table,.print-page-table>tbody,.print-page-table>tbody>tr,.print-page-table>tbody>tr>td{display:block;width:100%;padding:0;margin:0;border:0}.print-only-thead,.print-only-tfoot{display:none}@media print{@page{margin:0}*{ -webkit-print-color-adjust:exact!important;print-color-adjust:exact!important }html,body{background:#ffffff!important;margin:0!important}.paper{width:100%;margin:0;padding:0!important;background:#ffffff!important;box-shadow:none}.print-page-table{display:table!important;width:100%!important;border-collapse:collapse!important;background:#ffffff!important}.print-page-table>tbody{display:table-row-group!important}.print-page-table>tbody>tr{display:table-row!important}.print-page-table>tbody>tr>td{display:table-cell!important;padding:0 15mm!important;background:#ffffff!important}.print-only-thead{display:table-header-group!important}.print-only-tfoot{display:table-footer-group!important}.print-page-gap{height:14mm;background:#ffffff!important}.proposal-machine-row,.proposal-gallery-card,.proposal-site-showcase,.proposal-stat-row,.proposal-subblock{break-inside:avoid;page-break-inside:avoid}.doc-web-footnote{display:none!important}}</style></head><body><table class="print-page-table"><thead class="print-only-thead"><tr><td><div class="print-page-gap"></div></td></tr></thead><tbody><tr><td><main class="paper">${paper}</main></td></tr></tbody><tfoot class="print-only-tfoot"><tr><td><div class="print-page-gap"></div></td></tr></tfoot></table></body></html>`;
-}
-
-export function exportProposalHTML(roiData = null, scoreData = null, complianceDocs = []) {
-  const p = readProposalForm();
-  const standalone = buildStandaloneProposalHTML(roiData, scoreData, complianceDocs, false);
+  const standalone = `<!doctype html><html lang="${getLanguage() === 'zh' ? 'zh' : 'en'}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${escapeHTML(translateMultiline(p.title) || 'Location Partnership Proposal')}</title><style>*{box-sizing:border-box}body{margin:0;background:#f3f3f2;color:#222;font-family:Arial,"Microsoft YaHei",sans-serif}.paper{width:min(1000px,calc(100% - 32px));margin:32px auto;background:#fff;padding:48px 52px;border-radius:10px}.proposal-brand{display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid #111;padding-bottom:15px}.proposal-logo{font-weight:900;letter-spacing:1px;font-size:17px}.proposal-logo-wrap{display:flex;align-items:center}.proposal-custom-logo{max-width:180px;max-height:54px;width:auto;height:auto;object-fit:contain;display:block}.proposal-header-meta{display:flex;flex-wrap:wrap;gap:18px;margin:-8px 0 18px;padding:10px 14px;background:#f7f7f5;border:1px solid #e6e6e3;border-radius:8px;font-size:13px;color:#333}.proposal-header-meta span{color:#666;margin-right:4px}.proposal-doc-type{font-size:12px;letter-spacing:1.3px;color:#666;font-weight:700}.proposal-title{margin:28px 0 9px;font-size:30px}.proposal-subtitle{font-size:14px;color:#666;margin-bottom:20px}.proposal-section{margin:24px 0;page-break-inside:avoid}.proposal-section h3{font-size:17px;margin:0 0 10px;padding-bottom:8px;border-bottom:1px solid #ddd}.proposal-section p,.proposal-section li{font-size:14px;line-height:1.75;color:#333;margin:0 0 6px}.proposal-section ul{padding-left:18px;margin:6px 0}.proposal-subblock{margin:10px 0 14px}.proposal-subhead{font-size:14px;font-weight:800;color:#111;margin:0 0 6px}.proposal-focus-bar{margin-top:8px;padding:9px 12px;background:#f5f5f3;border-left:3px solid #111;border-radius:0 6px 6px 0;font-size:13px;color:#222}.proposal-callout{background:#f4f4f4;border-left:3px solid #111;padding:12px 14px;font-size:13px;line-height:1.7;color:#333;border-radius:0 6px 6px 0;margin-top:6px}.proposal-meta{display:grid;grid-template-columns:1fr 1fr;gap:12px;background:#f5f5f5;padding:16px;border-radius:8px}.proposal-meta div span{font-size:12px;color:#666;display:block;margin-bottom:4px}.proposal-meta div strong{font-size:14px;color:#111}.proposal-machines-table{display:grid;gap:10px;margin:12px 0 6px}.proposal-power-note{font-size:12px;color:#666;margin:4px 0 12px}.proposal-machine-row{border:1px solid #ddd;border-radius:10px;padding:12px 14px;background:#fafafa;display:grid;grid-template-columns:.9fr 1.25fr 1.25fr;gap:10px;align-items:stretch}.proposal-machine-model-col{display:flex;flex-direction:column;justify-content:center}.proposal-machine-model-col strong{font-size:15px;color:#111;font-weight:900}.proposal-machine-model-col span{display:inline-block;margin-top:5px;font-size:12px;font-weight:700;background:#e8e8e5;padding:3px 9px;border-radius:999px;align-self:flex-start}.prop-spec-box{background:#fff;border:1px solid #e5e5e2;border-radius:8px;padding:10px 12px;display:flex;flex-direction:column;justify-content:center}.prop-spec-box .spec-kicker{display:block;font-size:11px;color:#666;font-weight:700;margin-bottom:4px}.prop-spec-box .spec-primary{display:block;font-size:16px;color:#111;font-weight:900}.prop-spec-box .spec-secondary{display:block;font-size:12px;color:#555;font-weight:600;margin-top:4px}.proposal-dual-gallery{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:14px 0}.proposal-dual-gallery.is-multi-models{grid-template-columns:repeat(auto-fit,minmax(210px,1fr))}.proposal-gallery-card{border:1px solid #ddd;border-radius:10px;background:#fff;padding:12px;text-align:center}.proposal-gallery-card img{width:100%;height:250px;object-fit:contain;border-radius:6px;display:block;background:#f9f9f8}.proposal-gallery-card img.site-photo{object-fit:cover}.proposal-gallery-card img[data-model="Ultra 1200"]{object-fit:cover;object-position:18% 50%}.proposal-gallery-card strong{display:inline-block;margin-top:8px;font-size:12px;background:#eee;padding:4px 12px;border-radius:999px}.proposal-stat-row{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:14px 0}.proposal-stat{background:#111;color:#fff;padding:14px;border-radius:8px}.proposal-stat span{font-size:12px;color:#ccc;display:block}.proposal-stat strong{font-size:15px;display:block;margin-top:6px}.proposal-footer{border-top:1px solid #ddd;margin-top:30px;padding-top:12px;display:flex;justify-content:space-between;color:#666;font-size:12px}.doc-print-only{display:none}.doc-web-link{color:#111;font-weight:700}@media(max-width:650px){.paper{padding:24px 18px}.proposal-dual-gallery,.proposal-machine-row,.proposal-stat-row{grid-template-columns:1fr}}@media print{body{background:#fff}.paper{width:100%;margin:0;padding:20px 28px}.doc-web-only,.doc-web-footnote{display:none!important}.doc-print-only{display:inline!important;color:#333;font-size:13px}}</style></head><body><main class="paper">${paper}</main></body></html>`;
   const blob = new Blob([standalone], { type: 'text/html;charset=utf-8' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -909,39 +889,6 @@ export function exportProposalHTML(roiData = null, scoreData = null, complianceD
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
-}
-
-export function printProposalDocument(roiData = null, scoreData = null, complianceDocs = []) {
-  const html = buildStandaloneProposalHTML(roiData, scoreData, complianceDocs, true);
-  let frame = document.getElementById('proposalPrintFrame');
-  if (!frame) {
-    frame = document.createElement('iframe');
-    frame.id = 'proposalPrintFrame';
-    frame.style.position = 'fixed';
-    frame.style.right = '0';
-    frame.style.bottom = '0';
-    frame.style.width = '0';
-    frame.style.height = '0';
-    frame.style.border = '0';
-    frame.style.visibility = 'hidden';
-    document.body.appendChild(frame);
-  }
-  const doc = frame.contentDocument || frame.contentWindow?.document;
-  if (!doc || !frame.contentWindow) {
-    window.print();
-    return;
-  }
-  doc.open();
-  doc.write(html);
-  doc.close();
-  setTimeout(() => {
-    try {
-      frame.contentWindow.focus();
-      frame.contentWindow.print();
-    } catch {
-      window.print();
-    }
-  }, 220);
 }
 
 export function bindProposalInputs(onUpdate = () => {}) {
@@ -1066,7 +1013,6 @@ export function removeDeletedDocFromSelection(docId) {
 export function scrollPreviewToSection(sectionKey, smooth = true) {
   if (!sectionKey) return;
   const previewEl = el('proposalPreview');
-  const wrapEl = document.querySelector('.proposal-preview-wrap');
   if (!previewEl) return;
   const targetSec = previewEl.querySelector(`.proposal-section[data-section-key="${sectionKey}"]`);
   if (!targetSec) return;
@@ -1074,16 +1020,12 @@ export function scrollPreviewToSection(sectionKey, smooth = true) {
   previewEl.querySelectorAll('.proposal-section.is-active-sec').forEach(s => s.classList.remove('is-active-sec'));
   targetSec.classList.add('is-active-sec');
 
-  // When editing or viewing Module 01 ('basic'), always pin #proposalPreview to top: 0
-  // so Company Logo, Proposal Title, Prepared By, Proposal Date, and Section 01 are all visible from the very top
+  // When editing Module 01 ('basic'), scroll all the way to top: 0 so Logo, Proposal Title, Prepared By & Date are visible
   if (sectionKey === 'basic') {
-    if (!smooth) {
-      previewEl.scrollTop = 0;
-      if (wrapEl) wrapEl.scrollTop = 0;
-    } else {
-      previewEl.scrollTo({ top: 0, behavior: 'smooth' });
-      if (wrapEl) wrapEl.scrollTo({ top: 0, behavior: 'smooth' });
-    }
+    previewEl.scrollTo({
+      top: 0,
+      behavior: smooth ? 'smooth' : 'auto'
+    });
     return;
   }
 
@@ -1092,16 +1034,12 @@ export function scrollPreviewToSection(sectionKey, smooth = true) {
   const secRect = targetSec.getBoundingClientRect();
   const currentScroll = previewEl.scrollTop;
   const offsetInsidePaper = secRect.top - paperRect.top + currentScroll;
-  const desiredTop = Math.max(0, offsetInsidePaper - 16);
+  const desiredTop = Math.max(0, offsetInsidePaper - 20);
 
-  if (!smooth) {
-    previewEl.scrollTop = desiredTop;
-  } else {
-    previewEl.scrollTo({
-      top: desiredTop,
-      behavior: 'smooth'
-    });
-  }
+  previewEl.scrollTo({
+    top: desiredTop,
+    behavior: smooth ? 'smooth' : 'auto'
+  });
 }
 
 function setupLeftRightScrollSync() {
@@ -1109,18 +1047,18 @@ function setupLeftRightScrollSync() {
   if (!formPanel || formPanel.dataset.scrollSyncBound) return;
   formPanel.dataset.scrollSyncBound = 'true';
 
+  // 1. When clicking, focusing, or typing inside any left module card, scroll right preview to that module
   const handleCardActivate = (event) => {
     const card = event.target.closest('.prop-module-card');
     if (!card) return;
     const key = card.dataset.moduleCard || card.dataset.cmodId;
     if (!key) return;
-    activeScrollKey = key;
     userInteractingWithLeft = true;
     clearTimeout(interactionTimer);
-    interactionTimer = setTimeout(() => { userInteractingWithLeft = false; }, 1500);
-    const isInputEvent = event.type === 'input' || event.type === 'change';
+    interactionTimer = setTimeout(() => { userInteractingWithLeft = false; }, 1200);
+    const isInputEvent = event.type === 'input';
+    // On input, wait one frame so renderProposalPreview finishes updating DOM first
     if (isInputEvent) {
-      scrollPreviewToSection(key, false);
       requestAnimationFrame(() => scrollPreviewToSection(key, false));
     } else {
       scrollPreviewToSection(key, true);
@@ -1130,41 +1068,16 @@ function setupLeftRightScrollSync() {
   formPanel.addEventListener('focusin', handleCardActivate);
   formPanel.addEventListener('click', handleCardActivate);
   formPanel.addEventListener('input', handleCardActivate);
-  formPanel.addEventListener('change', handleCardActivate);
 
+  // 2. When scrolling the page vertically, sync the right preview to the module card currently in the viewport
   window.addEventListener('scroll', () => {
     if (userInteractingWithLeft) return;
     const proposalPage = el('page-proposal');
     if (!proposalPage || !proposalPage.classList.contains('active')) return;
-
-    // If user currently has an input focused inside a module card (e.g. Module 01), keep preview locked to that card
-    const focusedCard = document.activeElement?.closest?.('.prop-module-card');
-    if (focusedCard && formPanel.contains(focusedCard)) {
-      const fKey = focusedCard.dataset.moduleCard || focusedCard.dataset.cmodId;
-      if (fKey) {
-        activeScrollKey = fKey;
-        scrollPreviewToSection(fKey, false);
-        return;
-      }
-    }
-
     const cards = [...formPanel.querySelectorAll('.prop-module-card:not(.is-unchecked)')];
     if (!cards.length) return;
 
-    // As long as Module 01 ('basic') has its bottom below 220px from viewport top, keep preview at top ('basic')
-    const basicCard = cards[0];
-    if (basicCard && basicCard.dataset.moduleCard === 'basic') {
-      const bRect = basicCard.getBoundingClientRect();
-      if (bRect.bottom > 220) {
-        if (activeScrollKey !== 'basic') {
-          activeScrollKey = 'basic';
-          scrollPreviewToSection('basic', true);
-        }
-        return;
-      }
-    }
-
-    const triggerLine = window.innerHeight * 0.28;
+    const triggerLine = window.innerHeight * 0.34;
     let matchedCard = cards[0];
     for (const card of cards) {
       const rect = card.getBoundingClientRect();

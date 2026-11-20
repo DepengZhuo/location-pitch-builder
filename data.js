@@ -3,16 +3,15 @@
    9 Venue Categories, Machine Specs, Compliance Docs & Formatters
    ========================================================= */
 export const VENUE_TYPES = [
-  { id: 'Gym & Fitness Center', en: 'Gym & Fitness Center', zh: '健身房与运动中心', siteImage: './assets/site_images/Gym & Fitness Center.png' },
-  { id: 'Factory & Industrial Plant', en: 'Factory & Industrial Plant', zh: '工厂与工业园区', siteImage: './assets/site_images/Factory & Industrial Plant.png' },
-  { id: 'Airport & Transit Hub', en: 'Airport & Transit Hub', zh: '机场与交通枢纽', siteImage: './assets/site_images/Airport & Transit Hub.jpg' },
-  { id: 'Apartment & Residential', en: 'Apartment & Residential', zh: '公寓与住宅社区', siteImage: './assets/site_images/Apartment & Residential.jpg' },
-  { id: 'Construction Site', en: 'Construction Site', zh: '建筑工地与施工现场', siteImage: './assets/site_images/Construction Site.png' },
-  { id: 'Hospital & Medical Center', en: 'Hospital & Medical Center', zh: '医院与医疗中心', siteImage: './assets/site_images/Hospital & Medical Center.jpg' },
-  { id: 'Hotel & Hospitality', en: 'Hotel & Hospitality', zh: '酒店与文旅住宿', siteImage: './assets/site_images/Hotel & Hospitality.jpg' },
-  { id: 'Office & Corporate Campus', en: 'Office & Corporate Campus', zh: '写字楼与企业园区', siteImage: './assets/site_images/Office & Corporate Campus.jpg' },
-  { id: 'School & University Campus', en: 'School & University Campus', zh: '学校与大学校园', siteImage: './assets/site_images/School & University Campus.jpg' },
-  { id: 'Other', en: 'Other', zh: '其他', siteImage: '' }
+  { id: 'Gym & Fitness Center', en: 'Gym & Fitness Center', zh: '健身房与运动中心' },
+  { id: 'Factory & Industrial Plant', en: 'Factory & Industrial Plant', zh: '工厂与工业园区' },
+  { id: 'Airport & Transit Hub', en: 'Airport & Transit Hub', zh: '机场与交通枢纽' },
+  { id: 'Apartment & Residential', en: 'Apartment & Residential', zh: '公寓与住宅社区' },
+  { id: 'Construction Site', en: 'Construction Site', zh: '建筑工地与施工现场' },
+  { id: 'Hospital & Medical Center', en: 'Hospital & Medical Center', zh: '医院与医疗中心' },
+  { id: 'Hotel & Hospitality', en: 'Hotel & Hospitality', zh: '酒店与文旅住宿' },
+  { id: 'Office & Corporate Campus', en: 'Office & Corporate Campus', zh: '写字楼与企业园区' },
+  { id: 'School & University Campus', en: 'School & University Campus', zh: '学校与大学校园' }
 ];
 
 export const LEGACY_VENUE_MAP = {
@@ -50,8 +49,8 @@ export const LEGACY_VENUE_MAP = {
   '机场与交通枢纽': 'Airport & Transit Hub',
   '建筑工地与施工现场 (Construction Site)': 'Construction Site',
   '建筑工地与施工现场': 'Construction Site',
-  '其他': 'Other',
-  'Other': 'Other'
+  '其他': 'Office & Corporate Campus',
+  'Other': 'Office & Corporate Campus'
 };
 
 export function normalizeVenue(val) {
@@ -222,24 +221,6 @@ Key Focus: Great-value drinks + Between-class/late-night food + Dorm emergency e
 • 食品：面包、三明治、饭团、方便食品、酸奶、薯片、饼干、巧克力、坚果、能量棒。
 • 日用品：纸巾、湿巾、文具应急品、充电线、个人护理用品（尤其适合宿舍区）。
 推荐重点：高性价比饮品 + 课间/夜宵食品 + 宿舍日常应急用品。`
-  },
-  'Other': {
-    valueEn: `• 24/7 Self-Service Convenience: Provides round-the-clock access to drinks, snacks, and everyday essentials on site.
-• Zero Staffing Burden: Fully automated grab-and-go checkout requires no front-desk handling or on-site cashier.
-• Compact & Clean Footprint: Fits easily into lobbies, break areas, or common corridors using a standard 110V–120V outlet.
-• Flexible Amenity Upgrade: Enhances convenience for visitors, tenants, or staff with full restocking and maintenance included.`,
-    valueZh: `• 24 小时自助便利：为现场人员全天候提供饮品、零食与日常简餐补给。
-• 零人工运营负担：全自动即拿即走结算，无需前台或专人值守收银。
-• 占地紧凑易部署：适配大堂、休息区或公共走廊，仅需标准 110V–120V 电源。
-• 省心的场地配套升级：由运营方负责全套补货与维护，提升访客、租户或员工体验。`,
-    planogramEn: `• Beverages: Bottled water, sparkling drinks, ready-to-drink coffee, tea, and energy drinks.
-• Food: Sandwiches, pastries, protein bars, chips, nuts, and grab-and-go snacks.
-• Other: Everyday convenience items tailored to on-site foot traffic and local preferences.
-Key Focus: Cold beverages + Grab-and-go snacks + High-turnover everyday essentials.`,
-    planogramZh: `• 饮料：瓶装水、气泡水、即饮咖啡、茶饮及功能饮料。
-• 食品：三明治、烘焙糕点、蛋白棒、薯片、坚果及便携零食。
-• 其他：根据现场客群偏好灵活搭配的日常便利商品。
-推荐重点：冷饮 + 即食零食 + 高周转日常高频刚需品。`
   }
 };
 
@@ -406,99 +387,14 @@ export const READINESS_ITEMS = [
 export const DEFAULT_SCORE = Object.fromEntries(SCORE_CRITERIA.map(c => [c.id, '']));
 export const DEFAULT_READINESS = Object.fromEntries(READINESS_ITEMS.map(r => [r.id, 'pending']));
 
-export const LEGACY_DEFAULT_DOC_IDS = new Set([
-  'nama', 'ul-etl', 'nsf', 'fcc', 'ada', 'coi', 'w9', 'pax-im30-fcc'
-]);
-
 export const DEFAULT_DOCS = [
-  {
-    id: 'etl-listed',
-    title: 'ETL Listed Certification',
-    category: 'Electrical & Product Safety',
-    desc: 'Electrical and product safety certification for applicable HAHA equipment models.',
-    filename: 'ETL Listed_All Models.pdf',
-    url: '',
-    downloadPath: './assets/certificates/ETL Listed_All Models.pdf',
-    logoPath: './assets/certificates/ETL-listed.png',
-    isFixed: true
-  },
-  {
-    id: 'etl-sanitation',
-    title: 'ETL Sanitation Certification',
-    category: 'Sanitation & Food Safety',
-    desc: 'Sanitation certification for applicable HAHA food equipment models.',
-    filename: 'ETL Sanitation_All Models.pdf',
-    url: '',
-    downloadPath: './assets/certificates/ETL Sanitation_All Models.pdf',
-    logoPath: './assets/certificates/ETL-sanitation.png',
-    isFixed: true
-  },
-  {
-    id: 'nsf-ansi-7',
-    title: 'NSF Certification',
-    category: 'Commercial Refrigeration',
-    desc: 'Commercial refrigeration equipment certification. Applicable only to Pro 542.',
-    filename: 'NSF.pdf',
-    url: '',
-    downloadPath: './assets/certificates/NSF.pdf',
-    logoPath: './assets/certificates/NSF_International_logo.png',
-    isFixed: true
-  },
-  {
-    id: 'haha-fcc',
-    title: 'FCC Compliance',
-    category: 'Equipment RF & EMC Compliance',
-    desc: 'FCC compliance documentation for HAHA equipment. Applicable to Mini 360 and Ultra 1200.',
-    filename: '2509B0307SHA-V1-FCC.pdf',
-    url: '',
-    downloadPath: './assets/certificates/2509B0307SHA-V1-FCC.pdf',
-    logoPath: './assets/certificates/FCC.png',
-    isFixed: true
-  },
-  {
-    id: 'pax-im30-pci-pts',
-    title: 'PAX IM30 – PCI PTS Hardware Certification',
-    category: 'Payment Terminal Security',
-    desc: 'PCI PTS hardware security certification for the PAX IM30 payment terminal.',
-    filename: 'IM30_PCI PTS_Cert 20230728.pdf',
-    url: '',
-    downloadPath: './assets/certificates/IM30_PCI PTS_Cert 20230728.pdf',
-    logoPath: './assets/certificates/pci-dss-500.png',
-    isFixed: true
-  },
-  {
-    id: 'up-pci-dss-aoc',
-    title: 'Universal Processing – PCI DSS Service Provider AOC',
-    category: 'Payment Processing Compliance',
-    desc: 'PCI DSS v4.0.1 Attestation of Compliance for payment service provider Universal Processing (acquiring bank: Esquire Bank).',
-    filename: 'C1951-01-PIT1 UP_PCI_DSS_AOC_Service_Provider_atsec.pdf',
-    url: '',
-    downloadPath: './assets/certificates/C1951-01-PIT1 UP_PCI_DSS_AOC_Service_Provider_atsec.pdf',
-    logoPath: './assets/certificates/pci-dss-500.png',
-    isFixed: true
-  },
-  {
-    id: 'haha-rohs',
-    title: 'RoHS Compliance Certification',
-    category: 'Environmental Compliance',
-    desc: 'EU RoHS environmental compliance certification for HAHA equipment.',
-    filename: 'ROHS  VOC certificate.pdf',
-    url: '',
-    downloadPath: './assets/certificates/ROHS  VOC certificate.pdf',
-    logoPath: './assets/certificates/rohs-compliant.png',
-    isFixed: true
-  },
-  {
-    id: 'nama-listed',
-    title: 'NAMA Listed Certification',
-    category: 'Vending Industry Compliance',
-    desc: 'NAMA certification for applicable HAHA vending equipment.',
-    filename: 'NAMA.pdf',
-    url: '',
-    downloadPath: './assets/certificates/NAMA.pdf',
-    logoPath: './assets/certificates/NAMA-LISTED.png',
-    isFixed: true
-  }
+  { id: 'nama', title: 'NAMA Certification', short: 'NAMA Certification', category: 'Industry Certification', desc: 'NAMA certification file included in the repository. Verify applicability and recipient before sharing.', filename: 'NAMA.pdf', url: '', downloadPath: './assets/certificates/NAMA.pdf', note: 'For NAMA certification reference only' },
+  { id: 'ul-etl', title: 'UL / ETL Electrical Safety', short: 'Electrical Safety', category: 'Equipment Certification', desc: 'Documents electrical safety testing and certification. Provide the certificate matching the selected machine model.', filename: '', url: '', note: 'Verify certificate scope by machine model' },
+  { id: 'nsf', title: 'NSF Sanitation & Food Safety', short: 'Food Contact / Sanitation', category: 'Food Safety', desc: 'Addresses property review requirements regarding food-contact materials and sanitation standards.', filename: '', url: '', note: 'Confirm specific standards and scope' },
+  { id: 'fcc', title: 'FCC Wireless Compliance', short: 'Wireless Compliance', category: 'Equipment Certification', desc: 'Details FCC compliance for wireless communication modules and electronics inside the machine.', filename: '', url: '', note: 'Verify module, model, and filing entity' },
+  { id: 'ada', title: 'ADA Accessibility Guidance', short: 'Accessibility', category: 'Site Compliance', desc: 'Explains placement and operational accessibility considerations. Not a standalone "ADA certificate".', filename: '', url: '', note: 'Review with site layout and local regulations' },
+  { id: 'coi', title: 'Certificate of Insurance (COI)', short: 'Liability Insurance', category: 'Insurance', desc: 'Operator liability insurance certificate for the property (typically $2M coverage; verify actual policy limits).', filename: '', url: '', note: 'Check insured entity, coverage limits, expiration, and additional insured terms' },
+  { id: 'w9', title: 'W-9 Tax Form', short: 'Tax Document', category: 'Tax Document', desc: 'Tax identification form requested by properties for commission payouts. Contains sensitive tax information.', filename: '', url: '', note: 'Share only through access-controlled channels' }
 ];
 
 export const POWER_SUPPLY_SPEC = '110–120V / 60Hz';

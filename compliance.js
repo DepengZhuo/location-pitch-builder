@@ -1,15 +1,23 @@
 /* ==================================================
    Compliance Documents Module:
-   - 4 Fixed HAHA Certifications (read-only, direct PDF download)
-   - Operator Custom Documents (Add, Edit Link, Open / Download, Delete)
-   - Preserves existing LocalStorage custom links while filtering legacy defaults
+   - Standard 7 documents are permanent (cannot be deleted)
+   - User-added custom documents support Delete
+   - Supports 4 document statuses for accurate Print/PDF verification checklists:
+     1. 'attached' (Included / Link Ready)
+     2. 'on_request' (Available Upon Request)
+     3. 'pending' (In Progress / Pending Verification)
+     4. 'not_applicable' (Not Applicable / Per Site Requirement)
    ================================================== */
-import { DEFAULT_DOCS, LEGACY_DEFAULT_DOC_IDS, escapeHTML, safeURL } from './data.js';
+import { DEFAULT_DOCS, escapeHTML, safeURL } from './data.js';
 import { t } from './i18n.js';
 
-const FIXED_DOC_IDS = new Set(DEFAULT_DOCS.map(d => d.id));
-const GH_PAGES_BASE = 'https://depengzhuo.github.io/location-pitch-builder/';
-const GH_RAW_BASE = 'https://raw.githubusercontent.com/DepengZhuo/location-pitch-builder/main/';
+const DEFAULT_DOC_IDS = new Set(DEFAULT_DOCS.map(d => d.id));
+export const DOC_STATUS_OPTIONS = [
+  { value: 'attached', label: 'Included / Link Ready', printLabel: 'Included with proposal / Link ready' },
+  { value: 'on_request', label: 'Available Upon Request', printLabel: 'Verified & available upon request' },
+  { value: 'pending', label: 'Pending / In Progress', printLabel: 'Pending site-specific verification' },
+  { value: 'not_applicable', label: 'Not Applicable', printLabel: 'Not applicable for this site' }
+];
 
 let onChangeCallback = () => {};
 let onToastCallback = () => {};
@@ -23,36 +31,29 @@ export function setComplianceChangeHandler(callback, toastFn) {
 
 export function normalizeDocs(docs = []) {
   const safeList = Array.isArray(docs) ? docs : [];
-  const fixed = DEFAULT_DOCS.map(base => ({ ...base }));
+  const byId = new Map(safeList.map(doc => [doc.id, doc]));
+  const standard = DEFAULT_DOCS.map(base => {
+    const saved = byId.get(base.id) || {};
+    const url = saved.url || base.url || '';
+    const hasLink = Boolean(safeURL(url) || base.downloadPath);
+    const defaultStatus = hasLink ? 'attached' : 'on_request';
+    return {
+      ...base,
+      url,
+      filename: saved.filename || base.filename || '',
+      docStatus: saved.docStatus || (hasLink ? 'attached' : defaultStatus)
+    };
+  });
   const custom = safeList
-    .filter(doc => doc && doc.id && !FIXED_DOC_IDS.has(doc.id) && !LEGACY_DEFAULT_DOC_IDS.has(doc.id))
+    .filter(doc => doc && doc.id && !DEFAULT_DOC_IDS.has(doc.id))
     .map(doc => {
-      const cleaned = { ...doc };
-      delete cleaned.docStatus;
-      return cleaned;
+      const hasLink = Boolean(safeURL(doc.url) || doc.downloadPath);
+      return {
+        ...doc,
+        docStatus: doc.docStatus || (hasLink ? 'attached' : 'on_request')
+      };
     });
-  return [...fixed, ...custom];
-}
-
-export function resolveDocHref(doc) {
-  if (!doc) return '';
-  if (doc.url && safeURL(doc.url)) return doc.url;
-  if (doc.downloadPath) {
-    if (/^https?:\/\//i.test(doc.downloadPath)) return doc.downloadPath;
-    return doc.downloadPath;
-  }
-  return '';
-}
-
-export function resolveExportDocHref(doc) {
-  if (!doc) return '';
-  if (doc.url && safeURL(doc.url)) return doc.url;
-  if (doc.downloadPath) {
-    if (/^https?:\/\//i.test(doc.downloadPath)) return doc.downloadPath;
-    const rel = doc.downloadPath.replace(/^\.\//, '');
-    return GH_PAGES_BASE + encodeURI(rel);
-  }
-  return '';
+  return [...standard, ...custom];
 }
 
 export function renderCompliance(docs = docsCache) {
@@ -62,56 +63,49 @@ export function renderCompliance(docs = docsCache) {
   if (!gridEl) return;
 
   gridEl.innerHTML = docsCache.map(doc => {
-    const isFixed = Boolean(doc.isFixed || FIXED_DOC_IDS.has(doc.id));
-
-    if (isFixed) {
-      const href = encodeURI(doc.downloadPath || '');
-      const logoSrc = encodeURI(doc.logoPath || '');
-      const rawFallbackLogo = doc.logoPath
-        ? GH_RAW_BASE + encodeURI(doc.logoPath.replace(/^\.\//, ''))
-        : '';
-      return `<article class="document-card" data-doc="${escapeHTML(doc.id)}">
-        <div class="doc-top">
-          ${logoSrc ? `<img class="doc-cert-logo" src="${escapeHTML(logoSrc)}" data-fallback="${escapeHTML(rawFallbackLogo)}" alt="${escapeHTML(t(doc.title))}" />` : '<div class="doc-icon">▤</div>'}
-        </div>
-        <h3>${escapeHTML(t(doc.title))}</h3>
-        <p>${escapeHTML(t(doc.desc))}</p>
-        <div class="doc-meta">${escapeHTML(t(doc.category))}</div>
-        <a class="doc-download" href="${escapeHTML(href)}" target="_blank" rel="noopener noreferrer" download="${escapeHTML(doc.filename || '')}">${t('Download')} ↓</a>
-      </article>`;
-    }
-
-    const safeLink = safeURL(doc.url) || '';
+    const safeLink = safeURL(doc.url) || doc.downloadPath;
+    const ready = Boolean(safeLink);
+    const status = ready ? t('Link Configured') : t('To Be Provided');
+    const statusClass = ready ? 'linked' : '';
+    const isCustom = !DEFAULT_DOC_IDS.has(doc.id);
+    const curDocStatus = doc.docStatus || (ready ? 'attached' : 'on_request');
     return `<article class="document-card" data-doc="${escapeHTML(doc.id)}">
-      <div class="doc-top"><div class="doc-icon">▤</div></div>
-      <h3>${escapeHTML(doc.title)}</h3>
-      <div class="doc-meta">${escapeHTML(t(doc.category || 'Supplemental Document'))}</div>
+      <div class="doc-top"><div class="doc-icon">▤</div><span class="doc-status ${statusClass}">${status}</span></div>
+      <h3>${escapeHTML(t(doc.title))}</h3><p>${escapeHTML(t(doc.desc))}</p>
+      <div class="doc-meta">${escapeHTML(t(doc.category))} · ${escapeHTML(t(doc.note || 'To Be Provided'))}</div>
+      ${ready ? `<div class="doc-meta">${doc.downloadPath && !doc.url ? t('Repository Certificate File') : t(`Link: ${escapeHTML(doc.url.length > 42 ? doc.url.slice(0, 39) + '...' : doc.url)}`)}</div>` : ''}
+      <label class="field doc-status-field">
+        <span>${t('Print / Review Status')}</span>
+        <select class="doc-status-select" data-doc-status="${escapeHTML(doc.id)}">
+          ${DOC_STATUS_OPTIONS.map(opt => `<option value="${opt.value}" ${curDocStatus === opt.value ? 'selected' : ''}>${t(opt.label)}</option>`).join('')}
+        </select>
+      </label>
       <div class="doc-actions">
-        <button type="button" data-action="link" data-id="${escapeHTML(doc.id)}">${t('Edit Link')}</button>
-        <button type="button" class="doc-delete-btn" data-action="delete" data-id="${escapeHTML(doc.id)}">${t('Delete')}</button>
+        <button type="button" data-action="link" data-id="${escapeHTML(doc.id)}">${doc.url ? t('Edit Link') : t('Add Drive Link')}</button>
+        ${isCustom ? `<button type="button" class="doc-delete-btn" data-action="delete" data-id="${escapeHTML(doc.id)}">${t('Delete')}</button>` : ''}
       </div>
-      ${safeLink
-        ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer">${t('Open / Download')} ↗</a>`
-        : `<button type="button" class="doc-download" disabled>${t('Open / Download')}</button>`}
+      ${ready ? `<a class="doc-download" href="${escapeHTML(safeLink)}" target="_blank" rel="noopener noreferrer" download>${doc.downloadPath && !doc.url ? t('Download Certificate ↓') : t('Open / Download File ↗')}</a>` : `<button type="button" class="doc-download" disabled>${t('Link Not Configured')}</button>`}
     </article>`;
   }).join('');
-
-  gridEl.querySelectorAll('img[data-fallback]').forEach(img => {
-    img.addEventListener('error', () => {
-      if (img.dataset.fallback && img.src !== img.dataset.fallback) {
-        img.src = img.dataset.fallback;
-      }
-    }, { once: true });
-  });
 
   gridEl.querySelectorAll('[data-action="link"]').forEach(button => {
     button.addEventListener('click', () => openComplianceModal(button.dataset.id));
   });
 
+  gridEl.querySelectorAll('.doc-status-select').forEach(sel => {
+    sel.addEventListener('change', () => {
+      const target = docsCache.find(item => item.id === sel.dataset.docStatus);
+      if (target) {
+        target.docStatus = sel.value;
+        onChangeCallback(docsCache);
+      }
+    });
+  });
+
   gridEl.querySelectorAll('[data-action="delete"]').forEach(button => {
     button.addEventListener('click', () => {
       const id = button.dataset.id;
-      if (FIXED_DOC_IDS.has(id)) return;
+      if (DEFAULT_DOC_IDS.has(id)) return;
       docsCache = docsCache.filter(item => item.id !== id);
       onChangeCallback(docsCache, id);
       onToastCallback(t('Custom document deleted.'));
@@ -120,7 +114,6 @@ export function renderCompliance(docs = docsCache) {
 }
 
 function openComplianceModal(docId = null) {
-  if (docId && FIXED_DOC_IDS.has(docId)) return;
   editingDocId = docId;
   const modal = document.getElementById('complianceModal');
   const titleEl = document.getElementById('complianceModalTitle');
@@ -129,16 +122,16 @@ function openComplianceModal(docId = null) {
   const urlInput = document.getElementById('complianceDocUrl');
   if (!modal || !titleInput || !urlInput) return;
 
-  if (titleField) titleField.hidden = false;
-
   if (docId) {
     const doc = docsCache.find(item => item.id === docId);
     if (!doc) return;
-    if (titleEl) titleEl.textContent = `${t('Edit Link')} · ${doc.title}`;
-    titleInput.value = doc.title || '';
+    if (titleEl) titleEl.textContent = `${t('Edit Link')} · ${t(doc.title)}`;
+    if (titleField) titleField.hidden = true;
+    titleInput.value = doc.title;
     urlInput.value = doc.url || '';
   } else {
     if (titleEl) titleEl.textContent = t('Add File Link');
+    if (titleField) titleField.hidden = false;
     titleInput.value = '';
     urlInput.value = '';
   }
@@ -155,34 +148,37 @@ function closeComplianceModal() {
 function saveComplianceModal() {
   const titleInput = document.getElementById('complianceDocTitle');
   const urlInput = document.getElementById('complianceDocUrl');
-  const title = titleInput?.value.trim() || '';
   const rawUrl = urlInput?.value.trim() || '';
-
-  if (!title) {
-    onToastCallback(t('Please enter a document title first.'));
-    titleInput?.focus();
-    return;
-  }
-  if (!rawUrl || !safeURL(rawUrl)) {
-    onToastCallback(t('Please enter a valid HTTPS or Google Drive link.'));
+  if (rawUrl && !safeURL(rawUrl)) {
+    onToastCallback(t('Invalid URL format. Please enter a full URL starting with https:// or http://.'));
     urlInput?.focus();
     return;
   }
 
   if (editingDocId) {
     const doc = docsCache.find(item => item.id === editingDocId);
-    if (doc && !FIXED_DOC_IDS.has(doc.id)) {
-      doc.title = title;
+    if (doc) {
       doc.url = rawUrl;
+      doc.filename = rawUrl ? (doc.filename || 'Cloud File Link') : '';
+      if (rawUrl) doc.docStatus = 'attached';
       onChangeCallback(docsCache);
     }
   } else {
+    const title = titleInput?.value.trim() || '';
+    if (!title) {
+      onToastCallback(t('Please enter a document title first.'));
+      titleInput?.focus();
+      return;
+    }
     docsCache.push({
       id: `custom_${Date.now()}`,
       title,
+      desc: 'Custom supplemental document. Please verify content and validity.',
       category: 'Supplemental Document',
+      filename: rawUrl ? 'Cloud File Link' : '',
       url: rawUrl,
-      isFixed: false
+      docStatus: rawUrl ? 'attached' : 'on_request',
+      note: 'Custom document'
     });
     onChangeCallback(docsCache);
   }

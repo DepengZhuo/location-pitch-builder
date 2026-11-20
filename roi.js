@@ -43,7 +43,7 @@ export function applyROIForm(data = {}) {
     rent: 200
   };
   let inferredDeal = data.dealType;
-  if (!['revenueShare', 'fixedRent', 'combo', 'amenity'].includes(inferredDeal)) {
+  if (!['revenueShare', 'fixedRent', 'amenity'].includes(inferredDeal)) {
     inferredDeal = Number(data.rent) > 0 ? 'fixedRent' : 'revenueShare';
   }
   const merged = { ...defaults, ...data, venue: normalizeVenue(data.venue || defaults.venue), dealType: inferredDeal };
@@ -80,8 +80,8 @@ function syncModeUI(mode) {
     card.setAttribute('aria-checked', String(active));
   });
 
-  if (read('roiShareField')) read('roiShareField').hidden = mode !== 'revenueShare' && mode !== 'combo';
-  if (read('roiRentField')) read('roiRentField').hidden = mode !== 'fixedRent' && mode !== 'combo';
+  if (read('roiShareField')) read('roiShareField').hidden = mode !== 'revenueShare';
+  if (read('roiRentField')) read('roiRentField').hidden = mode !== 'fixedRent';
   if (read('roiAmenityField')) read('roiAmenityField').hidden = mode !== 'amenity';
 }
 
@@ -92,8 +92,6 @@ export function calculateROI(input = readROIForm()) {
     landlordIncome = monthlyRevenue * (input.shareRate / 100);
   } else if (input.dealType === 'fixedRent') {
     landlordIncome = input.rent;
-  } else if (input.dealType === 'combo') {
-    landlordIncome = input.rent + monthlyRevenue * (input.shareRate / 100);
   } else {
     landlordIncome = 0;
   }
@@ -133,9 +131,6 @@ export function renderROI() {
   } else if (input.dealType === 'fixedRent') {
     if (typeBasisEl) typeBasisEl.textContent = t('Based on agreed fixed monthly rent');
     if (modelLabelEl) modelLabelEl.textContent = t(`Fixed monthly rent ${money(input.rent)}`);
-  } else if (input.dealType === 'combo') {
-    if (typeBasisEl) typeBasisEl.textContent = t(`Based on ${money(input.rent)}/mo + ${input.shareRate}% revenue share`);
-    if (modelLabelEl) modelLabelEl.textContent = t(`${money(input.rent)}/mo + ${input.shareRate}% Share`);
   } else {
     if (typeBasisEl) typeBasisEl.textContent = t('No direct monetary payment');
     if (modelLabelEl) modelLabelEl.textContent = t('Amenity-Only Placement');

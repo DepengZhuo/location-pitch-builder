@@ -6,6 +6,23 @@
   <meta name="theme-color" content="#111111" />
   <meta name="description" content="HAHA Vending Location Pitch & Partnership Proposal Studio" />
   <title>Location Pitch Builder | HAHA Vending</title>
+<!-- 网页标签页 & 手机桌面图标 -->
+  <link rel="icon" type="image/png" href="./assets/images/haha-logo.png" />
+  <link rel="apple-touch-icon" href="./assets/images/haha-logo.png" />
+
+  <!-- 转发链接卡片预览 (WhatsApp / iMessage / Slack / LinkedIn / 飞书 / 微信等) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://depengzhuo.github.io/location-pitch-builder/" />
+  <meta property="og:title" content="Location Pitch Builder | HAHA Vending" />
+  <meta property="og:description" content="HAHA Vending Location Pitch & Partnership Proposal Studio" />
+  <meta property="og:image" content="https://depengzhuo.github.io/location-pitch-builder/assets/images/haha-logo.png" />
+
+  <!-- 兼容部分海外平台 (Twitter / X / Discord / Teams) -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Location Pitch Builder | HAHA Vending" />
+  <meta name="twitter:description" content="HAHA Vending Location Pitch & Partnership Proposal Studio" />
+  <meta name="twitter:image" content="https://depengzhuo.github.io/location-pitch-builder/assets/images/haha-logo.png" />
+  
   <link rel="stylesheet" href="./styles/main.css" />
 </head>
 <body>
@@ -369,12 +386,6 @@
                     <strong>Fixed Monthly Rent</strong>
                     <small>Operator pays an agreed monthly placement fee.</small>
                   </div>
-                  <div class="roi-mode-card" data-mode="combo" tabindex="0" role="radio" aria-checked="false">
-                    <span class="roi-mode-mark">✓</span>
-                    <div class="roi-mode-symbol">＋</div>
-                    <strong>Combo (Rent + Share)</strong>
-                    <small>Combine a fixed monthly rent with a percentage of sales.</small>
-                  </div>
                   <div class="roi-mode-card" data-mode="amenity" tabindex="0" role="radio" aria-checked="false">
                     <span class="roi-mode-mark">✓</span>
                     <div class="roi-mode-symbol">✦</div>
@@ -559,7 +570,6 @@
                       <select id="propDeal">
                         <option value="revenueShare">Revenue Share</option>
                         <option value="fixedRent">Fixed Monthly Rent</option>
-                        <option value="combo">Fixed Rent + Revenue Share</option>
                         <option value="amenity">Amenity-Only</option>
                       </select>
                     </label>
