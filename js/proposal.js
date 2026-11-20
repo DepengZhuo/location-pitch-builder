@@ -427,7 +427,9 @@ export function applyProposalForm(rawData = {}) {
   }
 
   let dealValue = 'revenueShare';
-  if (data.deal === 'amenity' || String(data.deal || '').includes('便民')) {
+  if (data.deal === 'combo' || String(data.deal || '').includes('组合')) {
+    dealValue = 'combo';
+  } else if (data.deal === 'amenity' || String(data.deal || '').includes('便民')) {
     dealValue = 'amenity';
   } else if (data.deal === 'fixedRent' || String(data.deal || '').includes('固定')) {
     dealValue = 'fixedRent';
@@ -509,8 +511,8 @@ export function applyProposalForm(rawData = {}) {
 
 function updateDealFields() {
   const mode = el('propDeal')?.value || 'revenueShare';
-  if (el('propShareField')) el('propShareField').hidden = mode !== 'revenueShare';
-  if (el('propRentField')) el('propRentField').hidden = mode !== 'fixedRent';
+  if (el('propShareField')) el('propShareField').hidden = mode !== 'revenueShare' && mode !== 'combo';
+  if (el('propRentField')) el('propRentField').hidden = mode !== 'fixedRent' && mode !== 'combo';
 }
 
 export function applyROIToProposal(roi) {
@@ -706,6 +708,10 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
       landlord = '$0';
     } else if (p.deal === 'fixedRent') {
       landlord = money(p.rent);
+    } else if (p.deal === 'combo') {
+      landlord = roiData
+        ? money(p.rent + (roiData.monthlyRevenue || 0) * (p.share / 100))
+        : `${money(p.rent)} + ${p.share}%`;
     } else if (roiData) {
       landlord = money((roiData.monthlyRevenue || 0) * (p.share / 100));
     }
@@ -715,6 +721,9 @@ export function renderProposalPreview(roiData = null, scoreData = null, complian
     if (p.deal === 'fixedRent') {
       deal = t(`Fixed monthly rent ${money(p.rent)}`);
       landlordDeal = t(`Fixed monthly rent ${money(p.rent)}`);
+    } else if (p.deal === 'combo') {
+      deal = t(`Fixed ${money(p.rent)}/mo + ${p.share}% of monthly sales`);
+      landlordDeal = t(`${money(p.rent)}/mo + ${p.share}% Share`);
     } else if (p.deal === 'amenity') {
       deal = t('Amenity-Only ($0 Monthly Fee)');
       landlordDeal = t('Amenity-Only Placement');

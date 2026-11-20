@@ -487,6 +487,17 @@ export const DEFAULT_DOCS = [
     downloadPath: './assets/certificates/ROHS  VOC certificate.pdf',
     logoPath: './assets/certificates/rohs-compliant.png',
     isFixed: true
+  },
+  {
+    id: 'nama-listed',
+    title: 'NAMA Listed Certification',
+    category: 'Vending Industry Compliance',
+    desc: 'NAMA certification for applicable HAHA vending equipment.',
+    filename: 'NAMA.pdf',
+    url: '',
+    downloadPath: './assets/certificates/NAMA.pdf',
+    logoPath: './assets/certificates/NAMA-LISTED.png',
+    isFixed: true
   }
 ];
 

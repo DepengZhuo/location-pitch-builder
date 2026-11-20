@@ -94,6 +94,9 @@ const enToZh = {
   'RoHS Compliance Certification': 'RoHS 环保合规认证',
   'Environmental Compliance': '环保与有害物质合规',
   'EU RoHS environmental compliance certification for HAHA equipment.': 'HAHA 设备 EU RoHS 环保合规认证文件。',
+  'NAMA Listed Certification': 'NAMA 认证',
+  'Vending Industry Compliance': '自动售货行业认证',
+  'NAMA certification for applicable HAHA vending equipment.': 'HAHA 适用自动售货设备的 NAMA 行业认证文件。',
   // 1. Rate the Location — Option Descriptions
   'Not Sure': '待确认',
   "I don't have enough information to evaluate this yet.": '目前还没有足够的信息进行判断。',
@@ -362,12 +365,15 @@ const enToZh = {
   'Estimated monthly sales = daily items sold × average selling price × operating days. The estimate is used only to calculate the property’s potential earnings.': '预计月销售额 = 日均销售件数 × 平均商品售价 × 每月营业天数。该估算仅用于计算点位方的潜在合作收益。',
   'Partnership Setup': '合作模式设置',
   'Choose how the property will benefit financially from the placement.': '选择物业方从本次智能零售柜投放中获得收益或价值的方式。',
-  'Choose one': '三选一',
+  'Choose one': '四选一',
   'Partnership Model': '合作方式',
   'Revenue Share': '按销售额分成',
   'Property receives an agreed percentage of sales.': '物业按约定的月销售额比例获得分成。',
   'Fixed Monthly Rent': '固定月租',
   'Operator pays an agreed monthly placement fee.': '运营商按月向物业支付固定的场地租金。',
+  'Combo (Rent + Share)': '组合模式（月租 + 分成）',
+  'Fixed Rent + Revenue Share': '固定月租 + 销售额占比',
+  'Combine a fixed monthly rent with a percentage of sales.': '固定月租叠加按约定比例的销售额分成。',
   'Amenity-Only': '纯便民配套',
   'No direct payment; the cooler is provided as a site amenity.': '无直接租金；设备作为场地便民福利配套提供。',
   'Property Revenue Share (%)': '点位方销售额分成比例 (%)',
@@ -664,6 +670,15 @@ export function translateToZh(value) {
 
   match = key.match(/^(\d+(?:\.\d+)?)% of monthly sales$/);
   if (match) return `按销售额分成 ${match[1]}%`;
+
+  match = key.match(/^Based on (.+)\/mo \+ ([\d.]+)% revenue share$/);
+  if (match) return `基于固定月租 ${match[1]} + 销售额 ${match[2]}% 分成计算`;
+
+  match = key.match(/^(.+)\/mo \+ ([\d.]+)% Share$/);
+  if (match) return `${match[1]}/月 + ${match[2]}% 分成`;
+
+  match = key.match(/^Fixed (.+)\/mo \+ ([\d.]+)% of monthly sales$/);
+  if (match) return `固定月租 ${match[1]} + 月销售额 ${match[2]}% 分成`;
 
   match = key.match(/^Fixed monthly rent (.+)$/);
   if (match) return `固定月租 ${match[1]}`;
